@@ -1,5 +1,6 @@
 package git.wildwind.wwhfas.registry;
 
+import git.wildwind.wwhfas.block.ModBlocks;
 import net.neoforged.bus.api.IEventBus;
 
 public final class ModRegistries {

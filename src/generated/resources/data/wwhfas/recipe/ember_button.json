@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "wwhfas:ember_planks"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "wwhfas:ember_button"
+  }
+}

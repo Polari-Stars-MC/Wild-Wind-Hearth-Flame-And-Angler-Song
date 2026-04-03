@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_cinder_log": {
+      "conditions": {
+        "items": [
+          {
+            "items": "wwhfas:cinder_log"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "wwhfas:cinder_planks"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_cinder_log"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "wwhfas:cinder_planks"
+    ]
+  }
+}

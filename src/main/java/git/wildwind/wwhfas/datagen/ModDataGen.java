@@ -1,5 +1,6 @@
 package git.wildwind.wwhfas.datagen;
 
+import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.datagen.provider.ModBlockStateProvider;
 import git.wildwind.wwhfas.datagen.provider.ModBlockTagsProvider;
 import git.wildwind.wwhfas.datagen.provider.ModItemModelProvider;
@@ -9,8 +10,11 @@ import git.wildwind.wwhfas.datagen.provider.ModLootTableProvider;
 import git.wildwind.wwhfas.datagen.provider.ModRecipeProvider;
 import net.minecraft.data.PackOutput;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+
+import java.util.Set;
 
 public final class ModDataGen {
     private ModDataGen() {
@@ -31,12 +35,21 @@ public final class ModDataGen {
         generator.addProvider(event.includeClient(), new ModItemModelProvider(output, existing));
         generator.addProvider(event.includeClient(), new ModLangProvider(output, "en_us"));
         generator.addProvider(event.includeClient(), new ModLangProvider(output, "zh_cn"));
-        generator.addProvider(event.includeServer(), new ModLootTableProvider(output));
+        generator.addProvider(event.includeServer(), new ModLootTableProvider(output, event.getLookupProvider()));
         generator.addProvider(event.includeServer(), blockTags);
         generator.addProvider(
                 event.includeServer(),
                 new ModItemTagsProvider(output, event.getLookupProvider(), blockTags, existing)
         );
         generator.addProvider(event.includeServer(), new ModRecipeProvider(output, event.getLookupProvider()));
+        generator.addProvider(
+            event.includeServer(),
+            new DatapackBuiltinEntriesProvider(
+                output,
+                event.getLookupProvider(),
+                ModWorldGenProvider.BUILDER,
+                Set.of(WildWindMod.MOD_ID)
+            )
+        );
     }
 }

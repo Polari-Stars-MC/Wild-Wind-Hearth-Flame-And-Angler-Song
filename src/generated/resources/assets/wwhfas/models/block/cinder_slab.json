@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "wwhfas:block/cinder_planks",
+    "side": "wwhfas:block/cinder_planks",
+    "top": "wwhfas:block/cinder_planks"
+  }
+}

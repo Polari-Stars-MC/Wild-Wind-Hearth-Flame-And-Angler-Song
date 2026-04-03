@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "wwhfas:block/cinder_slab"
+    },
+    "type=double": {
+      "model": "wwhfas:block/cinder_planks"
+    },
+    "type=top": {
+      "model": "wwhfas:block/cinder_slab_top"
+    }
+  }
+}

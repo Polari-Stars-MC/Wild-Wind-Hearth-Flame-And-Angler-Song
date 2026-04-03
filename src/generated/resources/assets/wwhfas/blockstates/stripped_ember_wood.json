@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "wwhfas:block/stripped_ember_wood_horizontal",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "wwhfas:block/stripped_ember_wood"
+    },
+    "axis=z": {
+      "model": "wwhfas:block/stripped_ember_wood_horizontal",
+      "x": 90
+    }
+  }
+}

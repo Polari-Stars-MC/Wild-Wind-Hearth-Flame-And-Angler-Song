@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "wwhfas:block/ember_log",
+    "side": "wwhfas:block/ember_log"
+  }
+}

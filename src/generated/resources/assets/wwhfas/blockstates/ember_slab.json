@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "wwhfas:block/ember_slab"
+    },
+    "type=double": {
+      "model": "wwhfas:block/ember_planks"
+    },
+    "type=top": {
+      "model": "wwhfas:block/ember_slab_top"
+    }
+  }
+}
