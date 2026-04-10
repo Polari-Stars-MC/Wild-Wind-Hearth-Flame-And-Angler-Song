@@ -58,16 +58,16 @@ public class ModBlockStateProvider extends BlockStateProvider {
     signBlock(
         (StandingSignBlock) woodSet.sign().get(),
         (WallSignBlock) woodSet.wallSign().get(),
-        modLoc("entity/signs/" + name + "_sign")
+        blockTexture(woodSet.planks().get())
     );
     hangingSignBlock(
         (CeilingHangingSignBlock) woodSet.hangingSign().get(),
         (WallHangingSignBlock) woodSet.wallHangingSign().get(),
-        modLoc("entity/signs/hanging/" + name + "_hanging_sign")
+        blockTexture(woodSet.planks().get())
     );
 
     simpleBlock(
-        (SaplingBlock) woodSet.sapling().get(),
+        woodSet.sapling().get(),
         models().cross(name + "_sapling", modLoc("block/" + name + "_sapling")).renderType("cutout")
     );
     simpleBlock(
@@ -88,7 +88,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
     simpleBlockItem(woodSet.slab().get(), models().getExistingFile(modLoc("block/" + name + "_slab")));
     simpleBlockItem(woodSet.fenceGate().get(), models().getExistingFile(modLoc("block/" + name + "_fence_gate")));
     simpleBlockItem(woodSet.trapdoor().get(), models().getExistingFile(modLoc("block/" + name + "_trapdoor_bottom")));
-    simpleBlockItem(woodSet.button().get(), models().getExistingFile(modLoc("block/" + name + "_button")));
     simpleBlockItem(woodSet.pressurePlate().get(), models().getExistingFile(modLoc("block/" + name + "_pressure_plate")));
     }
 }

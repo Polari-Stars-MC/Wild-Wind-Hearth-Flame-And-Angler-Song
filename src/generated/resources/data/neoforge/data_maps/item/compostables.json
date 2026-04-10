@@ -1,0 +1,16 @@
+{
+  "values": {
+    "wwhfas:cinder_leaves": {
+      "chance": 0.3
+    },
+    "wwhfas:cinder_sapling": {
+      "chance": 0.3
+    },
+    "wwhfas:ember_leaves": {
+      "chance": 0.3
+    },
+    "wwhfas:ember_sapling": {
+      "chance": 0.3
+    }
+  }
+}

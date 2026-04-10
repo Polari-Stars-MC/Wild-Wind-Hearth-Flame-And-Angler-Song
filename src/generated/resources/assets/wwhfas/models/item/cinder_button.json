@@ -1,3 +1,6 @@
 {
-  "parent": "wwhfas:block/cinder_button"
+  "parent": "minecraft:block/button_inventory",
+  "textures": {
+    "texture": "wwhfas:block/cinder_planks"
+  }
 }

@@ -1,5 +1,9 @@
 package git.wildwind.wwhfas.block;
 
+import git.wildwind.wwhfas.block.sign.ModCeilingHangingSignBlock;
+import git.wildwind.wwhfas.block.sign.ModStandingSignBlock;
+import git.wildwind.wwhfas.block.sign.ModWallHangingSignBlock;
+import git.wildwind.wwhfas.block.sign.ModWallSignBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -13,6 +17,7 @@ import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import git.wildwind.wwhfas.WildWindMod;
+import git.wildwind.wwhfas.registry.ModBlockEntities;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -231,20 +236,26 @@ public final class ModBlocks {
     }
 
     private static Block sign(WoodType woodType, MapColor mapColor) {
-        return new StandingSignBlock(woodType, BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_SIGN).mapColor(mapColor));
+        return new ModStandingSignBlock(
+            woodType,
+            BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_SIGN).mapColor(mapColor),
+            () -> ModBlockEntities.SIGN.get()
+        );
     }
 
     private static Block wallSign(WoodType woodType, MapColor mapColor, DeferredHolder<Block, Block> sign) {
-        return new WallSignBlock(
+        return new ModWallSignBlock(
                 woodType,
-                BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_WALL_SIGN).mapColor(mapColor).lootFrom(sign)
+            BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_WALL_SIGN).mapColor(mapColor).lootFrom(sign),
+            () -> ModBlockEntities.SIGN.get()
         );
     }
 
     private static Block hangingSign(WoodType woodType, MapColor mapColor) {
-        return new CeilingHangingSignBlock(
+        return new ModCeilingHangingSignBlock(
                 woodType,
-                BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_HANGING_SIGN).mapColor(mapColor)
+            BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_HANGING_SIGN).mapColor(mapColor),
+            () -> ModBlockEntities.HANGING_SIGN.get()
         );
     }
 
@@ -253,9 +264,10 @@ public final class ModBlocks {
             MapColor mapColor,
             DeferredHolder<Block, Block> hangingSign
     ) {
-        return new WallHangingSignBlock(
+        return new ModWallHangingSignBlock(
                 woodType,
-                BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_WALL_HANGING_SIGN).mapColor(mapColor).lootFrom(hangingSign)
+            BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_WALL_HANGING_SIGN).mapColor(mapColor).lootFrom(hangingSign),
+            () -> ModBlockEntities.HANGING_SIGN.get()
         );
     }
 

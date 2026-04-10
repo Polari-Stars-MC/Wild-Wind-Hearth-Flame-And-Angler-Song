@@ -3,6 +3,7 @@ package git.wildwind.wwhfas.datagen;
 import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.datagen.provider.ModBlockStateProvider;
 import git.wildwind.wwhfas.datagen.provider.ModBlockTagsProvider;
+import git.wildwind.wwhfas.datagen.provider.ModDataMapProvider;
 import git.wildwind.wwhfas.datagen.provider.ModItemModelProvider;
 import git.wildwind.wwhfas.datagen.provider.ModItemTagsProvider;
 import git.wildwind.wwhfas.datagen.provider.ModLangProvider;
@@ -37,6 +38,7 @@ public final class ModDataGen {
         generator.addProvider(event.includeClient(), new ModLangProvider(output, "zh_cn"));
         generator.addProvider(event.includeServer(), new ModLootTableProvider(output, event.getLookupProvider()));
         generator.addProvider(event.includeServer(), blockTags);
+        generator.addProvider(event.includeServer(), new ModDataMapProvider(output, event.getLookupProvider()));
         generator.addProvider(
                 event.includeServer(),
                 new ModItemTagsProvider(output, event.getLookupProvider(), blockTags, existing)

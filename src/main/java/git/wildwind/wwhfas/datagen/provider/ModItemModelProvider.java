@@ -13,23 +13,29 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-    for (ModBlocks.WoodSet woodSet : ModBlocks.WOOD_SETS) {
-        registerWoodSet(woodSet);
-    }
+        for (ModBlocks.WoodSet woodSet : ModBlocks.WOOD_SETS) {
+            registerWoodSet(woodSet);
+        }
     }
 
     private void registerWoodSet(ModBlocks.WoodSet woodSet) {
-    String name = woodSet.name();
+        String name = woodSet.name();
 
-    withExistingParent(name + "_fence", mcLoc("block/fence_inventory"))
-        .texture("texture", modLoc("block/" + name + "_planks"));
-    withExistingParent(name + "_door", mcLoc("item/generated"))
-        .texture("layer0", modLoc("item/" + name + "_door"));
-    withExistingParent(name + "_sapling", mcLoc("item/generated"))
-        .texture("layer0", modLoc("block/" + name + "_sapling"));
-    withExistingParent(name + "_sign", mcLoc("item/generated"))
-        .texture("layer0", modLoc("item/" + name + "_sign"));
-    withExistingParent(name + "_hanging_sign", mcLoc("item/generated"))
-        .texture("layer0", modLoc("item/" + name + "_hanging_sign"));
+        withExistingParent(name + "_fence", mcLoc("block/fence_inventory"))
+            .texture("texture", modLoc("block/" + name + "_planks"));
+        withExistingParent(name + "_button", mcLoc("block/button_inventory"))
+            .texture("texture", modLoc("block/" + name + "_planks"));
+        withExistingParent(name + "_door", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/" + name + "_door"));
+        withExistingParent(name + "_sapling", mcLoc("item/generated"))
+            .texture("layer0", modLoc("block/" + name + "_sapling"));
+        withExistingParent(name + "_sign", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/" + name + "_sign"));
+        withExistingParent(name + "_hanging_sign", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/" + name + "_hanging_sign"));
+        withExistingParent(name + "_boat", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/" + name + "_boat"));
+        withExistingParent(name + "_chest_boat", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/" + name + "_chest_boat"));
     }
 }
