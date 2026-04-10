@@ -188,8 +188,21 @@ public final class BlockPropertyBookFactory {
         return Component.translatable(KEY_PREFIX + suffix);
     }
 
-    private static Component entry(String suffix, Object value) {
-        return Component.translatable(KEY_PREFIX + "entry." + suffix, value);
+    private static Component entry(String suffix, Object... value) {
+        // 防止不合法value
+        var args=new Object[value.length];
+        for (int i = 0; i < value.length; i++) {
+            if (value[i] == null) {
+                args[i] = "";
+            } else if (value[i] instanceof Component c) {
+                args[i] = c.getString();
+            } else if (value[i] instanceof ResourceLocation r) {
+                args[i]=Component.translatable(r.toLanguageKey()).getString();
+            } else {
+                args[i] = value[i].toString();
+            }
+        }
+        return Component.translatable(KEY_PREFIX + "entry." + suffix, args);
     }
 
     private static Component fallback(String suffix) {
