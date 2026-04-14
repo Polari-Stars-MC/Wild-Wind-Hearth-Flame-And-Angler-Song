@@ -28,6 +28,7 @@ public class ModClientHooks {
         event.enqueueWork(() -> {
             Sheets.addWoodType(ModWoodType.CINDER);
             Sheets.addWoodType(ModWoodType.EMBER);
+            Sheets.addWoodType(ModWoodType.AZALEA);
         });
     }
 

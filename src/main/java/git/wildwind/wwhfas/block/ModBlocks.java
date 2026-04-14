@@ -46,14 +46,33 @@ public final class ModBlocks {
         ModBlockSetType.EMBER,
         ModWoodType.EMBER
     );
+    public static final WoodSet AZALEA = registerWoodSet(
+        "azalea",
+        MapColor.COLOR_PINK,
+        MapColor.COLOR_PINK,
+        MapColor.COLOR_PINK,
+        ModBlockSetType.AZALEA,
+        ModWoodType.AZALEA
+    );
 
-    public static final List<WoodSet> WOOD_SETS = List.of(CINDER, EMBER);
+    public static final List<WoodSet> WOOD_SETS = List.of(CINDER, EMBER, AZALEA);
 
     private ModBlocks() {
     }
 
     public static void register(IEventBus modBus) {
         BLOCKS.register(modBus);
+    }
+
+    private static WoodSet registerWoodSet(
+        String name,
+        MapColor barkColor,
+        MapColor woodColor,
+        MapColor plankColor,
+        BlockSetType blockSetType,
+        WoodType woodType
+    ) {
+        return registerWoodSet(name, barkColor, woodColor, plankColor, null, blockSetType, woodType);
     }
 
     private static WoodSet registerWoodSet(
@@ -75,7 +94,7 @@ public final class ModBlocks {
         "stripped_" + name + "_wood",
         () -> log(woodColor, woodColor)
     );
-    DeferredHolder<Block, Block> leaves = BLOCKS.register(name + "_leaves", () -> leaves());
+    DeferredHolder<Block, Block> leaves = treeGrower == null ? null : BLOCKS.register(name + "_leaves", ModBlocks::leaves);
     DeferredHolder<Block, Block> planks = BLOCKS.register(name + "_planks", () -> planks(plankColor));
     DeferredHolder<Block, Block> stairs = BLOCKS.register(name + "_stairs", () -> legacyStair(planks.get()));
     DeferredHolder<Block, Block> slab = BLOCKS.register(name + "_slab", () -> slab(plankColor));
@@ -88,11 +107,10 @@ public final class ModBlocks {
         () -> pressurePlate(blockSetType, plankColor)
     );
     DeferredHolder<Block, Block> button = BLOCKS.register(name + "_button", () -> woodenButton(blockSetType));
-    DeferredHolder<Block, Block> sapling = BLOCKS.register(name + "_sapling", () -> sapling(treeGrower));
-    DeferredHolder<Block, Block> pottedSapling = BLOCKS.register(
-        "potted_" + name + "_sapling",
-        () -> pottedSapling(sapling)
-    );
+    DeferredHolder<Block, Block> sapling = treeGrower == null ? null : BLOCKS.register(name + "_sapling", () -> sapling(treeGrower));
+    DeferredHolder<Block, Block> pottedSapling = sapling == null
+        ? null
+        : BLOCKS.register("potted_" + name + "_sapling", () -> pottedSapling(sapling));
     DeferredHolder<Block, Block> sign = BLOCKS.register(name + "_sign", () -> sign(woodType, plankColor));
     DeferredHolder<Block, Block> wallSign = BLOCKS.register(name + "_wall_sign", () -> wallSign(woodType, plankColor, sign));
     DeferredHolder<Block, Block> hangingSign = BLOCKS.register(
@@ -311,5 +329,8 @@ public final class ModBlocks {
             DeferredHolder<Block, Block> hangingSign,
             DeferredHolder<Block, Block> wallHangingSign
     ) {
+        public boolean hasTreeBlocks() {
+            return leaves != null && sapling != null && pottedSapling != null;
+        }
     }
 }

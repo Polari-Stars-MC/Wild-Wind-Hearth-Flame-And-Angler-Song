@@ -1,7 +1,9 @@
 package git.wildwind.wwhfas.registry;
 
 import git.wildwind.wwhfas.block.ModBlocks;
+import git.wildwind.wwhfas.block.ModTerrainBlocks;
 import git.wildwind.wwhfas.WildWindMod;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.BlockItem;
@@ -9,6 +11,7 @@ import net.minecraft.world.item.BoatItem;
 import net.minecraft.world.item.HangingSignItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SignItem;
+import net.minecraft.world.item.StandingAndWallBlockItem;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.asm.enumextension.EnumProxy;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -22,8 +25,23 @@ public final class ModItems {
 
     public static final WoodItems CINDER = registerWoodItems(ModBlocks.CINDER, ModBoatTypes.CINDER);
     public static final WoodItems EMBER = registerWoodItems(ModBlocks.EMBER, ModBoatTypes.EMBER);
+    public static final WoodItems AZALEA = registerWoodItems(ModBlocks.AZALEA, ModBoatTypes.AZALEA);
+    public static final DeferredHolder<Item, Item> SCORCHED_GRASS_BLOCK = blockItem(ModTerrainBlocks.SCORCHED_GRASS_BLOCK);
+    public static final DeferredHolder<Item, Item> SCORCHED_DIRT = blockItem(ModTerrainBlocks.SCORCHED_DIRT);
+    public static final DeferredHolder<Item, Item> SCORCHED_GRASS = blockItem(ModTerrainBlocks.SCORCHED_GRASS);
+    public static final DeferredHolder<Item, Item> SCORCHED_TWIG = ITEMS.register(
+        ModTerrainBlocks.SCORCHED_TWIG.getId().getPath(),
+        () -> new StandingAndWallBlockItem(
+            ModTerrainBlocks.SCORCHED_TWIG.get(),
+            ModTerrainBlocks.SCORCHED_TWIG_WALL.get(),
+            new Item.Properties(),
+            Direction.DOWN
+        )
+    );
+    public static final DeferredHolder<Item, Item> TINY_CACTUS = blockItem(ModTerrainBlocks.TINY_CACTUS);
+    public static final DeferredHolder<Item, Item> FLETCHIING_TABLE = blockItem(ModTerrainBlocks.FLETCHIING_TABLE);
 
-    public static final List<WoodItems> WOOD_ITEMS = List.of(CINDER, EMBER);
+    public static final List<WoodItems> WOOD_ITEMS = List.of(CINDER, EMBER, AZALEA);
 
     private ModItems() {
     }
@@ -97,6 +115,9 @@ public final class ModItems {
     }
 
     private static DeferredHolder<Item, Item> blockItem(DeferredHolder<net.minecraft.world.level.block.Block, net.minecraft.world.level.block.Block> block) {
+        if (block == null) {
+            return null;
+        }
         return ITEMS.register(block.getId().getPath(), () -> new BlockItem(block.get(), new Item.Properties()));
     }
 
@@ -122,5 +143,8 @@ public final class ModItems {
         DeferredHolder<Item, Item> boat,
         DeferredHolder<Item, Item> chestBoat
     ) {
+        public boolean hasTreeItems() {
+            return leaves != null && sapling != null;
+        }
     }
 }

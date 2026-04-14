@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "wwhfas:block/scorched_twig_wall",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "wwhfas:block/scorched_twig_wall"
+    },
+    "facing=south": {
+      "model": "wwhfas:block/scorched_twig_wall",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "wwhfas:block/scorched_twig_wall",
+      "y": 270
+    }
+  }
+}

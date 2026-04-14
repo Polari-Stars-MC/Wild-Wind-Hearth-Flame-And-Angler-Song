@@ -18,8 +18,10 @@ public class ModDataMapProvider extends DataMapProvider {
     protected void gather(HolderLookup.Provider provider) {
         var compostables = builder(NeoForgeDataMaps.COMPOSTABLES);
         for (ModItems.WoodItems woodItems : ModItems.WOOD_ITEMS) {
-            compostables.add(woodItems.leaves().get().builtInRegistryHolder(), new Compostable(0.3f, false), false);
-            compostables.add(woodItems.sapling().get().builtInRegistryHolder(), new Compostable(0.3f, false), false);
+            if (woodItems.hasTreeItems()) {
+                compostables.add(woodItems.leaves().get().builtInRegistryHolder(), new Compostable(0.3f, false), false);
+                compostables.add(woodItems.sapling().get().builtInRegistryHolder(), new Compostable(0.3f, false), false);
+            }
         }
     }
 }

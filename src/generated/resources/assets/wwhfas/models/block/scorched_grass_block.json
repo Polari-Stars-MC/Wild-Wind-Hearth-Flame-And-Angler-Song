@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "wwhfas:block/scorched_dirt",
+    "particle": "wwhfas:block/scorched_dirt",
+    "side": "wwhfas:block/scorched_grass_block_side",
+    "top": "wwhfas:block/scorched_grass_block_top"
+  }
+}

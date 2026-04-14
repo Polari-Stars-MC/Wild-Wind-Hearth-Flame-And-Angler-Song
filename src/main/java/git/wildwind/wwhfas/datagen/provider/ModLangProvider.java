@@ -2,6 +2,7 @@ package git.wildwind.wwhfas.datagen.provider;
 
 import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.block.ModBlocks;
+import git.wildwind.wwhfas.block.ModTerrainBlocks;
 import git.wildwind.wwhfas.registry.ModItems;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
@@ -19,14 +20,18 @@ public class ModLangProvider extends LanguageProvider {
             add("mod.wwhfas.name", "Wild Wind: Hearth Flame & Angler Song");
             addWoodSet(ModBlocks.CINDER, ModItems.CINDER, "Cinder");
             addWoodSet(ModBlocks.EMBER, ModItems.EMBER, "Ember");
+            addWoodSet(ModBlocks.AZALEA, ModItems.AZALEA, "Azalea");
+            addTerrainBlocks();
             addBlockPropertyBookTranslations();
             return;
         }
 
         if ("zh_cn".equals(this.locale)) {
             add("mod.wwhfas.name", "原野之风：炉焰与渔歌");
-            addWoodSet(ModBlocks.CINDER, ModItems.CINDER, "焚烬木");
-            addWoodSet(ModBlocks.EMBER, ModItems.EMBER, "灵焰木");
+            addWoodSet(ModBlocks.CINDER, ModItems.CINDER, "灵焰木");
+            addWoodSet(ModBlocks.EMBER, ModItems.EMBER, "焚烬木");
+            addWoodSet(ModBlocks.AZALEA, ModItems.AZALEA, "杜鹃木");
+            addTerrainBlocks();
             addBlockPropertyBookTranslations();
         }
     }
@@ -36,7 +41,6 @@ public class ModLangProvider extends LanguageProvider {
         addBlock(woodSet.wood(), baseName + suffix(" Wood", "木块"));
         addBlock(woodSet.strippedLog(), suffix("Stripped ", "去皮") + baseName + suffix(" Log", "原木"));
         addBlock(woodSet.strippedWood(), suffix("Stripped ", "去皮") + baseName + suffix(" Wood", "木块"));
-        addBlock(woodSet.leaves(), baseName + suffix(" Leaves", "树叶"));
         addBlock(woodSet.planks(), baseName + suffix(" Planks", "木板"));
         addBlock(woodSet.stairs(), baseName + suffix(" Stairs", "楼梯"));
         addBlock(woodSet.slab(), baseName + suffix(" Slab", "台阶"));
@@ -46,12 +50,24 @@ public class ModLangProvider extends LanguageProvider {
         addBlock(woodSet.trapdoor(), baseName + suffix(" Trapdoor", "活板门"));
         addBlock(woodSet.pressurePlate(), baseName + suffix(" Pressure Plate", "压力板"));
         addBlock(woodSet.button(), baseName + suffix(" Button", "按钮"));
-        addBlock(woodSet.sapling(), baseName + suffix(" Sapling", "树苗"));
-        addBlock(woodSet.pottedSapling(), suffix("Potted ", "盆栽") + baseName + suffix(" Sapling", "树苗"));
         addBlock(woodSet.sign(), baseName + suffix(" Sign", "告示牌"));
         addBlock(woodSet.hangingSign(), baseName + suffix(" Hanging Sign", "悬挂式告示牌"));
         addItem(woodItems.boat(), baseName + suffix(" Boat", "船"));
         addItem(woodItems.chestBoat(), baseName + suffix(" Chest Boat", "运输船"));
+        if (woodSet.hasTreeBlocks() && woodItems.hasTreeItems()) {
+            addBlock(woodSet.leaves(), baseName + suffix(" Leaves", "树叶"));
+            addBlock(woodSet.sapling(), baseName + suffix(" Sapling", "树苗"));
+            addBlock(woodSet.pottedSapling(), suffix("Potted ", "盆栽") + baseName + suffix(" Sapling", "树苗"));
+        }
+    }
+
+    private void addTerrainBlocks() {
+        addBlock(ModTerrainBlocks.SCORCHED_GRASS_BLOCK, text("Scorched Grass Block", "焦灰草方块"));
+        addBlock(ModTerrainBlocks.SCORCHED_DIRT, text("Scorched Dirt", "焦土"));
+        addBlock(ModTerrainBlocks.SCORCHED_GRASS, text("Scorched Grass", "焦灰草丛"));
+        addBlock(ModTerrainBlocks.SCORCHED_TWIG, text("Scorched Twig", "焦灰枝条"));
+        addBlock(ModTerrainBlocks.TINY_CACTUS, text("Tiny Cactus", "仙人球"));
+        addBlock(ModTerrainBlocks.FLETCHIING_TABLE, text("Fletching Table", "制箭台"));
     }
 
 

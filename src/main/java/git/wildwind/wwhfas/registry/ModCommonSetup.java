@@ -1,6 +1,7 @@
 package git.wildwind.wwhfas.registry;
 
 import git.wildwind.wwhfas.block.ModBlocks;
+import git.wildwind.wwhfas.block.ModTerrainBlocks;
 import git.wildwind.wwhfas.interaction.BlockPropertyBookFactory;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -40,13 +41,19 @@ public final class ModCommonSetup {
                 registerFlammable(woodSet.wood().get(), 5, 5);
                 registerFlammable(woodSet.strippedLog().get(), 5, 5);
                 registerFlammable(woodSet.strippedWood().get(), 5, 5);
-                registerFlammable(woodSet.leaves().get(), 30, 60);
                 registerFlammable(woodSet.planks().get(), 5, 20);
                 registerFlammable(woodSet.stairs().get(), 5, 20);
                 registerFlammable(woodSet.slab().get(), 5, 20);
                 registerFlammable(woodSet.fence().get(), 5, 20);
                 registerFlammable(woodSet.fenceGate().get(), 5, 20);
+                if (woodSet.hasTreeBlocks()) {
+                    registerFlammable(woodSet.leaves().get(), 30, 60);
+                }
             }
+            registerFlammable(ModTerrainBlocks.SCORCHED_GRASS.get(), 60, 100);
+            registerFlammable(ModTerrainBlocks.SCORCHED_TWIG.get(), 60, 100);
+            registerFlammable(ModTerrainBlocks.SCORCHED_TWIG_WALL.get(), 60, 100);
+            registerFlammable(ModTerrainBlocks.FLETCHIING_TABLE.get(), 5, 20);
         });
     }
 
@@ -66,17 +73,13 @@ public final class ModCommonSetup {
     }
 
     private static BlockState getStrippedState(BlockState state) {
-        if (state.is(ModBlocks.CINDER.log().get())) {
-            return copyLogState(state, ModBlocks.CINDER.strippedLog().get());
-        }
-        if (state.is(ModBlocks.CINDER.wood().get())) {
-            return copyLogState(state, ModBlocks.CINDER.strippedWood().get());
-        }
-        if (state.is(ModBlocks.EMBER.log().get())) {
-            return copyLogState(state, ModBlocks.EMBER.strippedLog().get());
-        }
-        if (state.is(ModBlocks.EMBER.wood().get())) {
-            return copyLogState(state, ModBlocks.EMBER.strippedWood().get());
+        for (ModBlocks.WoodSet woodSet : ModBlocks.WOOD_SETS) {
+            if (state.is(woodSet.log().get())) {
+                return copyLogState(state, woodSet.strippedLog().get());
+            }
+            if (state.is(woodSet.wood().get())) {
+                return copyLogState(state, woodSet.strippedWood().get());
+            }
         }
         return null;
     }

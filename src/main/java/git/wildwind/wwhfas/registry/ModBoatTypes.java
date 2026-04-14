@@ -28,6 +28,15 @@ public final class ModBoatTypes {
             (Supplier<Item>) () -> Items.STICK,
             false
     );
+    public static final EnumProxy<Boat.Type> AZALEA = new EnumProxy<>(
+            Boat.Type.class,
+            (Supplier<Block>) () -> ModBlocks.AZALEA.planks().get(),
+            WildWindMod.MOD_ID + ":azalea",
+            (Supplier<Item>) () -> ModItems.AZALEA.boat().get(),
+            (Supplier<Item>) () -> ModItems.AZALEA.chestBoat().get(),
+            (Supplier<Item>) () -> Items.STICK,
+            false
+    );
 
     private ModBoatTypes() {
     }

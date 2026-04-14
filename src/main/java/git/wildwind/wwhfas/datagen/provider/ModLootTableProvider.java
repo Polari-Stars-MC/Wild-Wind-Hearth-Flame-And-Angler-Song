@@ -1,10 +1,12 @@
 package git.wildwind.wwhfas.datagen.provider;
 
 import git.wildwind.wwhfas.block.ModBlocks;
+import git.wildwind.wwhfas.block.ModTerrainBlocks;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
@@ -38,7 +40,6 @@ public class ModLootTableProvider extends LootTableProvider {
                 dropSelf(woodSet.wood().get());
                 dropSelf(woodSet.strippedLog().get());
                 dropSelf(woodSet.strippedWood().get());
-                add((LeavesBlock) woodSet.leaves().get(), block -> createLeavesDrops(block, woodSet.sapling().get(), NORMAL_LEAVES_SAPLING_CHANCES));
                 dropSelf(woodSet.planks().get());
                 add((SlabBlock) woodSet.slab().get(), this::createSlabItemTable);
                 dropSelf(woodSet.stairs().get());
@@ -48,16 +49,28 @@ public class ModLootTableProvider extends LootTableProvider {
                 dropSelf(woodSet.trapdoor().get());
                 dropSelf(woodSet.pressurePlate().get());
                 dropSelf(woodSet.button().get());
-                dropSelf(woodSet.sapling().get());
-                dropPottedContents(woodSet.pottedSapling().get());
                 dropSelf(woodSet.sign().get());
                 dropSelf(woodSet.hangingSign().get());
+                if (woodSet.hasTreeBlocks()) {
+                    add((LeavesBlock) woodSet.leaves().get(), block -> createLeavesDrops(block, woodSet.sapling().get(), NORMAL_LEAVES_SAPLING_CHANCES));
+                    dropSelf(woodSet.sapling().get());
+                    dropPottedContents(woodSet.pottedSapling().get());
+                }
             }
+            dropSelf(ModTerrainBlocks.SCORCHED_GRASS_BLOCK.get());
+            dropSelf(ModTerrainBlocks.SCORCHED_DIRT.get());
+            dropSelf(ModTerrainBlocks.SCORCHED_GRASS.get());
+            dropSelf(ModTerrainBlocks.SCORCHED_TWIG.get());
+            dropSelf(ModTerrainBlocks.SCORCHED_TWIG_WALL.get());
+            dropSelf(ModTerrainBlocks.TINY_CACTUS.get());
+            dropSelf(ModTerrainBlocks.FLETCHIING_TABLE.get());
         }
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
-            return ModBlocks.BLOCKS.getEntries().stream().map(holder -> (Block) holder.get()).collect(Collectors.toList());
+            return Stream.concat(ModBlocks.BLOCKS.getEntries().stream(), ModTerrainBlocks.BLOCKS.getEntries().stream())
+                .map(holder -> (Block) holder.get())
+                .collect(Collectors.toList());
         }
     }
 }

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "snowy=false": {
+      "model": "wwhfas:block/scorched_grass_block"
+    },
+    "snowy=true": {
+      "model": "wwhfas:block/scorched_grass_block_snowy"
+    }
+  }
+}

@@ -33,6 +33,24 @@
     "wwhfas:ember_sign",
     "wwhfas:ember_wall_sign",
     "wwhfas:ember_hanging_sign",
-    "wwhfas:ember_wall_hanging_sign"
+    "wwhfas:ember_wall_hanging_sign",
+    "wwhfas:azalea_log",
+    "wwhfas:azalea_wood",
+    "wwhfas:stripped_azalea_log",
+    "wwhfas:stripped_azalea_wood",
+    "wwhfas:azalea_planks",
+    "wwhfas:azalea_stairs",
+    "wwhfas:azalea_slab",
+    "wwhfas:azalea_fence",
+    "wwhfas:azalea_fence_gate",
+    "wwhfas:azalea_door",
+    "wwhfas:azalea_trapdoor",
+    "wwhfas:azalea_pressure_plate",
+    "wwhfas:azalea_button",
+    "wwhfas:azalea_sign",
+    "wwhfas:azalea_wall_sign",
+    "wwhfas:azalea_hanging_sign",
+    "wwhfas:azalea_wall_hanging_sign",
+    "wwhfas:fletchiing_table"
   ]
 }

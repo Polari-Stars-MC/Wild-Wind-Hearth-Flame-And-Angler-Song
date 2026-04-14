@@ -2,6 +2,7 @@ package git.wildwind.wwhfas.datagen.provider;
 
 import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.block.ModBlocks;
+import git.wildwind.wwhfas.block.ModTerrainBlocks;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -37,10 +38,6 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .addTag(logsTag);
             tag(BlockTags.LOGS_THAT_BURN)
                 .addTag(logsTag);
-            tag(BlockTags.OVERWORLD_NATURAL_LOGS)
-                .add(woodSet.log().get());
-            tag(BlockTags.LEAVES)
-                .add(woodSet.leaves().get());
             tag(BlockTags.PLANKS)
                 .add(woodSet.planks().get());
             tag(BlockTags.WOODEN_STAIRS)
@@ -59,8 +56,6 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(woodSet.pressurePlate().get());
             tag(BlockTags.WOODEN_BUTTONS)
                 .add(woodSet.button().get());
-            tag(BlockTags.SAPLINGS)
-                .add(woodSet.sapling().get());
             tag(BlockTags.STANDING_SIGNS)
                 .add(woodSet.sign().get());
             tag(BlockTags.WALL_SIGNS)
@@ -93,9 +88,6 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                     woodSet.hangingSign().get(),
                     woodSet.wallHangingSign().get()
                 );
-            tag(BlockTags.FLOWER_POTS)
-                .add(woodSet.pottedSapling().get());
-
             tag(Tags.Blocks.STRIPPED_LOGS)
                 .add(woodSet.strippedLog().get());
             tag(Tags.Blocks.STRIPPED_WOODS)
@@ -104,6 +96,25 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(woodSet.fence().get());
             tag(Tags.Blocks.FENCE_GATES_WOODEN)
                 .add(woodSet.fenceGate().get());
+            if (woodSet.hasTreeBlocks()) {
+                tag(BlockTags.OVERWORLD_NATURAL_LOGS)
+                    .add(woodSet.log().get());
+                tag(BlockTags.LEAVES)
+                    .add(woodSet.leaves().get());
+                tag(BlockTags.SAPLINGS)
+                    .add(woodSet.sapling().get());
+                tag(BlockTags.FLOWER_POTS)
+                    .add(woodSet.pottedSapling().get());
+            }
         }
+
+        tag(BlockTags.DIRT)
+            .add(ModTerrainBlocks.SCORCHED_GRASS_BLOCK.get(), ModTerrainBlocks.SCORCHED_DIRT.get());
+        tag(BlockTags.MINEABLE_WITH_SHOVEL)
+            .add(ModTerrainBlocks.SCORCHED_GRASS_BLOCK.get(), ModTerrainBlocks.SCORCHED_DIRT.get());
+        tag(BlockTags.DEAD_BUSH_MAY_PLACE_ON)
+            .add(ModTerrainBlocks.SCORCHED_GRASS_BLOCK.get(), ModTerrainBlocks.SCORCHED_DIRT.get());
+        tag(BlockTags.MINEABLE_WITH_AXE)
+            .add(ModTerrainBlocks.FLETCHIING_TABLE.get());
     }
 }

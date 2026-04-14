@@ -1,15 +1,8 @@
 package git.wildwind.wwhfas.datagen;
 
-import git.wildwind.wwhfas.WildWindMod;
-import git.wildwind.wwhfas.datagen.provider.ModBlockStateProvider;
-import git.wildwind.wwhfas.datagen.provider.ModBlockTagsProvider;
-import git.wildwind.wwhfas.datagen.provider.ModDataMapProvider;
-import git.wildwind.wwhfas.datagen.provider.ModItemModelProvider;
-import git.wildwind.wwhfas.datagen.provider.ModItemTagsProvider;
-import git.wildwind.wwhfas.datagen.provider.ModLangProvider;
-import git.wildwind.wwhfas.datagen.provider.ModLootTableProvider;
-import git.wildwind.wwhfas.datagen.provider.ModRecipeProvider;
 import net.minecraft.data.PackOutput;
+import git.wildwind.wwhfas.WildWindMod;
+import git.wildwind.wwhfas.datagen.provider.*;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -41,17 +34,21 @@ public final class ModDataGen {
         generator.addProvider(event.includeServer(), new ModDataMapProvider(output, event.getLookupProvider()));
         generator.addProvider(
                 event.includeServer(),
+                new DatapackBuiltinEntriesProvider(
+                        output,
+                        event.getLookupProvider(),
+                        ModWorldGenProvider.BUILDER,
+                        Set.of(WildWindMod.MOD_ID)
+                )
+        );
+        generator.addProvider(
+                event.includeServer(),
+                new ModConfiguredFeatureProvider(output, event.getLookupProvider(), existing)
+        );
+        generator.addProvider(
+                event.includeServer(),
                 new ModItemTagsProvider(output, event.getLookupProvider(), blockTags, existing)
         );
         generator.addProvider(event.includeServer(), new ModRecipeProvider(output, event.getLookupProvider()));
-        generator.addProvider(
-            event.includeServer(),
-            new DatapackBuiltinEntriesProvider(
-                output,
-                event.getLookupProvider(),
-                ModWorldGenProvider.BUILDER,
-                Set.of(WildWindMod.MOD_ID)
-            )
-        );
     }
 }

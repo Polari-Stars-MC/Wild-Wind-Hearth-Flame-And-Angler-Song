@@ -38,3 +38,8 @@ run/
 **/src/generated/**/.cache/
 repo/
 !**/src/**/repo/
+资源
+
+### AI ####
+*.md
+!README.md

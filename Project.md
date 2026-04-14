@@ -198,3 +198,202 @@
 	- 树叶与树苗投入堆肥桶
 	- 木材、树叶、树苗被火点燃与燃烧速度
 	- 标签驱动的配方、告示牌和相关兼容模组交互
+
+## 2026-04-14 杜鹃木衍生方块接入
+
+### 本轮目标
+- 根据 `Background.md` 新增杜鹃木衍生方块。
+- 保持“不要注册树木和树叶”的约束，同时让公共木材注册链支持这种部分接入场景。
+
+### 本轮完成
+- 在木材基础注册链中新增 `azalea`：
+	- `BlockSetType`
+	- `WoodType`
+	- `WoodSet`
+	- `WoodItems`
+	- `Boat.Type` 扩展
+- 将原先默认“每套木材都必须有 leaves / sapling / potted sapling”的公共逻辑，改为可选接入：
+	- `ModBlocks`
+	- `ModItems`
+	- `ModCommonSetup`
+	- `ModBlockStateProvider`
+	- `ModItemModelProvider`
+	- `ModLangProvider`
+	- `ModBlockTagsProvider`
+	- `ModLootTableProvider`
+	- `ModDataMapProvider`
+- 为杜鹃木接入以下内容：
+	- 原木、木块、去皮原木、去皮木块
+	- 木板、楼梯、台阶、栅栏、栅栏门
+	- 门、活板门、压力板、按钮
+	- 告示牌、悬挂式告示牌
+	- 船、运输船
+- 补齐杜鹃木运行时贴图资源到 `src/main/resources/assets/wwhfas/textures/`：
+	- `block`
+	- `item`
+	- `entity/boat`
+	- `entity/chest_boat`
+	- `entity/signs`
+	- `entity/signs/hanging`
+	- `gui/hanging_signs`
+- 通过 IDE 的 `Data` 运行配置重新执行 datagen，生成杜鹃木相关的：
+	- blockstates
+	- models
+	- recipes
+	- loot tables
+	- advancements
+	- tags
+	- lang
+
+### 本轮约束落实
+- 没有注册杜鹃木树叶、树苗、盆栽树苗。
+- 杜鹃木的公共行为按“已有方块部分接入”处理：
+	- 原木/木块可去皮
+	- 木材方块进入可燃与燃料相关标签链
+	- 不为不存在的树叶/树苗生成堆肥、掉落、tag、模型和语言条目
+
+### 已验证
+- 使用 IDEA MCP 对本轮核心 Java 文件编译，编译通过。
+- 使用 IDEA MCP 执行 `Data` 运行配置，datagen 成功。
+- 使用 IDEA MCP 执行 `HearthFlame&AnglerSong [build]`，构建成功。
+- 使用 IDEA MCP 检查生成结果，已确认：
+	- 存在 `azalea_*` 相关生成产物
+	- 不存在 `azalea_leaves`
+	- 不存在 `azalea_sapling`
+
+### 关键结论
+- 这次不是简单“再加一套写死木材”，而是把原先写死的树叶/树苗依赖改成了可部分添加的木材套件结构。
+- 这样后续如果再接入“不完整树木套件”或“只有建材没有树木本体”的内容，就不需要重复开专用分支。
+
+## 2026-04-14 原版杜鹃树 datagen 覆盖
+
+### 本轮目标
+- 根据 `Background.md` 在 datagen 中覆盖原版 `minecraft:azalea_tree`。
+- 将原版杜鹃树生成里的木头替换为 `wwhfas:azalea_log`，树叶仍保持原版杜鹃树叶。
+
+### 本轮发现
+- 当前项目虽然已有 `ModWorldGenProvider`，但 `ModDataGen` 里对应的 worldgen provider 仍处于注释状态，因此此前不会生成任何 worldgen registry JSON。
+- 1.21.1 原版 `TreeFeatures.AZALEA_TREE` 的配置里，trunk 使用的是 `minecraft:oak_log`，foliage 使用 `minecraft:azalea_leaves` 与 `minecraft:flowering_azalea_leaves` 的加权 provider。
+- 1.21.1 原版 `CaveFeatures.ROOTED_AZALEA_TREE` 通过 `PlacementUtils.inlinePlaced(holdergetter.getOrThrow(TreeFeatures.AZALEA_TREE))` 直接引用 `minecraft:azalea_tree`，因此只要覆盖这个 configured feature，地下 rooted azalea tree 也会同步换木头。
+
+### 本轮完成
+- 新增 `src/main/java/git/wildwind/wwhfas/datagen/provider/ModConfiguredFeatureProvider.java`，使用 datagen 生成 `minecraft` 命名空间下的 configured feature 覆盖文件。
+- 调整 `src/main/java/git/wildwind/wwhfas/datagen/ModDataGen.java`，把新的 configured feature provider 接入 server datagen 流程，并重新接回现有 `ModWorldGenProvider` 的 `DatapackBuiltinEntriesProvider`，避免 datagen 清掉项目原有的 `wwhfas` worldgen 生成物。
+- 重新执行 `Data` 运行配置，生成 `src/generated/resources/data/minecraft/worldgen/configured_feature/azalea_tree.json`。
+
+### 结果对比
+- 已将杜鹃树 trunk provider 从原版 `minecraft:oak_log` 替换为 `wwhfas:azalea_log`。
+- 保留原版 foliage provider，不引入自定义树叶，仍然使用：
+	- `minecraft:azalea_leaves`
+	- `minecraft:flowering_azalea_leaves`
+- 保留原版杜鹃树的弯曲树干、rooted dirt、随机树叶分布等配置，不额外改动生成风格。
+
+### 已验证
+- 使用 IDEA MCP 对以下文件执行编译，编译通过：
+	- `src/main/java/git/wildwind/wwhfas/datagen/ModDataGen.java`
+	- `src/main/java/git/wildwind/wwhfas/datagen/provider/ModConfiguredFeatureProvider.java`
+- 使用 IDEA MCP 执行 `Data` 运行配置，datagen 成功。
+- 使用 IDEA MCP 执行 `HearthFlame&AnglerSong [build]`，构建成功。
+- 使用 IDEA MCP 检查生成文件，确认：
+	- `src/generated/resources/data/minecraft/worldgen/configured_feature/azalea_tree.json` 已生成
+	- `src/generated/resources/data/wwhfas/worldgen/configured_feature/cinder.json` 与 `ember.json` 仍然保留
+	- `trunk_provider.state.Name = wwhfas:azalea_log`
+	- `foliage_provider.entries` 仍为原版杜鹃树叶与盛开的杜鹃树叶
+
+## 2026-04-14 焦灰地表方块接入
+
+### 本轮目标
+- 根据 `Background.md` 新增 6 个方块：
+	- `scorched_grass_block`
+	- `scorched_dirt`
+	- `scorched_grass`
+	- `scorched_twig`
+	- `tiny_cactus`
+	- `fletchiing_table`
+- 把注册、方块物品、运行时资源、datagen 与验证一次性补齐。
+
+### 本轮关键决策
+- `scorched_twig` 按 `DeadBushBlock` 落地，只注册用户点名的 6 个方块，不额外引入隐藏的墙面枝条块。
+- `scorched_grass_block` 新增自定义 `ScorchedGrassBlock`，保留草方块主体行为，但移除蔓延逻辑，仅在环境不满足时退化为 `scorched_dirt`。
+- `tiny_cactus` 与 `fletchiing_table` 直接复用原版仙人掌 / 制箭台纹理，不新增额外贴图。
+
+### 本轮完成
+- 新增 [src/main/java/git/wildwind/wwhfas/block/ModTerrainBlocks.java](src/main/java/git/wildwind/wwhfas/block/ModTerrainBlocks.java)，独立注册这批非木材地表方块，避免继续膨胀 [src/main/java/git/wildwind/wwhfas/block/ModBlocks.java](src/main/java/git/wildwind/wwhfas/block/ModBlocks.java)。
+- 新增 [src/main/java/git/wildwind/wwhfas/block/ScorchedGrassBlock.java](src/main/java/git/wildwind/wwhfas/block/ScorchedGrassBlock.java)，实现“像草方块但不蔓延”的随机刻退化逻辑。
+- 调整 [src/main/java/git/wildwind/wwhfas/registry/ModItems.java](src/main/java/git/wildwind/wwhfas/registry/ModItems.java) 与 [src/main/java/git/wildwind/wwhfas/registry/ModRegistries.java](src/main/java/git/wildwind/wwhfas/registry/ModRegistries.java)，把 6 个新方块及其 block item 接入现有注册链。
+- 调整 [src/main/java/git/wildwind/wwhfas/registry/ModCommonSetup.java](src/main/java/git/wildwind/wwhfas/registry/ModCommonSetup.java)，补充 `scorched_grass`、`scorched_twig`、`fletchiing_table` 的可燃性。
+- 调整 datagen provider：
+	- [src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java](src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java)
+	- [src/main/java/git/wildwind/wwhfas/datagen/provider/ModItemModelProvider.java](src/main/java/git/wildwind/wwhfas/datagen/provider/ModItemModelProvider.java)
+	- [src/main/java/git/wildwind/wwhfas/datagen/provider/ModLangProvider.java](src/main/java/git/wildwind/wwhfas/datagen/provider/ModLangProvider.java)
+	- [src/main/java/git/wildwind/wwhfas/datagen/provider/ModLootTableProvider.java](src/main/java/git/wildwind/wwhfas/datagen/provider/ModLootTableProvider.java)
+	- [src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockTagsProvider.java](src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockTagsProvider.java)
+- 复制运行时贴图到 `src/main/resources/assets/wwhfas/textures/block/`：
+	- `scorched_dirt.png`
+	- `scorched_grass.png`
+	- `scorched_grass_block_side.png`
+	- `scorched_grass_block_top.png`
+	- `scorched_twig.png`
+
+### 生成结果
+- 已生成 6 个新方块的 blockstates / block models / item models / loot tables / 中英文 lang 条目。
+- 已生成新增 tag：
+	- `data/minecraft/tags/block/dirt.json`
+	- `data/minecraft/tags/block/dead_bush_may_place_on.json`
+	- `data/minecraft/tags/block/mineable/shovel.json`
+	- `data/minecraft/tags/block/mineable/axe.json`
+- `scorched_grass_block` 已生成 `snowy=true/false` 两套模型：
+	- `scorched_grass_block.json`
+	- `scorched_grass_block_snowy.json`
+- `fletchiing_table` 已生成复用原版制箭台纹理的 block / item model。
+- `tiny_cactus` 已生成复用原版仙人掌纹理的 block / item model。
+
+### 已验证
+- 使用 IDEA MCP 对本轮核心 Java 文件编译，编译通过。
+- 使用 IDEA MCP 执行 `Data` 运行配置，datagen 成功。
+- 使用 IDEA MCP 执行 `HearthFlame&AnglerSong [build]`，构建成功。
+- 使用 IDEA MCP 抽查生成结果，已确认以下产物存在：
+	- `assets/wwhfas/blockstates/scorched_grass_block.json`
+	- `assets/wwhfas/blockstates/scorched_twig.json`
+	- `assets/wwhfas/blockstates/tiny_cactus.json`
+	- `assets/wwhfas/blockstates/fletchiing_table.json`
+	- `assets/wwhfas/models/item/scorched_grass.json`
+	- `assets/wwhfas/models/item/scorched_twig.json`
+	- `data/wwhfas/loot_table/blocks/scorched_dirt.json`
+	- `data/wwhfas/loot_table/blocks/fletchiing_table.json`
+
+### 本轮明确未做
+- 未启用 `资源/scorched_twig_wall.png`，因为需求只要求注册 6 个方块，没有要求额外的墙面枝条块。
+- 未为 `tiny_cactus` 自定义更小体积或特殊碰撞，当前按“继承原版仙人掌”直接复用 vanilla 行为与纹理。
+
+## 2026-04-14 焦灰枝条墙面态补齐
+
+### 本轮目标
+- 延续上一轮地表方块任务，把 `scorched_twig` 的墙面态补上。
+
+### 本轮完成
+- 新增 [src/main/java/git/wildwind/wwhfas/block/WallScorchedTwigBlock.java](src/main/java/git/wildwind/wwhfas/block/WallScorchedTwigBlock.java)，实现墙面枝条的朝向、依附面校验、旋转/镜像和生存逻辑。
+- 调整 [src/main/java/git/wildwind/wwhfas/block/ModTerrainBlocks.java](src/main/java/git/wildwind/wwhfas/block/ModTerrainBlocks.java)，新增 `scorched_twig_wall` 方块注册。
+- 调整 [src/main/java/git/wildwind/wwhfas/registry/ModItems.java](src/main/java/git/wildwind/wwhfas/registry/ModItems.java)，将 `scorched_twig` 改为 `StandingAndWallBlockItem`，让地面枝条和墙面枝条共用同一个物品放置入口。
+- 调整 [src/main/java/git/wildwind/wwhfas/registry/ModCommonSetup.java](src/main/java/git/wildwind/wwhfas/registry/ModCommonSetup.java)，补充墙面枝条可燃性。
+- 调整 [src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java](src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java)，生成 `scorched_twig_wall` 的朝向 blockstate 与模型。
+- 调整 [src/main/java/git/wildwind/wwhfas/datagen/provider/ModLootTableProvider.java](src/main/java/git/wildwind/wwhfas/datagen/provider/ModLootTableProvider.java)，让墙面枝条破坏后掉落 `scorched_twig` 物品。
+- 将 `资源/scorched_twig_wall.png` 复制到：
+	- `src/main/resources/assets/wwhfas/textures/block/scorched_twig_wall.png`
+
+### 结果
+- 已生成：
+	- `src/generated/resources/assets/wwhfas/blockstates/scorched_twig_wall.json`
+	- `src/generated/resources/assets/wwhfas/models/block/scorched_twig_wall.json`
+	- `src/generated/resources/data/wwhfas/loot_table/blocks/scorched_twig_wall.json`
+- 墙面枝条现在会按朝向挂在墙面上。
+- 墙面枝条与地面枝条共用 `scorched_twig` 物品，不新增第二个物品条目。
+
+### 已验证
+- 使用 IDEA MCP 对本轮涉及 Java 文件重新编译，编译通过。
+- 使用 IDEA MCP 执行 `Data`，datagen 成功。
+- 使用 IDEA MCP 执行 `HearthFlame&AnglerSong [build]`，构建成功。
+- 抽查生成结果确认：
+	- blockstate 已按 `facing=north/south/east/west` 生成旋转
+	- 墙面枝条模型已引用 `wwhfas:block/scorched_twig_wall`
+	- 墙面枝条 loot 已掉落 `wwhfas:scorched_twig`
