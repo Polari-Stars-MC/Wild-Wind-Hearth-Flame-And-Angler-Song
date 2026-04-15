@@ -1,6 +1,94 @@
 {
-  "parent": "minecraft:block/coral_wall_fan",
+  "ambientocclusion": false,
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#cross"
+        },
+        "east": {
+          "texture": "#cross"
+        },
+        "north": {
+          "texture": "#cross"
+        },
+        "south": {
+          "texture": "#cross"
+        },
+        "up": {
+          "texture": "#cross"
+        },
+        "west": {
+          "texture": "#cross"
+        }
+      },
+      "from": [
+        0,
+        0,
+        8
+      ],
+      "rotation": {
+        "angle": 45.0,
+        "axis": "x",
+        "origin": [
+          8,
+          8,
+          8
+        ]
+      },
+      "shade": false,
+      "to": [
+        16,
+        16,
+        8
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#cross"
+        },
+        "east": {
+          "texture": "#cross"
+        },
+        "north": {
+          "texture": "#cross"
+        },
+        "south": {
+          "texture": "#cross"
+        },
+        "up": {
+          "texture": "#cross"
+        },
+        "west": {
+          "texture": "#cross"
+        }
+      },
+      "from": [
+        0,
+        0,
+        8
+      ],
+      "rotation": {
+        "angle": -45.0,
+        "axis": "x",
+        "origin": [
+          8,
+          8,
+          8
+        ]
+      },
+      "shade": false,
+      "to": [
+        16,
+        16,
+        8
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
   "textures": {
-    "fan": "wwhfas:block/scorched_twig_wall"
+    "cross": "wwhfas:block/scorched_twig_wall",
+    "particle": "wwhfas:block/scorched_twig_wall"
   }
 }

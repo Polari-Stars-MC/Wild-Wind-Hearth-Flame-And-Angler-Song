@@ -4,11 +4,14 @@ import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.block.ModBlocks;
 import git.wildwind.wwhfas.block.ModTerrainBlocks;
 import git.wildwind.wwhfas.block.WallScorchedTwigBlock;
+import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.SnowyDirtBlock;
 import net.minecraft.world.level.block.*;
+import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class ModBlockStateProvider extends BlockStateProvider {
@@ -125,19 +128,16 @@ public class ModBlockStateProvider extends BlockStateProvider {
             ModTerrainBlocks.SCORCHED_TWIG.get(),
             models().cross("scorched_twig", modLoc("block/scorched_twig")).renderType("cutout")
         );
-        var scorchedTwigWall = models().withExistingParent("scorched_twig_wall", mcLoc("block/coral_wall_fan"))
-            .texture("fan", modLoc("block/scorched_twig_wall"));
+        var scorchedTwigWall = wallCrossModel("scorched_twig_wall", modLoc("block/scorched_twig_wall"));
         getVariantBuilder(ModTerrainBlocks.SCORCHED_TWIG_WALL.get()).forAllStates(state -> ConfiguredModel.builder()
             .modelFile(scorchedTwigWall)
-            .rotationY(((int) state.getValue(WallScorchedTwigBlock.FACING).toYRot() + 180) % 360)
+            .rotationY(((int) state.getValue(WallScorchedTwigBlock.FACING).toYRot() + 270) % 360)
             .build());
 
-        var tinyCactus = models().withExistingParent("tiny_cactus", mcLoc("block/cube_bottom_top"))
-            .texture("bottom", mcLoc("block/cactus_bottom"))
-            .texture("top", mcLoc("block/cactus_top"))
-            .texture("side", mcLoc("block/cactus_side"))
-            .texture("particle", mcLoc("block/cactus_side"));
-        simpleBlockWithItem(ModTerrainBlocks.TINY_CACTUS.get(), tinyCactus);
+        simpleBlock(
+            ModTerrainBlocks.TINY_CACTUS.get(),
+            models().cross("tiny_cactus", modLoc("block/tiny_cactus")).renderType("cutout")
+        );
 
         var fletchiingTable = models().withExistingParent("fletchiing_table", mcLoc("block/cube"))
             .texture("down", mcLoc("block/birch_planks"))
@@ -148,5 +148,53 @@ public class ModBlockStateProvider extends BlockStateProvider {
             .texture("west", mcLoc("block/fletching_table_side"))
             .texture("particle", mcLoc("block/fletching_table_front"));
         simpleBlockWithItem(ModTerrainBlocks.FLETCHIING_TABLE.get(), fletchiingTable);
+    }
+
+    private ModelFile wallCrossModel(String name, net.minecraft.resources.ResourceLocation texture) {
+        BlockModelBuilder model = models().getBuilder(name)
+            .ao(false)
+            .renderType("cutout")
+            .texture("particle", texture)
+            .texture("cross", texture);
+
+        addCrossElement(model,
+                0.0F, 0.0F, 8F,   // from
+                16.0F, 16.0F, 8F, // to
+                45.0F,              // angle
+                8.0F, 8.0F, 8.0F    // origin
+        );
+
+        // Element 2: 负 45 度 (注意 Y 轴范围变成了 1~17)
+        addCrossElement(model,
+                0.0F, 0.0F, 8F,   // from Y=1
+                16.0F, 16.0F, 8F, // to Y=17 (超出方块边界)
+                -45.0F,             // angle
+                8.0F, 8.0F, 8.0F    // origin Y=9
+        );
+        return model;
+    }
+
+    private void addCrossElement(BlockModelBuilder model,
+                                 float fromX, float fromY, float fromZ,
+                                 float toX, float toY, float toZ,
+                                 float angle, float originX, float originY, float originZ) {
+        model.element()
+                .from(fromX, fromY, fromZ)
+                .to(toX, toY, toZ)
+                .shade(false)
+                .rotation()
+                .angle(angle)
+                .axis(Direction.Axis.X) // 注意：这里必须改为 X 轴
+                .origin(originX, originY, originZ)
+                // JSON 中没有 rescale，保持默认即可 (false)
+                .end()
+                // --- 6 个面的定义，完全照搬 JSON 数据 ---
+                .face(Direction.NORTH).uvs(0.0F, 0.0F, 16.0F, 16.0F).texture("#cross").end()
+                .face(Direction.SOUTH).uvs(0.0F, 0.0F, 16.0F, 16.0F).texture("#cross").end() // JSON 中南面未翻转
+                .face(Direction.EAST) .uvs(8.0F, 0.0F, 8.0F, 16.0F).texture("#cross").end()  // 侧面纹理切片
+                .face(Direction.WEST) .uvs(8.0F, 0.0F, 8.0F, 16.0F).texture("#cross").end()
+                .face(Direction.UP)   .uvs(0.0F, 8.0F, 16.0F, 8.0F).texture("#cross").end()
+                .face(Direction.DOWN) .uvs(0.0F, 8.0F, 16.0F, 8.0F).texture("#cross").end()
+                .end(); // 结束 Element
     }
 }

@@ -4,10 +4,7 @@ import git.wildwind.wwhfas.WildWindMod;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CactusBlock;
-import net.minecraft.world.level.block.DeadBushBlock;
 import net.minecraft.world.level.block.FletchingTableBlock;
-import net.minecraft.world.level.block.TallGrassBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -27,11 +24,11 @@ public final class ModTerrainBlocks {
     );
     public static final DeferredHolder<Block, Block> SCORCHED_GRASS = BLOCKS.register(
         "scorched_grass",
-        () -> new TallGrassBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SHORT_GRASS))
+        () -> new ScorchedGrassPlantBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SHORT_GRASS))
     );
     public static final DeferredHolder<Block, Block> SCORCHED_TWIG = BLOCKS.register(
         "scorched_twig",
-        () -> new DeadBushBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DEAD_BUSH))
+        () -> new ScorchedTwigBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DEAD_BUSH))
     );
     public static final DeferredHolder<Block, Block> SCORCHED_TWIG_WALL = BLOCKS.register(
         "scorched_twig_wall",
@@ -39,7 +36,7 @@ public final class ModTerrainBlocks {
     );
     public static final DeferredHolder<Block, Block> TINY_CACTUS = BLOCKS.register(
         "tiny_cactus",
-        () -> new CactusBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CACTUS))
+        () -> new TinyCactusBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CACTUS))
     );
     public static final DeferredHolder<Block, Block> FLETCHIING_TABLE = BLOCKS.register(
         "fletchiing_table",

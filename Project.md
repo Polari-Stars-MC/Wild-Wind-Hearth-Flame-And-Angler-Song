@@ -397,3 +397,224 @@
 	- blockstate 已按 `facing=north/south/east/west` 生成旋转
 	- 墙面枝条模型已引用 `wwhfas:block/scorched_twig_wall`
 	- 墙面枝条 loot 已掉落 `wwhfas:scorched_twig`
+
+## 2026-04-14 焦灰地表方块 todo 收尾
+
+### 本轮目标
+- 重新读取 `Background.md` 的最新 todo，并完成以下 3 项收尾：
+	- 墙面枝条继续使用地面枝条模型，但能接到墙面，且墙面模型需要旋转
+	- `tiny_cactus` 改为使用补充贴图，并切到作物模型
+	- 将本 mod 方块放入原版创造模式标签，按原版分类归位
+
+### 本轮完成
+- 调整 [src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java](src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java)，将 `scorched_twig_wall` 的 blockstate/model 生成逻辑改为直接复用 `wwhfas:block/scorched_twig`，并按 `facing` 生成 `y=0/90/180/270` 旋转。
+- 保留 `scorched_twig` 与 `scorched_twig_wall` 共用同一个 `StandingAndWallBlockItem` 的放置入口，不新增第二个物品。
+- 将 `资源/tiny_cactus.png` 复制到运行时资源路径 `src/main/resources/assets/wwhfas/textures/block/tiny_cactus.png`。
+- 调整 [src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java](src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java)，将 `tiny_cactus` 的方块模型改为 `minecraft:block/crop`，并使用 `cutout` 渲染。
+- 调整 [src/main/java/git/wildwind/wwhfas/datagen/provider/ModItemModelProvider.java](src/main/java/git/wildwind/wwhfas/datagen/provider/ModItemModelProvider.java)，将 `tiny_cactus` 的物品模型改为 `minecraft:item/generated`，纹理改指向 `wwhfas:block/tiny_cactus`。
+- 调整 [src/main/java/git/wildwind/wwhfas/registry/ModCreativeTabs.java](src/main/java/git/wildwind/wwhfas/registry/ModCreativeTabs.java)，通过 `BuildCreativeModeTabContentsEvent` 将本 mod 方块接入原版创造标签：
+	- `CreativeModeTabs.BUILDING_BLOCKS`：三套木材的建筑类方块
+	- `CreativeModeTabs.NATURAL_BLOCKS`：树叶、树苗、焦灰地表方块与小仙人球
+	- `CreativeModeTabs.FUNCTIONAL_BLOCKS`：告示牌、悬挂告示牌、`fletchiing_table`
+
+### 生成结果
+- 已生成并确认：
+	- `src/generated/resources/assets/wwhfas/blockstates/scorched_twig_wall.json`
+	- `src/generated/resources/assets/wwhfas/blockstates/tiny_cactus.json`
+	- `src/generated/resources/assets/wwhfas/models/block/tiny_cactus.json`
+	- `src/generated/resources/assets/wwhfas/models/item/tiny_cactus.json`
+- `scorched_twig_wall` 生成结果已改为：
+	- 复用 `wwhfas:block/scorched_twig`
+	- `facing=east/south/west` 带 `y` 旋转
+- `tiny_cactus` 生成结果已改为：
+	- block model：`minecraft:block/crop`
+	- item model：`minecraft:item/generated`
+	- 纹理：`wwhfas:block/tiny_cactus`
+
+### 已验证
+- 使用 IDEA MCP 重新读取 `Background.md`，确认本轮 todo 为 3 项最新内容。
+- 使用 IDEA MCP 执行 `Data`，datagen 成功。
+- 使用 IDEA MCP 执行 `HearthFlame&AnglerSong [build]`，构建成功。
+- 使用 IDEA MCP 抽查生成结果，确认：
+	- `scorched_twig_wall` 已使用地面枝条模型，并按墙面朝向旋转
+	- `tiny_cactus` 已切换为作物模型与新贴图
+	- 原版创造标签注册代码已落位到 `ModCreativeTabs`
+- `Data` 生成日志中的 `HashCache removed stale: 1` 与本轮预期一致，说明旧的单独墙面枝条模型生成物已被清理。
+
+## 2026-04-15 焦灰植物视觉修正
+
+### 本轮目标
+- 根据最新 `Background.md` 修复两处视觉问题：
+	- 墙面枝条虽然会旋转，但贴图没有切到墙面版本
+	- `tiny_cactus` 期望是作物那种 X 型渲染，但当前结果不是
+
+### 本轮完成
+- 调整 [src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java](src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java)：
+	- 为 `scorched_twig_wall` 重新生成独立的 `block/scorched_twig_wall` 模型
+	- 保留 `minecraft:block/cross` 这种与地面枝条一致的几何结构
+	- 将贴图改为 `wwhfas:block/scorched_twig_wall`
+	- blockstate 继续按 `facing` 生成 `y=0/90/180/270` 旋转
+- 将 `tiny_cactus` 的方块模型从 `minecraft:block/crop` 改为 `minecraft:block/cross`，使其在世界中按 X 型交叉面渲染。
+- 保持 `tiny_cactus` 物品模型不变，继续使用 `minecraft:item/generated` 与 `wwhfas:block/tiny_cactus` 贴图。
+
+### 生成结果
+- 已生成并确认：
+	- `src/generated/resources/assets/wwhfas/blockstates/scorched_twig_wall.json`
+	- `src/generated/resources/assets/wwhfas/models/block/scorched_twig_wall.json`
+	- `src/generated/resources/assets/wwhfas/models/block/tiny_cactus.json`
+	- `src/generated/resources/assets/wwhfas/models/item/tiny_cactus.json`
+- `scorched_twig_wall` 当前生成结果：
+	- `parent = minecraft:block/cross`
+	- `textures.cross = wwhfas:block/scorched_twig_wall`
+	- `facing=east/south/west` 仍带 `y` 旋转
+- `tiny_cactus` 当前生成结果：
+	- `parent = minecraft:block/cross`
+	- `render_type = minecraft:cutout`
+
+### 已验证
+- 使用 IDEA MCP 对 [src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java](src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java) 编译，编译通过。
+- 使用 IDEA MCP 执行 `Data`，datagen 成功。
+- 使用 IDEA MCP 执行 `HearthFlame&AnglerSong [build]`，构建成功。
+- 使用 IDEA MCP 抽查生成结果，确认：
+	- `scorched_twig_wall` 已从复用地面纹理改为使用独立墙面贴图
+	- `tiny_cactus` 已从 `crop` 模型改为 `cross` 模型
+
+## 2026-04-15 焦灰枝条墙挂模型调整
+
+### 本轮目标
+- 根据最新 `Background.md`，调整 `scorched_twig_wall` 的墙面模型：
+	- 当前贴图中最右侧是接墙区域
+	- 需要按这张墙面贴图的版式重新生成模型
+
+### 本轮完成
+- 调整 [src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java](src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java)，将 `scorched_twig_wall` 的模型生成从 `minecraft:block/cross` 改为 `minecraft:block/coral_wall_fan`。
+- 保留 [src/generated/resources/assets/wwhfas/blockstates/scorched_twig_wall.json](src/generated/resources/assets/wwhfas/blockstates/scorched_twig_wall.json) 的朝向旋转逻辑，继续按 `facing` 生成 `y=0/90/180/270`。
+- 将墙面贴图 `wwhfas:block/scorched_twig_wall` 直接作为 `coral_wall_fan` 模型的 `fan` 纹理输入，使贴图最右侧自然落到贴墙边。
+
+### 生成结果
+- 已生成并确认：
+	- `src/generated/resources/assets/wwhfas/models/block/scorched_twig_wall.json`
+	- `src/generated/resources/assets/wwhfas/blockstates/scorched_twig_wall.json`
+- 当前墙面枝条生成结果：
+	- `parent = minecraft:block/coral_wall_fan`
+	- `textures.fan = wwhfas:block/scorched_twig_wall`
+	- `facing=east/south/west` 仍带 `y` 旋转
+
+### 已验证
+- 使用 IDEA MCP 对 [src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java](src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java) 编译，编译通过。
+- 使用 IDEA MCP 执行 `Data`，datagen 成功。
+- 使用 IDEA MCP 执行 `HearthFlame&AnglerSong [build]`，构建成功。
+- 使用 IDEA MCP 抽查生成结果，确认 `scorched_twig_wall` 已切换为墙挂模板，而不是 `cross`。
+
+## 2026-04-15 墙面枝条 X 型与自定义标签页排序
+
+### 本轮目标
+- 根据最新 `Background.md` 完成两项调整：
+	- `scorched_twig_wall` 不要再是地面 X 或 V 型，而是“对着墙的 X 型”，并让墙面贴图最右侧对应贴墙一边
+	- 将自定义标签页改为按用户给出的混合顺序筛出本 mod 方块，不再按注册顺序全量输出
+
+### 本轮完成
+- 调整 [src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java](src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java)，将 `scorched_twig_wall` 改为自定义元素模型：
+	- 不再使用 `minecraft:block/cross`
+	- 不再使用 `minecraft:block/coral_wall_fan`
+	- 改为 2 个零厚度平面，位于墙面法线方向上，并分别绕 `X` 轴做 `+45/-45` 旋转
+	- 从正对墙面的视角看，得到 X 型而不是 V 型
+	- 纹理仍使用 `wwhfas:block/scorched_twig_wall`，并通过局部坐标让贴图最右侧靠近贴墙边
+- 保留 `scorched_twig_wall` 的 `facing -> y` 旋转 blockstate 逻辑，不改放置和朝向行为。
+- 调整 [src/main/java/git/wildwind/wwhfas/registry/ModCreativeTabs.java](src/main/java/git/wildwind/wwhfas/registry/ModCreativeTabs.java)，将 `WILD_WIND` 自定义标签页从“按注册顺序全量输出”改为显式排序输出。
+- 自定义标签页当前输出策略：
+	- 只放本 mod 方块
+	- 忽略用户给出的“原版方块”占位项
+	- 建材段顺序：`AZALEA -> CINDER -> EMBER`
+	- 自然段顺序：`AZALEA/CINDER/EMBER` 原木、`CINDER/EMBER` 树叶、`CINDER/EMBER` 树苗、焦灰地表方块
+- 本轮没有把 sign / hanging sign / boat / chest boat / `fletchiing_table` 放回自定义标签页，因为它们不在这轮用户给出的排序清单内。
+
+### 生成结果
+- 已生成并确认：
+	- `src/generated/resources/assets/wwhfas/models/block/scorched_twig_wall.json`
+	- `src/generated/resources/assets/wwhfas/blockstates/scorched_twig_wall.json`
+- 当前 `scorched_twig_wall` 生成结果：
+	- `ambientocclusion = false`
+	- 含 2 个 `axis = x, angle = +/-45` 的元素
+	- 2 个元素都使用 `wwhfas:block/scorched_twig_wall`
+	- blockstate 仍按 `north/east/south/west` 旋转
+
+### 已验证
+- 使用 IDEA MCP 对以下文件编译，编译通过：
+	- [src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java](src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java)
+	- [src/main/java/git/wildwind/wwhfas/registry/ModCreativeTabs.java](src/main/java/git/wildwind/wwhfas/registry/ModCreativeTabs.java)
+- 使用 IDEA MCP 执行 `Data`，datagen 成功。
+- 使用 IDEA MCP 执行 `HearthFlame&AnglerSong [build]`，构建成功。
+- 使用 IDEA MCP 抽查生成结果，确认：
+	- `scorched_twig_wall` 已变成自定义“贴墙 X 型”元素模型
+	- 自定义标签页代码已改为显式排序输出，而不是遍历 `ModItems.ITEMS`
+
+## 2026-04-15 墙面枝条连接边修正
+
+### 本轮目标
+- 根据最新 `Background.md`，继续修正 `addWallCrossPlane`：
+	- 当前效果仍然像“上下一整条”
+	- 需要真正做成“对墙的 X”
+	- 需要让贴图最右侧稳定对准连接处
+
+### 本轮完成
+- 调整 [src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java](src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java) 中的 `addWallCrossPlane(...)`：
+	- 将元素平面从“沿墙深度展开”改成“贴着墙面展开”
+	- 将旋转轴从 `Direction.Axis.X` 改为 `Direction.Axis.Z`
+	- 将旋转原点改到平面右侧连接边：`origin = (16, 8, 15.2)`
+	- 将可见面从 `east/west` 改为 `north/south`
+- 保留 `wallCrossModel(...)` 的双平面结构，但现在两个平面都贴着墙面，并分别绕 `Z` 轴做 `+45/-45` 旋转。
+- 保留 `scorched_twig_wall` 的 `facing -> y` blockstate 旋转逻辑，不改放置与朝向链。
+
+### 生成结果
+- 已重新生成并确认：
+	- `src/generated/resources/assets/wwhfas/models/block/scorched_twig_wall.json`
+- 当前生成结果特征：
+	- `from = [0, 0, 15.2]`
+	- `to = [16, 16, 15.2]`
+	- `rotation.axis = z`
+	- `rotation.origin = [16, 8, 15.2]`
+	- `faces = north/south`
+- 这意味着：
+	- 模型不再是对墙深度方向的一整条
+	- 两个平面现在贴着墙面展开，并围绕右侧连接边形成前视 X
+
+### 已验证
+- 使用 IDEA MCP 对 [src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java](src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java) 编译，编译通过。
+- 使用 IDEA MCP 执行 `Data`，datagen 成功。
+- 使用 IDEA MCP 执行 `HearthFlame&AnglerSong [build]`，构建成功。
+- 使用 IDEA MCP 抽查生成结果，确认 `scorched_twig_wall.json` 已切换到 `north/south + axis=z + origin右侧` 的新结构。
+
+## 2026-04-15 焦灰植物放置规则收紧
+
+### 本轮目标
+- 根据 `Background.md` 的最新 todo，收紧 3 类焦灰植物的放置规则：
+  - `scorched_grass` 只能放在泥土/草方块类方块顶部
+  - `scorched_twig` 顶部规则与 `scorched_grass` 一致，且仅允许挂在原木/去皮原木/木头/去皮木头侧面
+  - `tiny_cactus` 只能放在沙子类方块顶部
+
+### 本轮完成
+- 新增 `src/main/java/git/wildwind/wwhfas/block/ScorchedGrassPlantBlock.java`，继承 `TallGrassBlock`，将顶部放置约束收紧为 `BlockTags.DIRT`。
+- 新增 `src/main/java/git/wildwind/wwhfas/block/ScorchedTwigBlock.java`，继承 `DeadBushBlock`，将顶部放置约束收紧为 `BlockTags.DIRT`。
+- 新增 `src/main/java/git/wildwind/wwhfas/block/TinyCactusBlock.java`，继承 `CactusBlock`，保留原版仙人掌的水平阻挡/熔岩校验，只允许底部是 `BlockTags.SAND`、自身或原版 `Blocks.CACTUS`。
+- 调整 `src/main/java/git/wildwind/wwhfas/block/ModTerrainBlocks.java`，将 `SCORCHED_GRASS`、`SCORCHED_TWIG`、`TINY_CACTUS` 切到新的专用方块类。
+- 调整 `src/main/java/git/wildwind/wwhfas/block/WallScorchedTwigBlock.java`，将墙面枝条的依附规则收紧为：支撑方块必须属于 `BlockTags.LOGS_THAT_BURN`，且对应面 `isFaceSturdy(...)`。
+
+### 结果
+- `scorched_grass` 现在只接受泥土体系顶部支撑，不再复用更宽松的默认生存链。
+- `scorched_twig` 现在地面放置只接受泥土体系顶部，墙面放置只接受可燃原木体系侧面，可自然排除竹块与两种蘑菇柄。
+- `tiny_cactus` 现在只接受沙子/红沙这类 `BlockTags.SAND` 顶部，同时保留原版仙人掌相邻方块与头顶液体限制。
+
+### 已验证
+- 使用 IDEA MCP 对以下文件局部编译，编译通过：
+  - `src/main/java/git/wildwind/wwhfas/block/ScorchedGrassPlantBlock.java`
+  - `src/main/java/git/wildwind/wwhfas/block/ScorchedTwigBlock.java`
+  - `src/main/java/git/wildwind/wwhfas/block/TinyCactusBlock.java`
+  - `src/main/java/git/wildwind/wwhfas/block/ModTerrainBlocks.java`
+  - `src/main/java/git/wildwind/wwhfas/block/WallScorchedTwigBlock.java`
+- 使用 IDEA MCP 执行 `Data`，成功。
+- 使用 IDEA MCP 执行 `HearthFlame&AnglerSong [build]`，构建成功。
+
+### 关键说明
+- 这次不是单纯改 datagen 或 tag，而是把 3 个方块的生存/放置判断下沉到专用方块类里，避免继续受原版父类默认放置扩展路径影响。
+- 本轮验证基于编译、datagen、整项目构建与源码抽查；尚未进入游戏做交互实测。

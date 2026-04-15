@@ -32,15 +32,15 @@ public final class ModDataGen {
         generator.addProvider(event.includeServer(), new ModLootTableProvider(output, event.getLookupProvider()));
         generator.addProvider(event.includeServer(), blockTags);
         generator.addProvider(event.includeServer(), new ModDataMapProvider(output, event.getLookupProvider()));
-        generator.addProvider(
-                event.includeServer(),
-                new DatapackBuiltinEntriesProvider(
-                        output,
-                        event.getLookupProvider(),
-                        ModWorldGenProvider.BUILDER,
-                        Set.of(WildWindMod.MOD_ID)
-                )
-        );
+//        generator.addProvider(
+//                event.includeServer(),
+//                new DatapackBuiltinEntriesProvider(
+//                        output,
+//                        event.getLookupProvider(),
+//                        ModWorldGenProvider.BUILDER,
+//                        Set.of(WildWindMod.MOD_ID)
+//                )
+//        );
         generator.addProvider(
                 event.includeServer(),
                 new ModConfiguredFeatureProvider(output, event.getLookupProvider(), existing)

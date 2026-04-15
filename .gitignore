@@ -43,3 +43,4 @@ repo/
 ### AI ####
 *.md
 !README.md
+.helloagents
