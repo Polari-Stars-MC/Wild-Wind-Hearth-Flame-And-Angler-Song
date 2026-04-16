@@ -1,0 +1,32 @@
+{
+  "type": "wwhfas:arrow_fletching",
+  "category": "misc",
+  "tail": {
+    "ingredient": {
+      "item": "minecraft:paper"
+    }
+  },
+  "shaft": {
+    "ingredient": {
+      "item": "minecraft:bamboo"
+    },
+    "count": 2
+  },
+  "head": {
+    "ingredient": {
+      "item": "minecraft:bone"
+    }
+  },
+  "binding": {
+    "ingredient": {
+      "item": "minecraft:string"
+    }
+  },
+  "tail_material": "minecraft:paper",
+  "shaft_material": "minecraft:bamboo",
+  "head_material": "minecraft:bone",
+  "result": {
+    "id": "minecraft:arrow",
+    "count": 4
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "type": "wwhfas:arrow_fletching",
+  "category": "misc",
+  "tail": {
+    "ingredient": {
+      "item": "minecraft:feather"
+    }
+  },
+  "shaft": {
+    "ingredient": {
+      "item": "minecraft:stick"
+    }
+  },
+  "head": {
+    "ingredient": {
+      "item": "minecraft:flint"
+    }
+  },
+  "binding": {
+    "ingredient": {
+      "item": "minecraft:string"
+    }
+  },
+  "tail_material": "minecraft:feather",
+  "shaft_material": "minecraft:stick",
+  "head_material": "minecraft:flint",
+  "result": {
+    "id": "minecraft:arrow",
+    "count": 4
+  }
+}

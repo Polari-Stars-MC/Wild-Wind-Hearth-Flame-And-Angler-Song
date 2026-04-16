@@ -131,23 +131,13 @@ public class ModBlockStateProvider extends BlockStateProvider {
         var scorchedTwigWall = wallCrossModel("scorched_twig_wall", modLoc("block/scorched_twig_wall"));
         getVariantBuilder(ModTerrainBlocks.SCORCHED_TWIG_WALL.get()).forAllStates(state -> ConfiguredModel.builder()
             .modelFile(scorchedTwigWall)
-            .rotationY(((int) state.getValue(WallScorchedTwigBlock.FACING).toYRot() + 270) % 360)
+            .rotationY(((int) state.getValue(WallScorchedTwigBlock.FACING).toYRot() + 270) % 180)
             .build());
 
         simpleBlock(
             ModTerrainBlocks.TINY_CACTUS.get(),
             models().cross("tiny_cactus", modLoc("block/tiny_cactus")).renderType("cutout")
         );
-
-        var fletchiingTable = models().withExistingParent("fletchiing_table", mcLoc("block/cube"))
-            .texture("down", mcLoc("block/birch_planks"))
-            .texture("up", mcLoc("block/fletching_table_top"))
-            .texture("north", mcLoc("block/fletching_table_front"))
-            .texture("south", mcLoc("block/fletching_table_front"))
-            .texture("east", mcLoc("block/fletching_table_side"))
-            .texture("west", mcLoc("block/fletching_table_side"))
-            .texture("particle", mcLoc("block/fletching_table_front"));
-        simpleBlockWithItem(ModTerrainBlocks.FLETCHIING_TABLE.get(), fletchiingTable);
     }
 
     private ModelFile wallCrossModel(String name, net.minecraft.resources.ResourceLocation texture) {
@@ -190,9 +180,9 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 .end()
                 // --- 6 个面的定义，完全照搬 JSON 数据 ---
                 .face(Direction.NORTH).uvs(0.0F, 0.0F, 16.0F, 16.0F).texture("#cross").end()
-                .face(Direction.SOUTH).uvs(0.0F, 0.0F, 16.0F, 16.0F).texture("#cross").end() // JSON 中南面未翻转
+                .face(Direction.SOUTH).uvs(16.0F, 0.0F, 0.0F, 16.0F).texture("#cross").end() // JSON 中南面未翻转
                 .face(Direction.EAST) .uvs(8.0F, 0.0F, 8.0F, 16.0F).texture("#cross").end()  // 侧面纹理切片
-                .face(Direction.WEST) .uvs(8.0F, 0.0F, 8.0F, 16.0F).texture("#cross").end()
+                .face(Direction.WEST) .uvs(0.0F, 8.0F, 16.0F, 8.0F).texture("#cross").end()
                 .face(Direction.UP)   .uvs(0.0F, 8.0F, 16.0F, 8.0F).texture("#cross").end()
                 .face(Direction.DOWN) .uvs(0.0F, 8.0F, 16.0F, 8.0F).texture("#cross").end()
                 .end(); // 结束 Element

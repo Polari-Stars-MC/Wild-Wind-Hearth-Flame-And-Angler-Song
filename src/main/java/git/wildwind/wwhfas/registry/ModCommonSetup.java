@@ -3,6 +3,7 @@ package git.wildwind.wwhfas.registry;
 import git.wildwind.wwhfas.block.ModBlocks;
 import git.wildwind.wwhfas.block.ModTerrainBlocks;
 import git.wildwind.wwhfas.interaction.BlockPropertyBookFactory;
+import git.wildwind.wwhfas.menu.ArrowFletchingMenu;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FireBlock;
@@ -13,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.network.chat.Component;
@@ -23,6 +25,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 
 public final class ModCommonSetup {
     private ModCommonSetup() {
@@ -53,7 +56,6 @@ public final class ModCommonSetup {
             registerFlammable(ModTerrainBlocks.SCORCHED_GRASS.get(), 60, 100);
             registerFlammable(ModTerrainBlocks.SCORCHED_TWIG.get(), 60, 100);
             registerFlammable(ModTerrainBlocks.SCORCHED_TWIG_WALL.get(), 60, 100);
-            registerFlammable(ModTerrainBlocks.FLETCHIING_TABLE.get(), 5, 20);
         });
     }
 
@@ -101,6 +103,12 @@ public final class ModCommonSetup {
                 event.setCancellationResult(InteractionResult.SUCCESS);
                 event.setCanceled(true);
             }
+            if (event.getHand() == InteractionHand.MAIN_HAND && player.level().getBlockState(event.getPos()).is(Blocks.FLETCHING_TABLE)) {
+                event.setUseBlock(TriState.FALSE);
+                event.setUseItem(TriState.FALSE);
+                event.setCancellationResult(InteractionResult.SUCCESS);
+                event.setCanceled(true);
+            }
             return;
         }
 
@@ -109,6 +117,13 @@ public final class ModCommonSetup {
         }
 
         if (!shouldInspectBlock(player, event.getItemStack(), event.getHand() == InteractionHand.MAIN_HAND)) {
+            if (event.getHand() == InteractionHand.MAIN_HAND && player.level().getBlockState(event.getPos()).is(Blocks.FLETCHING_TABLE)) {
+                openArrowFletchingMenu(serverPlayer, event.getPos());
+                event.setUseBlock(TriState.FALSE);
+                event.setUseItem(TriState.FALSE);
+                event.setCancellationResult(InteractionResult.SUCCESS);
+                event.setCanceled(true);
+            }
             return;
         }
 
@@ -173,5 +188,19 @@ public final class ModCommonSetup {
         if (!inventory.add(writtenBook)) {
             player.drop(writtenBook, false);
         }
+    }
+
+    private static void openArrowFletchingMenu(ServerPlayer player, net.minecraft.core.BlockPos pos) {
+        player.openMenu(
+            new SimpleMenuProvider(
+                (containerId, inventory, targetPlayer) -> new ArrowFletchingMenu(
+                    containerId,
+                    inventory,
+                    ContainerLevelAccess.create(targetPlayer.level(), pos)
+                ),
+                Component.translatable("container.wwhfas.arrow_fletching")
+            ),
+            pos
+        );
     }
 }

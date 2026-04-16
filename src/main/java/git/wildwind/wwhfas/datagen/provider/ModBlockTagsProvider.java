@@ -114,7 +114,5 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
             .add(ModTerrainBlocks.SCORCHED_GRASS_BLOCK.get(), ModTerrainBlocks.SCORCHED_DIRT.get());
         tag(BlockTags.DEAD_BUSH_MAY_PLACE_ON)
             .add(ModTerrainBlocks.SCORCHED_GRASS_BLOCK.get(), ModTerrainBlocks.SCORCHED_DIRT.get());
-        tag(BlockTags.MINEABLE_WITH_AXE)
-            .add(ModTerrainBlocks.FLETCHIING_TABLE.get());
     }
 }

@@ -1,0 +1,31 @@
+{
+  "type": "wwhfas:arrow_fletching",
+  "category": "misc",
+  "tail": {
+    "ingredient": {
+      "item": "minecraft:feather"
+    }
+  },
+  "shaft": {
+    "ingredient": {
+      "item": "minecraft:breeze_rod"
+    }
+  },
+  "head": {
+    "ingredient": {
+      "item": "minecraft:quartz"
+    }
+  },
+  "binding": {
+    "ingredient": {
+      "item": "minecraft:phantom_membrane"
+    }
+  },
+  "tail_material": "minecraft:feather",
+  "shaft_material": "minecraft:breeze_rod",
+  "head_material": "minecraft:quartz",
+  "result": {
+    "id": "minecraft:arrow",
+    "count": 4
+  }
+}

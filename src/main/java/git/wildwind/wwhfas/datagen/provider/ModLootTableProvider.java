@@ -63,7 +63,6 @@ public class ModLootTableProvider extends LootTableProvider {
             dropSelf(ModTerrainBlocks.SCORCHED_TWIG.get());
             dropSelf(ModTerrainBlocks.SCORCHED_TWIG_WALL.get());
             dropSelf(ModTerrainBlocks.TINY_CACTUS.get());
-            dropSelf(ModTerrainBlocks.FLETCHIING_TABLE.get());
         }
 
         @Override

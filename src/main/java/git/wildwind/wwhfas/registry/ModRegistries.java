@@ -15,10 +15,12 @@ public final class ModRegistries {
         ModCreativeTabs.register(modBus);
         ModSounds.register(modBus);
         ModMenuTypes.register(modBus);
+        ModDataComponents.register(modBus);
         ModDataAttachments.register(modBus);
         ModBlockEntities.register(modBus);
         ModEntities.register(modBus);
         ModParticleTypes.register(modBus);
+        ModRecipeTypes.register(modBus);
         ModRecipeSerializers.register(modBus);
     }
 }

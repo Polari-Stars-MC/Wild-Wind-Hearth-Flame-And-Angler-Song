@@ -39,7 +39,6 @@ public final class ModItems {
         )
     );
     public static final DeferredHolder<Item, Item> TINY_CACTUS = blockItem(ModTerrainBlocks.TINY_CACTUS);
-    public static final DeferredHolder<Item, Item> FLETCHIING_TABLE = blockItem(ModTerrainBlocks.FLETCHIING_TABLE);
 
     public static final List<WoodItems> WOOD_ITEMS = List.of(CINDER, EMBER, AZALEA);
 

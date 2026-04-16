@@ -42,7 +42,6 @@
   "block.wwhfas.ember_stairs": "Ember Stairs",
   "block.wwhfas.ember_trapdoor": "Ember Trapdoor",
   "block.wwhfas.ember_wood": "Ember Wood",
-  "block.wwhfas.fletchiing_table": "Fletching Table",
   "block.wwhfas.potted_cinder_sapling": "Potted Cinder Sapling",
   "block.wwhfas.potted_ember_sapling": "Potted Ember Sapling",
   "block.wwhfas.scorched_dirt": "Scorched Dirt",
@@ -101,6 +100,10 @@
   "item.wwhfas.cinder_chest_boat": "Cinder Chest Boat",
   "item.wwhfas.ember_boat": "Ember Boat",
   "item.wwhfas.ember_chest_boat": "Ember Chest Boat",
+  "container.wwhfas.arrow_fletching": "Fletching Table",
+  "tooltip.wwhfas.arrow.head": "Head: %s",
+  "tooltip.wwhfas.arrow.shaft": "Shaft: %s",
+  "tooltip.wwhfas.arrow.tail": "Tail: %s",
   "message.wwhfas.block_property_book.created": "Generated a block property book.",
   "mod.wwhfas.name": "Wild Wind: Hearth Flame & Angler Song"
 }

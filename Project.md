@@ -248,6 +248,68 @@
 ### 本轮约束落实
 - 没有注册杜鹃木树叶、树苗、盆栽树苗。
 - 杜鹃木的公共行为按“已有方块部分接入”处理：
+
+## 2026-04-15 原版制箭台菜单接入
+
+### 本轮目标
+- 根据 `Background.md` 最新 todo，移除项目内新增的自定义制箭台方块。
+- 为原版 `minecraft:fletching_table` 接入四槽制箭菜单、箭材料组件与数据包驱动合成。
+
+### 本轮完成
+- 移除自定义 `fletchiing_table` 的注册链与生成产物：
+  - `src/main/java/git/wildwind/wwhfas/block/ModTerrainBlocks.java`
+  - `src/main/java/git/wildwind/wwhfas/registry/ModItems.java`
+  - `src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockStateProvider.java`
+  - `src/main/java/git/wildwind/wwhfas/datagen/provider/ModBlockTagsProvider.java`
+  - `src/main/java/git/wildwind/wwhfas/datagen/provider/ModLootTableProvider.java`
+  - `src/generated/resources/assets/wwhfas/.../fletchiing_table.*`
+- 新增原版制箭台右键菜单：
+  - `src/main/java/git/wildwind/wwhfas/menu/ArrowFletchingMenu.java`
+  - `src/main/java/git/wildwind/wwhfas/client/screen/ArrowFletchingScreen.java`
+  - `src/main/java/git/wildwind/wwhfas/registry/ModMenuTypes.java`
+  - `src/main/java/git/wildwind/wwhfas/registry/ModCommonSetup.java`
+- 使用 Python 读取 `资源/fletcher_gui.png` 后，将 screen 槽位按贴图布局接入为：
+  - 箭尾：`(18, 22)`
+  - 箭杆：`(43, 22)`
+  - 箭头：`(68, 22)`
+  - 捆绑材料：`(43, 52)`
+  - 输出：`(125, 32)`
+  - 错误 X：从贴图右侧区域裁切并绘制到输出箭头区域
+- 新增箭材料组件与数据包配方主链：
+  - `src/main/java/git/wildwind/wwhfas/registry/ModDataComponents.java`
+  - `src/main/java/git/wildwind/wwhfas/registry/ModRecipeTypes.java`
+  - `src/main/java/git/wildwind/wwhfas/registry/ModRecipeSerializers.java`
+  - `src/main/java/git/wildwind/wwhfas/recipe/ArrowFletchingRecipe.java`
+  - `src/main/java/git/wildwind/wwhfas/recipe/SizedIngredient.java`
+  - `src/main/java/git/wildwind/wwhfas/recipe/ArrowFletchingRecipeInput.java`
+  - `src/main/java/git/wildwind/wwhfas/recipe/ArrowFletchingSlot.java`
+- 为箭成品新增 3 个组件：
+  - `wwhfas:arrow_tail`
+  - `wwhfas:arrow_shaft`
+  - `wwhfas:arrow_head`
+- 新增 3 份示例数据包配方：
+  - `src/main/resources/data/wwhfas/recipe/fletching/flint_arrow.json`
+  - `src/main/resources/data/wwhfas/recipe/fletching/bone_arrow.json`
+  - `src/main/resources/data/wwhfas/recipe/fletching/quartz_arrow.json`
+- 新增运行时 GUI 资源：
+  - `src/main/resources/assets/wwhfas/textures/gui/container/fletcher.png`
+- 新增箭材料 tooltip 与容器标题翻译，并同步清理旧制箭台语言条目。
+
+### 需求对照结论
+- `todo 1`：已完成。项目内新增的 `fletchiing_table` 方块与物品注册已移除，交互改挂到原版 `Blocks.FLETCHING_TABLE`。
+- `todo 2`：已完成。右键原版制箭台会打开新的 menu/screen；槽位坐标来自对 `资源/fletcher_gui.png` 的 Python 读取与定位。
+- `todo 3`：已完成。菜单拆分为箭尾/箭杆/箭头/捆绑材料 4 个输入槽，且当输入无法匹配任何数据包配方时会显示错误 X。
+- `todo 4`：已完成。箭产物会写入 3 个材料组件，分别对应尾/杆/头。
+- `todo 5`：已完成。合成逻辑、材料与数量由 `wwhfas:arrow_fletching` recipe JSON 控制。
+- `todo 6`：按要求留空。当前只实现合成与组件落盘，没有实现后续弹道/伤害效果。
+
+### 已验证
+- 使用项目 JBR 驱动 Gradle wrapper 执行 `compileJava`，通过。
+- 使用项目 JBR 驱动 Gradle wrapper 执行 `build`，通过。
+
+### 说明
+- 当前会话中的 IDEA MCP 构建/终端工具仅返回项目路径，无法提供真实编译结果；因此为避免静默失败，改用项目本机 JBR + Gradle wrapper 获取可核对的编译输出。
+- `Background.md` 当前在工作树中本就有未提交改动，本轮未改写它。
 	- 原木/木块可去皮
 	- 木材方块进入可燃与燃料相关标签链
 	- 不为不存在的树叶/树苗生成堆肥、掉落、tag、模型和语言条目
