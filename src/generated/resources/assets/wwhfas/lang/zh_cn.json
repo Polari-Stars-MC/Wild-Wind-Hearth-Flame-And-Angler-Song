@@ -94,16 +94,16 @@
   "book.wwhfas.block_property.tool.pickaxe": "镐",
   "book.wwhfas.block_property.tool.shovel": "锹",
   "book.wwhfas.block_property.yes": "是",
+  "container.wwhfas.arrow_fletching": "制箭台",
   "item.wwhfas.azalea_boat": "杜鹃木船",
   "item.wwhfas.azalea_chest_boat": "杜鹃木运输船",
   "item.wwhfas.cinder_boat": "灵焰木船",
   "item.wwhfas.cinder_chest_boat": "灵焰木运输船",
   "item.wwhfas.ember_boat": "焚烬木船",
   "item.wwhfas.ember_chest_boat": "焚烬木运输船",
-  "container.wwhfas.arrow_fletching": "制箭台",
+  "message.wwhfas.block_property_book.created": "已生成方块属性书。",
+  "mod.wwhfas.name": "原野之风：炉焰与渔歌",
   "tooltip.wwhfas.arrow.head": "箭头：%s",
   "tooltip.wwhfas.arrow.shaft": "箭杆：%s",
-  "tooltip.wwhfas.arrow.tail": "箭尾：%s",
-  "message.wwhfas.block_property_book.created": "已生成方块属性书。",
-  "mod.wwhfas.name": "原野之风：炉焰与渔歌"
+  "tooltip.wwhfas.arrow.tail": "箭尾：%s"
 }

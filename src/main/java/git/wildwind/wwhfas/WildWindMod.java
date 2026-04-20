@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import git.wildwind.wwhfas.config.ModConfigs;
 import git.wildwind.wwhfas.datagen.ModDataGen;
 import git.wildwind.wwhfas.registry.ModCommonSetup;
+import git.wildwind.wwhfas.registry.ModFoliagePlacerTypes;
 import git.wildwind.wwhfas.registry.ModRegistries;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
