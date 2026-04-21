@@ -3,6 +3,7 @@ package git.wildwind.wwhfas.datagen.provider;
 import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.block.ModBlocks;
 import git.wildwind.wwhfas.block.ModTerrainBlocks;
+import git.wildwind.wwhfas.registry.ModItems;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -18,6 +19,12 @@ public class ModItemModelProvider extends ItemModelProvider {
             registerWoodSet(woodSet);
         }
         registerTerrainItems();
+
+        withExistingParent("crab_spawn_egg",mcLoc("item/template_spawn_egg"));
+        withExistingParent("crab_bucket", mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/crab_bucket"));
+
+        handheldItem(ModItems.CRAB_CLAW.get());
     }
 
     private void registerWoodSet(ModBlocks.WoodSet woodSet) {

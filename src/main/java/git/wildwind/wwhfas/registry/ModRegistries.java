@@ -22,5 +22,7 @@ public final class ModRegistries {
         ModParticleTypes.register(modBus);
         ModRecipeTypes.register(modBus);
         ModRecipeSerializers.register(modBus);
+        ModFoliagePlacerTypes.FOLIAGE_PLACER_TYPE.register(modBus);
+
     }
 }

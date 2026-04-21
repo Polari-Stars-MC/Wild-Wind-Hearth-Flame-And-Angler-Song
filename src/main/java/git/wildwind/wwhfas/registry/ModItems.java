@@ -5,13 +5,10 @@ import git.wildwind.wwhfas.block.ModTerrainBlocks;
 import git.wildwind.wwhfas.WildWindMod;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.BoatItem;
-import net.minecraft.world.item.HangingSignItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.SignItem;
-import net.minecraft.world.item.StandingAndWallBlockItem;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.material.Fluids;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.asm.enumextension.EnumProxy;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -146,4 +143,37 @@ public final class ModItems {
             return leaves != null && sapling != null;
         }
     }
+
+    public static final DeferredHolder<Item, SpawnEggItem> CRAB_SPAWN_EGG =
+            ITEMS.register("crab_spawn_egg",
+                    () -> new SpawnEggItem(
+                            ModEntities.CRAB.get(),
+                            0x4A9FAD,
+                            0xF2A950,
+                            new Item.Properties()
+                    ));
+
+
+    public static final DeferredHolder<Item, MobBucketItem> CRAB_BUCKET =
+            ITEMS.register("crab_bucket",
+                    () -> new MobBucketItem(
+                            ModEntities.CRAB.get(),
+                            Fluids.WATER,
+                            SoundEvents.BUCKET_EMPTY_FISH,
+                            new Item.Properties().stacksTo(1)
+                    ));
+
+    public static final DeferredHolder<Item, Item> CRAB_CLAW =
+            ITEMS.register("crab_claw",
+                    () -> new Item(
+                            new Item.Properties().stacksTo(1)
+                    ));
+
+    public static final DeferredHolder<Item, Item> OMNI_CLAW =
+            ITEMS.register("omni_claw",
+                    () -> new Item(
+                            new Item.Properties().stacksTo(1)
+                    ));
+
+
 }

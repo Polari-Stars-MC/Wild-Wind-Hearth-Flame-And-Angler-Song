@@ -94,16 +94,16 @@
   "book.wwhfas.block_property.tool.pickaxe": "Pickaxe",
   "book.wwhfas.block_property.tool.shovel": "Shovel",
   "book.wwhfas.block_property.yes": "Yes",
+  "container.wwhfas.arrow_fletching": "Fletching Table",
   "item.wwhfas.azalea_boat": "Azalea Boat",
   "item.wwhfas.azalea_chest_boat": "Azalea Chest Boat",
   "item.wwhfas.cinder_boat": "Cinder Boat",
   "item.wwhfas.cinder_chest_boat": "Cinder Chest Boat",
   "item.wwhfas.ember_boat": "Ember Boat",
   "item.wwhfas.ember_chest_boat": "Ember Chest Boat",
-  "container.wwhfas.arrow_fletching": "Fletching Table",
+  "message.wwhfas.block_property_book.created": "Generated a block property book.",
+  "mod.wwhfas.name": "Wild Wind: Hearth Flame & Angler Song",
   "tooltip.wwhfas.arrow.head": "Head: %s",
   "tooltip.wwhfas.arrow.shaft": "Shaft: %s",
-  "tooltip.wwhfas.arrow.tail": "Tail: %s",
-  "message.wwhfas.block_property_book.created": "Generated a block property book.",
-  "mod.wwhfas.name": "Wild Wind: Hearth Flame & Angler Song"
+  "tooltip.wwhfas.arrow.tail": "Tail: %s"
 }
