@@ -4,8 +4,15 @@ import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.block.ModBlocks;
 import git.wildwind.wwhfas.block.ModTerrainBlocks;
 import git.wildwind.wwhfas.registry.ModItems;
+import git.wildwind.wwhfas.registry.ModMobEffects;
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.item.alchemy.Potion;
 import net.neoforged.neoforge.common.data.LanguageProvider;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.function.Supplier;
 
 public class ModLangProvider extends LanguageProvider {
     private final String locale;
@@ -16,26 +23,14 @@ public class ModLangProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
-        if ("en_us".equals(this.locale)) {
-            add("mod.wwhfas.name", "Wild Wind: Hearth Flame & Angler Song");
-            addWoodSet(ModBlocks.CINDER, ModItems.CINDER, "Cinder");
-            addWoodSet(ModBlocks.EMBER, ModItems.EMBER, "Ember");
-            addWoodSet(ModBlocks.AZALEA, ModItems.AZALEA, "Azalea");
-            addTerrainBlocks();
-            addBlockPropertyBookTranslations();
-            addItems();
-            return;
-        }
-
-        if ("zh_cn".equals(this.locale)) {
-            add("mod.wwhfas.name", "原野之风：炉焰与渔歌");
-            addWoodSet(ModBlocks.CINDER, ModItems.CINDER, "灵焰木");
-            addWoodSet(ModBlocks.EMBER, ModItems.EMBER, "焚烬木");
-            addWoodSet(ModBlocks.AZALEA, ModItems.AZALEA, "杜鹃木");
-            addTerrainBlocks();
-            addBlockPropertyBookTranslations();
-            addItems();
-        }
+        add("mod.wwhfas.name", text("Wild Wind: Hearth Flame & Angler Song", "原野之风：炉焰与渔歌"));
+        addWoodSet(ModBlocks.CINDER, ModItems.CINDER, text("Cinder", "灵焰木"));
+        addWoodSet(ModBlocks.EMBER, ModItems.EMBER, text("Ember", "焚烬木"));
+        addWoodSet(ModBlocks.AZALEA, ModItems.AZALEA, text("Azalea", "杜鹃木"));
+        addTerrainBlocks();
+        addBlockPropertyBookTranslations();
+        addItems();
+        addEffects();
     }
 
     private void addItems() {
@@ -43,6 +38,10 @@ public class ModLangProvider extends LanguageProvider {
         addItem(ModItems.CRAB_BUCKET, text("Bucket of Crab", "螃蟹桶"));
         addItem(ModItems.CRAB_CLAW, text("Crab Claw", "蟹钳"));
         addItem(ModItems.OMNI_CLAW, text("Omni Craw", "万用蟹钳"));
+    }
+
+    private void addEffects() {
+        addEffectAndPotion(ModMobEffects.EXTENSION, text("Extension", "延展"));
     }
 
     private void addWoodSet(ModBlocks.WoodSet woodSet, ModItems.WoodItems woodItems, String baseName) {
@@ -135,5 +134,14 @@ public class ModLangProvider extends LanguageProvider {
 
     private String text(String english, String chinese) {
         return "en_us".equals(this.locale) ? english : chinese;
+    }
+
+    private void addEffectAndPotion(DeferredHolder<MobEffect, MobEffect> effect, String text) {
+        String effectName = effect.getId().getPath();
+        String potionText = "en_us".equals(this.locale) ? "Potion of " + text : text + "药水";
+        addEffect(effect, text);
+        add("item.minecraft.potion.effect." + effectName, potionText);
+        add("item.minecraft.splash_potion.effect." + effectName, text("Splash ", "喷溅型") + potionText);
+        add("item.minecraft.lingering_potion.effect." + effectName, text("Lingering ", "滞留型") + potionText);
     }
 }

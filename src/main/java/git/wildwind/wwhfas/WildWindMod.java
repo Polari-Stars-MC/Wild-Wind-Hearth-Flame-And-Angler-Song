@@ -6,6 +6,7 @@ import git.wildwind.wwhfas.datagen.ModDataGen;
 import git.wildwind.wwhfas.registry.ModCommonSetup;
 import git.wildwind.wwhfas.registry.ModFoliagePlacerTypes;
 import git.wildwind.wwhfas.registry.ModRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -21,5 +22,9 @@ public class WildWindMod {
         ModCommonSetup.register(modBus);
         ModDataGen.register(modBus);
         ModConfigs.register(modContainer);
+    }
+
+    public static ResourceLocation id(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 }

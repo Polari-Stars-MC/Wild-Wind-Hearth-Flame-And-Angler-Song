@@ -23,6 +23,7 @@ public final class ModRegistries {
         ModRecipeTypes.register(modBus);
         ModRecipeSerializers.register(modBus);
         ModFoliagePlacerTypes.FOLIAGE_PLACER_TYPE.register(modBus);
-
+        ModMobEffects.register(modBus);
+        ModPotions.register(modBus);
     }
 }

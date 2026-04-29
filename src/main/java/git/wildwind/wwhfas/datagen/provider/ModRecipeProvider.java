@@ -11,6 +11,7 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.world.item.Items;
+import org.jetbrains.annotations.NotNull;
 
 public class ModRecipeProvider extends RecipeProvider {
     public ModRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
@@ -18,10 +19,23 @@ public class ModRecipeProvider extends RecipeProvider {
     }
 
     @Override
-    protected void buildRecipes(RecipeOutput recipeOutput) {
+    protected void buildRecipes(@NotNull RecipeOutput recipeOutput) {
         for (int index = 0; index < ModBlocks.WOOD_SETS.size(); index++) {
             buildWoodRecipes(recipeOutput, ModBlocks.WOOD_SETS.get(index), ModItems.WOOD_ITEMS.get(index));
         }
+
+        buildCraftingTable(recipeOutput);
+    }
+
+    private void buildCraftingTable(RecipeOutput recipeOutput) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.OMNI_CLAW.get())
+                .define('I', Items.COPPER_INGOT)
+                .define('C', ModItems.OMNI_CLAW.get())
+                .pattern("ICC")
+                .pattern("IIC")
+                .pattern("III")
+                .unlockedBy("has_" + ModItems.CRAB_CLAW.getId().getPath(), has(ModItems.OMNI_CLAW.get()))
+                .save(recipeOutput);
     }
 
     private void buildWoodRecipes(RecipeOutput recipeOutput, ModBlocks.WoodSet woodSet, ModItems.WoodItems woodItems) {
