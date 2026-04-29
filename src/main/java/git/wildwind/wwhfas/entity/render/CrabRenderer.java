@@ -3,14 +3,9 @@ package git.wildwind.wwhfas.entity.render;
 import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.entity.Crab;
 import git.wildwind.wwhfas.entity.render.model.CrabModel;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
 
 public class CrabRenderer extends MobRenderer<Crab, CrabModel<Crab>> {
 
@@ -28,7 +23,7 @@ public class CrabRenderer extends MobRenderer<Crab, CrabModel<Crab>> {
         return switch (variant){
             case TEMPERATE -> CRAB_TEMPERATE;
             case COLD -> CRAB_COLD;
-            case HOT -> CRAB_WARM;
+            case WARM -> CRAB_WARM;
             default -> CRAB_TEMPERATE;
         };
     }
