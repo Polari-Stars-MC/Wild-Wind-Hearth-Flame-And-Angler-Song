@@ -23,6 +23,7 @@ public class ModLangProvider extends LanguageProvider {
             addWoodSet(ModBlocks.AZALEA, ModItems.AZALEA, "Azalea");
             addTerrainBlocks();
             addBlockPropertyBookTranslations();
+            addItems();
             return;
         }
 
@@ -33,7 +34,15 @@ public class ModLangProvider extends LanguageProvider {
             addWoodSet(ModBlocks.AZALEA, ModItems.AZALEA, "杜鹃木");
             addTerrainBlocks();
             addBlockPropertyBookTranslations();
+            addItems();
         }
+    }
+
+    private void addItems() {
+        addItem(ModItems.CRAB_SPAWN_EGG, text("Crab Spawn Egg", "螃蟹刷怪蛋"));
+        addItem(ModItems.CRAB_BUCKET, text("Bucket of Crab", "螃蟹桶"));
+        addItem(ModItems.CRAB_CLAW, text("Crab Claw", "蟹钳"));
+        addItem(ModItems.OMNI_CLAW, text("Omni Craw", "万用蟹钳"));
     }
 
     private void addWoodSet(ModBlocks.WoodSet woodSet, ModItems.WoodItems woodItems, String baseName) {

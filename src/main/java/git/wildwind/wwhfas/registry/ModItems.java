@@ -11,6 +11,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.asm.enumextension.EnumProxy;
+import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -144,12 +145,12 @@ public final class ModItems {
         }
     }
 
-    public static final DeferredHolder<Item, SpawnEggItem> CRAB_SPAWN_EGG =
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> CRAB_SPAWN_EGG =
             ITEMS.register("crab_spawn_egg",
-                    () -> new SpawnEggItem(
-                            ModEntities.CRAB.get(),
-                            0x4A9FAD,
-                            0xF2A950,
+                    () -> new DeferredSpawnEggItem(
+                            ModEntities.CRAB,
+                            0xFF3F7E8E,
+                            0xFFF9A45A,
                             new Item.Properties()
                     ));
 
