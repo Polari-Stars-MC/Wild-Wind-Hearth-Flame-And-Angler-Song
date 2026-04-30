@@ -7,8 +7,6 @@ import git.wildwind.wwhfas.entity.render.model.CrabModel;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.SpawnPlacementTypes;
-import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -63,7 +61,8 @@ public final class ModEntities {
 
         @SubscribeEvent
         static void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {
-            event.register(CRAB.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+            event.register(CRAB.get(), Crab.SPAWN_PLACEMENT, Heightmap.Types.OCEAN_FLOOR, Crab::checkCrabInWaterGroundSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+            event.register(CRAB.get(), Crab::checkCrabOnGroundSpawnRules);
         }
     }
 }

@@ -2,7 +2,9 @@ package git.wildwind.wwhfas.entity;
 
 import git.wildwind.wwhfas.registry.ModEntities;
 import git.wildwind.wwhfas.registry.ModItems;
+import git.wildwind.wwhfas.tag.ModBlockTags;
 import git.wildwind.wwhfas.tag.ModItemTags;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -13,6 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.ByIdMap;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
@@ -26,8 +29,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,6 +41,20 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.IntFunction;
 
 public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabVariant> {
+    public static final SpawnPlacementType SPAWN_PLACEMENT = new SpawnPlacementType() {
+
+        @Override
+        public boolean isSpawnPositionOk(LevelReader level, BlockPos pos, @Nullable EntityType<?> entityType) {
+            return ModSpawnPlacementTypes.IN_WATER_GROUND.isSpawnPositionOk(level, pos, entityType)
+                    || SpawnPlacementTypes.ON_GROUND.isSpawnPositionOk(level, pos, entityType);
+        }
+
+        @Override
+        public BlockPos adjustSpawnPosition(LevelReader level, BlockPos pos) {
+            return level.getFluidState(pos).is(Tags.Fluids.WATER) ? pos : SpawnPlacementTypes.ON_GROUND.adjustSpawnPosition(level, pos);
+        }
+    };
+
     private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
 
@@ -49,6 +69,35 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         builder.define(FROM_BUCKET, false);
     }
 
+    @Override
+    public float getWalkTargetValue(BlockPos pos, LevelReader level) {
+        if (level.getFluidState(pos).is(Fluids.WATER)) return 10.0f;
+        if (level.getBlockState(pos.below()).is(ModBlockTags.CARB_SPAWNABLE_IN_WATER_GROUND)) return 5.0f;
+
+        return level.getPathfindingCostFromLightLevels(pos);
+    }
+
+    @Override
+    public boolean checkSpawnObstruction(LevelReader level) {
+        return level.isUnobstructed(this);
+    }
+
+    public static boolean checkCrabInWaterGroundSpawnRules(
+            EntityType<? extends Crab> crab, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random
+    ) {
+        if (!(MobSpawnType.ignoresLightRequirements(spawnType) || isBrightEnoughToSpawn(level, pos))) return false;
+
+        int seaY = level.getSeaLevel();
+        int offsetY = seaY - 4;
+        return pos.getY() <= offsetY && level.getBlockState(pos.below()).is(ModBlockTags.CARB_SPAWNABLE_IN_WATER_GROUND);
+    }
+
+    public static boolean checkCrabOnGroundSpawnRules(EntityType<? extends Crab> crab, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        if (!(MobSpawnType.ignoresLightRequirements(spawnType) || isBrightEnoughToSpawn(level, pos))) return false;
+
+        return level.getBlockState(pos.below()).is(ModBlockTags.CRAB_SPAWNABLE_ON);
+    }
+
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 10.0D)
@@ -56,6 +105,14 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
                 .add(Attributes.ATTACK_DAMAGE, 10.0D)
                 .add(Attributes.STEP_HEIGHT, 1.0D);
     }
+
+//    @Override
+//    public float getWalkTargetValue(BlockPos pos, LevelReader level) {
+//        if (level.getBlockState(pos.below()).is(ModBlockTags.CARB_SPAWNABLE_IN_WATER_GROUND)) return 10.0f;
+//        if (level.getFluidState(pos).is(Fluids.WATER)) return 5.0f;
+//
+//        return level.getPathfindingCostFromLightLevels(pos);
+//    }
 
     @Override
     public boolean requiresCustomPersistence() {

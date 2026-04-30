@@ -3,16 +3,19 @@ package git.wildwind.wwhfas.datagen.provider;
 import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.block.ModBlocks;
 import git.wildwind.wwhfas.block.ModTerrainBlocks;
-import java.util.concurrent.CompletableFuture;
+import git.wildwind.wwhfas.tag.ModBlockTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+
+import java.util.concurrent.CompletableFuture;
 
 public class ModBlockTagsProvider extends BlockTagsProvider {
     public ModBlockTagsProvider(
@@ -25,6 +28,18 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
+        tag(ModBlockTags.CRAB_SPAWNABLE_ON)
+                .add(Blocks.MUD)
+                .add(Blocks.MUDDY_MANGROVE_ROOTS);
+
+        tag(ModBlockTags.CARB_SPAWNABLE_IN_WATER_GROUND)
+                .addTag(BlockTags.SAND)
+                .addTag(Tags.Blocks.GRAVELS)
+                .add(Blocks.CLAY)
+                .add(Blocks.MUD)
+                .add(Blocks.DIRT)
+                .add(Blocks.MUDDY_MANGROVE_ROOTS);
+
         for (ModBlocks.WoodSet woodSet : ModBlocks.WOOD_SETS) {
             TagKey<Block> logsTag = TagKey.create(
                 net.minecraft.core.registries.Registries.BLOCK,

@@ -4,7 +4,6 @@ import com.mojang.logging.LogUtils;
 import git.wildwind.wwhfas.config.ModConfigs;
 import git.wildwind.wwhfas.datagen.ModDataGen;
 import git.wildwind.wwhfas.registry.ModCommonSetup;
-import git.wildwind.wwhfas.registry.ModFoliagePlacerTypes;
 import git.wildwind.wwhfas.registry.ModRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
@@ -15,7 +14,7 @@ import org.slf4j.Logger;
 @Mod(WildWindMod.MOD_ID)
 public class WildWindMod {
     public static final String MOD_ID = "wwhfas";
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public WildWindMod(IEventBus modBus, ModContainer modContainer) {
         ModRegistries.register(modBus);

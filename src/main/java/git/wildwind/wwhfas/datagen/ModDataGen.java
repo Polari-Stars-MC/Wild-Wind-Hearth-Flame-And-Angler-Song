@@ -50,5 +50,6 @@ public final class ModDataGen {
                 new ModItemTagsProvider(output, event.getLookupProvider(), blockTags, existing)
         );
         generator.addProvider(event.includeServer(), new ModRecipeProvider(output, event.getLookupProvider()));
+        generator.addProvider(event.includeServer(), new ModEntityTypeTagsProvider(output, event.getLookupProvider(), event.getExistingFileHelper()));
     }
 }
