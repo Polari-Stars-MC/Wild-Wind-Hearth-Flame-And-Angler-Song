@@ -1,4 +1,4 @@
-package git.wildwind.wwhfas.tags;
+package git.wildwind.wwhfas.tag;
 
 import git.wildwind.wwhfas.WildWindMod;
 import net.minecraft.tags.ItemTags;

@@ -1,8 +1,8 @@
 package git.wildwind.wwhfas.datagen;
 
-import net.minecraft.data.PackOutput;
 import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.datagen.provider.*;
+import net.minecraft.data.PackOutput;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -32,15 +32,15 @@ public final class ModDataGen {
         generator.addProvider(event.includeServer(), new ModLootTableProvider(output, event.getLookupProvider()));
         generator.addProvider(event.includeServer(), blockTags);
         generator.addProvider(event.includeServer(), new ModDataMapProvider(output, event.getLookupProvider()));
-//        generator.addProvider(
-//                event.includeServer(),
-//                new DatapackBuiltinEntriesProvider(
-//                        output,
-//                        event.getLookupProvider(),
-//                        ModWorldGenProvider.BUILDER,
-//                        Set.of(WildWindMod.MOD_ID)
-//                )
-//        );
+        generator.addProvider(
+                event.includeServer(),
+                new DatapackBuiltinEntriesProvider(
+                        output,
+                        event.getLookupProvider(),
+                        ModWorldGenProvider.BUILDER,
+                        Set.of(WildWindMod.MOD_ID)
+                )
+        );
         generator.addProvider(
                 event.includeServer(),
                 new ModConfiguredFeatureProvider(output, event.getLookupProvider(), existing)
