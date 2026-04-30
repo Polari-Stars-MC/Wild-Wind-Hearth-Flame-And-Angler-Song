@@ -2,7 +2,7 @@ package git.wildwind.wwhfas.entity;
 
 import git.wildwind.wwhfas.registry.ModEntities;
 import git.wildwind.wwhfas.registry.ModItems;
-import git.wildwind.wwhfas.tags.ModItemTags;
+import git.wildwind.wwhfas.tag.ModItemTags;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -72,6 +72,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         return Bucketable.bucketMobPickup(player, hand, this).orElse(super.mobInteract(player, hand));
     }
 
+    // TODO: 当前变种生成异常，暂时保持原样，收尾阶段数据驱动化变种后再做调整。
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         Holder<Biome> biome = level.getBiome(this.blockPosition());
