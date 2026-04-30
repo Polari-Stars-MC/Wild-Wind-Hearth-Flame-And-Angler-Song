@@ -14,14 +14,13 @@ public class CrabRenderer extends MobRenderer<Crab, CrabModel<Crab>> {
     public static final ResourceLocation CRAB_WARM =  ResourceLocation.fromNamespaceAndPath(WildWindMod.MOD_ID, "textures/entity/crab/crab_warm.png");
 
     public CrabRenderer(EntityRendererProvider.Context context) {
-        super(context,new CrabModel<>(context.bakeLayer(CrabModel.LAYER_LOCATION)),0.4f);
+        super(context, new CrabModel<>(context.bakeLayer(CrabModel.LAYER_LOCATION)),0.4f);
     }
 
     @Override
     public ResourceLocation getTextureLocation(Crab entity) {
         Crab.CrabVariant variant = entity.getVariant();
         return switch (variant){
-            case TEMPERATE -> CRAB_TEMPERATE;
             case COLD -> CRAB_COLD;
             case WARM -> CRAB_WARM;
             default -> CRAB_TEMPERATE;

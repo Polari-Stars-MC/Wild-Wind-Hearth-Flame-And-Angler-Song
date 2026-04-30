@@ -1,12 +1,7 @@
-package git.wildwind.wwhfas.entity.render.model;// Made with Blockbench 5.1.3
-// Exported for Minecraft version 1.17 or later with Mojang mappings
-// Paste this class into your mod and generate all required imports
+package git.wildwind.wwhfas.entity.render.model;
 
-
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import git.wildwind.wwhfas.WildWindMod;
-import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -14,10 +9,12 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
-public class CrabModel<T extends Entity> extends EntityModel<T> {
-    // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(WildWindMod.MOD_ID, "textures/entity/crab"), "main");
-    private final ModelPart root;
+import java.util.List;
+
+public class CrabModel<T extends Entity> extends AgeableListModel<T> {
+	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(WildWindMod.MOD_ID, "crab"), "main");
+	private final ModelPart root;
 	private final ModelPart leg_left;
 	private final ModelPart leg_left_1;
 	private final ModelPart leg_left_2;
@@ -53,7 +50,7 @@ public class CrabModel<T extends Entity> extends EntityModel<T> {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 
-		PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
+		PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0f, 0.0F));
 
 		PartDefinition leg_left = root.addOrReplaceChild("leg_left", CubeListBuilder.create(), PartPose.offset(4.5355F, -3.4896F, 1.5F));
 
@@ -84,8 +81,8 @@ public class CrabModel<T extends Entity> extends EntityModel<T> {
 		PartDefinition cube_r6 = leg_right_3.addOrReplaceChild("cube_r6", CubeListBuilder.create().texOffs(24, 29).addBox(-4.9749F, 0.0F, -0.5F, 5.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.7854F));
 
 		PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0).addBox(-4.5F, -2.1302F, -3.75F, 9.0F, 4.0F, 8.0F, new CubeDeformation(0.0F))
-		.texOffs(12, 30).addBox(-3.5F, -3.1302F, -3.75F, 1.0F, 1.0F, 0.0F, new CubeDeformation(0.0F))
-		.texOffs(14, 30).addBox(2.5F, -3.1302F, -3.75F, 1.0F, 1.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -4.2698F, -0.25F, -0.0873F, 0.0F, 0.0F));
+				.texOffs(12, 30).addBox(-3.5F, -3.1302F, -3.75F, 1.0F, 1.0F, 0.0F, new CubeDeformation(0.0F))
+				.texOffs(14, 30).addBox(2.5F, -3.1302F, -3.75F, 1.0F, 1.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -4.2698F, -0.25F, -0.0873F, 0.0F, 0.0F));
 
 		PartDefinition group2 = body.addOrReplaceChild("group2", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
 
@@ -105,8 +102,13 @@ public class CrabModel<T extends Entity> extends EntityModel<T> {
 
 	}
 
-    @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
-        root.render(poseStack, buffer, packedLight, packedOverlay, color);
-    }
+	@Override
+	protected Iterable<ModelPart> headParts() {
+		return List.of();
+	}
+
+	@Override
+	protected Iterable<ModelPart> bodyParts() {
+		return List.of(root);
+	}
 }
