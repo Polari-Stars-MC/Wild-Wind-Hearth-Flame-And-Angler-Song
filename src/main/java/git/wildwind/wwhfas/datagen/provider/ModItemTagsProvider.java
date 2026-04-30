@@ -3,7 +3,7 @@ package git.wildwind.wwhfas.datagen.provider;
 import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.block.ModBlocks;
 import git.wildwind.wwhfas.registry.ModItems;
-import java.util.concurrent.CompletableFuture;
+import git.wildwind.wwhfas.tags.ModItemTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
@@ -11,8 +11,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+
+import java.util.concurrent.CompletableFuture;
 
 public class ModItemTagsProvider extends ItemTagsProvider {
     public ModItemTagsProvider(
@@ -26,6 +29,11 @@ public class ModItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
+        tag(Tags.Items.ANIMAL_FOODS)
+                .addTag(ModItemTags.CRAB_FOOD);
+        tag(ModItemTags.CRAB_FOOD)
+                .add(Items.SPIDER_EYE);
+
         copy(net.minecraft.tags.BlockTags.LOGS, ItemTags.LOGS);
         copy(net.minecraft.tags.BlockTags.PLANKS, ItemTags.PLANKS);
         copy(net.minecraft.tags.BlockTags.WOODEN_STAIRS, ItemTags.WOODEN_STAIRS);

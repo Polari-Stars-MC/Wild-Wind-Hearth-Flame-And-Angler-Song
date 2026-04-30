@@ -1,7 +1,8 @@
 package git.wildwind.wwhfas.entity;
 
+import git.wildwind.wwhfas.registry.ModEntities;
 import git.wildwind.wwhfas.registry.ModItems;
-import git.wildwind.wwhfas.registry.ModSounds;
+import git.wildwind.wwhfas.tags.ModItemTags;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -86,7 +87,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return false;
+        return stack.is(ModItemTags.CRAB_FOOD);
     }
 
     @Override
@@ -125,7 +126,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
 
     @Override
     public @Nullable AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        return null;
+        return ModEntities.CRAB.get().create(level);
     }
 
     @Override
