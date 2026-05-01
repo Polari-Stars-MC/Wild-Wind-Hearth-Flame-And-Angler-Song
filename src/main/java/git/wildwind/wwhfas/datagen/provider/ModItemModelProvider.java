@@ -24,7 +24,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         withExistingParent("crab_bucket", mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/crab_bucket"));
 
-        handheldItem(ModItems.CRAB_CLAW.get());
+        basicItem(ModItems.CRAB_CLAW.get());
     }
 
     private void registerWoodSet(ModBlocks.WoodSet woodSet) {
