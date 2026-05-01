@@ -27,7 +27,7 @@ public final class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Crab>> CRAB =
             ENTITY_TYPES.register("crab",
-                    () -> EntityType.Builder.of(Crab::new, MobCategory.CREATURE)
+                    () -> EntityType.Builder.of(Crab::new, MobCategory.WATER_CREATURE)
                             .sized(0.5F, 0.55F)
                             .clientTrackingRange(10)
                             .build("crab"));

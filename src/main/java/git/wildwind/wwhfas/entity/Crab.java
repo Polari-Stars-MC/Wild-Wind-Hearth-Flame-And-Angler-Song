@@ -87,10 +87,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     ) {
         if (!(MobSpawnType.ignoresLightRequirements(spawnType) || isBrightEnoughToSpawn(level, pos))) return false;
 
-        int seaY = level.getSeaLevel();
-        int minY = seaY - 4;
-        int y = pos.getY();
-        return y >= minY && y < seaY && level.getBlockState(pos.below()).is(ModBlockTags.CARB_SPAWNABLE_IN_WATER_GROUND);
+        return level.getBlockState(pos.below()).is(ModBlockTags.CARB_SPAWNABLE_IN_WATER_GROUND);
     }
 
     public static boolean checkCrabOnGroundSpawnRules(EntityType<? extends Crab> crab, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {

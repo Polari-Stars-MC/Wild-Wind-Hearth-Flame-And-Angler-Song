@@ -34,9 +34,9 @@ public final class ModBiomeModifiers {
                         List.of(
                                 new MobSpawnSettings.SpawnerData(
                                         ModEntities.CRAB.get(),
-                                        10,
-                                        2,
-                                        4
+                                        8,
+                                        1,
+                                        2
                                 )
                         )
                 )
