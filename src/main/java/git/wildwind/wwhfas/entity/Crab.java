@@ -37,10 +37,16 @@ import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.constant.DefaultAnimations;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.IntFunction;
 
-public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabVariant> {
+public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabVariant>, GeoEntity {
     public static final SpawnPlacementType SPAWN_PLACEMENT = new SpawnPlacementType() {
 
         @Override
@@ -55,8 +61,11 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         }
     };
 
+    protected static final RawAnimation HURT_ANIM = RawAnimation.begin().thenPlay("misc.hurt");
     private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
+
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     public Crab(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
@@ -103,14 +112,6 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
                 .add(Attributes.ATTACK_DAMAGE, 10.0D)
                 .add(Attributes.STEP_HEIGHT, 1.0D);
     }
-
-//    @Override
-//    public float getWalkTargetValue(BlockPos pos, LevelReader level) {
-//        if (level.getBlockState(pos.below()).is(ModBlockTags.CARB_SPAWNABLE_IN_WATER_GROUND)) return 10.0f;
-//        if (level.getFluidState(pos).is(Fluids.WATER)) return 5.0f;
-//
-//        return level.getPathfindingCostFromLightLevels(pos);
-//    }
 
     @Override
     public boolean requiresCustomPersistence() {
@@ -211,6 +212,44 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
             return CrabVariant.TEMPERATE;
         }
         return CrabVariant.values()[variantIndex];
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "base", 2, this::baseAnimController));
+        controllers.add(new AnimationController<>(this, "attack", 0, this::attackAnimController));
+        controllers.add(new AnimationController<>(this, "hurt", 0, this::hurtAnimController));
+    }
+
+    protected PlayState baseAnimController(final AnimationState<Crab> state) {
+        if (state.isMoving()) {
+            return state.setAndContinue(this.getEyeInFluidType().isAir() ? DefaultAnimations.WALK : DefaultAnimations.SWIM);
+        }
+
+        return state.setAndContinue(DefaultAnimations.IDLE);
+    }
+
+    private PlayState attackAnimController(AnimationState<Crab> state) {
+        if (this.swinging) {
+            return state.setAndContinue(DefaultAnimations.ATTACK_SWING);
+        }
+
+        state.resetCurrentAnimation();
+        return PlayState.STOP;
+    }
+
+    protected PlayState hurtAnimController(final AnimationState<Crab> state) {
+        if (this.isAlive() && this.hurtTime > 0) {
+            return state.setAndContinue(HURT_ANIM);
+        }
+
+        state.resetCurrentAnimation();
+        return PlayState.STOP;
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
     }
 
     // TODO: 数据驱动

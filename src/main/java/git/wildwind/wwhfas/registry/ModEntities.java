@@ -3,7 +3,6 @@ package git.wildwind.wwhfas.registry;
 import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.entity.Crab;
 import git.wildwind.wwhfas.entity.render.CrabRenderer;
-import git.wildwind.wwhfas.entity.render.model.CrabModel;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -39,15 +38,9 @@ public final class ModEntities {
 
     @EventBusSubscriber(value = Dist.CLIENT)
     public static class EntitiesClientEvent {
-
-        @SubscribeEvent
-        static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-            event.registerLayerDefinition(CrabModel.LAYER_LOCATION, CrabModel::createBodyLayer);
-        }
-
         @SubscribeEvent
         static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-            event.registerEntityRenderer(ModEntities.CRAB.get(),CrabRenderer::new);
+            event.registerEntityRenderer(ModEntities.CRAB.get(), CrabRenderer::new);
         }
     }
 
