@@ -24,7 +24,6 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WallClimberNavigation;
@@ -83,14 +82,14 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.2F, true));
+        this.goalSelector.addGoal(2, new PanicGoal(this, 1.25f));
+        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.2f, true));
         this.goalSelector.addGoal(4, new BreedGoal(this, 1.0f));
         this.goalSelector.addGoal(5, new TemptGoal(this, 1.1f, stack -> stack.is(ModItemTags.CRAB_FOOD), false));
         this.goalSelector.addGoal(6, new FollowParentGoal(this, 1.1f));
         this.goalSelector.addGoal(7, new RandomStrollGoal(this, 1.0f));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 7.0f));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Spider.class, true));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, CaveSpider.class, true));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Silverfish.class, true));
