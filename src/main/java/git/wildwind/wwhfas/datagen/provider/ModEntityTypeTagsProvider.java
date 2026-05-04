@@ -18,6 +18,8 @@ public class ModEntityTypeTagsProvider extends EntityTypeTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
+        tag(EntityTypeTags.AQUATIC)
+                .add(ModEntities.CRAB.get());
         tag(EntityTypeTags.CAN_BREATHE_UNDER_WATER)
                 .add(ModEntities.CRAB.get());
     }

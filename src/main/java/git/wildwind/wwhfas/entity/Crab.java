@@ -23,8 +23,17 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ai.navigation.WallClimberNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Bucketable;
+import net.minecraft.world.entity.monster.CaveSpider;
+import net.minecraft.world.entity.monster.Endermite;
+import net.minecraft.world.entity.monster.Silverfish;
+import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
@@ -46,6 +55,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.IntFunction;
 
+// TODO: 水中行为，横向移动
 public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabVariant>, GeoEntity {
     public static final SpawnPlacementType SPAWN_PLACEMENT = new SpawnPlacementType() {
 
@@ -69,6 +79,27 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
 
     public Crab(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
+    }
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.2F, true));
+        this.goalSelector.addGoal(4, new BreedGoal(this, 1.0f));
+        this.goalSelector.addGoal(5, new TemptGoal(this, 1.1f, stack -> stack.is(ModItemTags.CRAB_FOOD), false));
+        this.goalSelector.addGoal(6, new FollowParentGoal(this, 1.1f));
+        this.goalSelector.addGoal(7, new RandomStrollGoal(this, 1.0f));
+        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 7.0f));
+        this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Spider.class, true));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, CaveSpider.class, true));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Silverfish.class, true));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Endermite.class, true));
+    }
+
+    @Override
+    protected @NotNull PathNavigation createNavigation(Level level) {
+        return new WallClimberNavigation(this, level);
     }
 
     @Override
@@ -107,10 +138,10 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
 
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 10.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.25D)
-                .add(Attributes.ATTACK_DAMAGE, 10.0D)
-                .add(Attributes.STEP_HEIGHT, 1.0D);
+                .add(Attributes.MAX_HEALTH, 10.0d)
+                .add(Attributes.MOVEMENT_SPEED, 0.22d)
+                .add(Attributes.ATTACK_DAMAGE, 10.0d)
+                .add(Attributes.STEP_HEIGHT, 1.0d);
     }
 
     @Override
@@ -216,26 +247,18 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "base", 2, this::baseAnimController));
-        controllers.add(new AnimationController<>(this, "attack", 0, this::attackAnimController));
-        controllers.add(new AnimationController<>(this, "hurt", 0, this::hurtAnimController));
+        controllers.add(new AnimationController<>(this, "Walk/Idle", 5, state -> state.setAndContinue(state.isMoving() ? DefaultAnimations.WALK : DefaultAnimations.IDLE)));
+        controllers.add(new AnimationController<>(this, "Swim", this::swimAnimController));
+        controllers.add(new AnimationController<>(this, "Hurt", this::hurtAnimController));
+        controllers.add(DefaultAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_SWING));
     }
 
-    protected PlayState baseAnimController(final AnimationState<Crab> state) {
-        if (state.isMoving()) {
-            return state.setAndContinue(this.getEyeInFluidType().isAir() ? DefaultAnimations.WALK : DefaultAnimations.SWIM);
+    protected PlayState swimAnimController(final AnimationState<Crab> state) {
+        if (state.isMoving() && !this.getEyeInFluidType().isAir()) {
+            return state.setAndContinue(DefaultAnimations.SWIM);
         }
 
         return state.setAndContinue(DefaultAnimations.IDLE);
-    }
-
-    private PlayState attackAnimController(AnimationState<Crab> state) {
-        if (this.swinging) {
-            return state.setAndContinue(DefaultAnimations.ATTACK_SWING);
-        }
-
-        state.resetCurrentAnimation();
-        return PlayState.STOP;
     }
 
     protected PlayState hurtAnimController(final AnimationState<Crab> state) {
@@ -245,6 +268,27 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
 
         state.resetCurrentAnimation();
         return PlayState.STOP;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+    }
+
+    @Override
+    public boolean onClimbable() {
+        return this.horizontalCollision;
+    }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        updateSwingTime();
+    }
+
+    @Override
+    public int getCurrentSwingDuration() {
+        return 27;
     }
 
     @Override
