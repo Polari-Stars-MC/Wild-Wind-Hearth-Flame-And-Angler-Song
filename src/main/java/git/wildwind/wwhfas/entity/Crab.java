@@ -1,5 +1,6 @@
 package git.wildwind.wwhfas.entity;
 
+import git.wildwind.wwhfas.entity.ai.CrabAttackGoal;
 import git.wildwind.wwhfas.registry.ModEntities;
 import git.wildwind.wwhfas.registry.ModItems;
 import git.wildwind.wwhfas.tag.ModBlockTags;
@@ -54,7 +55,6 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.IntFunction;
 
-// TODO: 水中行为，横向移动
 public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabVariant>, GeoEntity {
     public static final SpawnPlacementType SPAWN_PLACEMENT = new SpawnPlacementType() {
 
@@ -75,6 +75,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private int preparingToAttack = -1;
 
     public Crab(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
@@ -83,7 +84,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(2, new PanicGoal(this, 1.25f));
-        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.2f, true));
+        this.goalSelector.addGoal(3, new CrabAttackGoal(this, 1.2f, true));
         this.goalSelector.addGoal(4, new BreedGoal(this, 1.0f));
         this.goalSelector.addGoal(5, new TemptGoal(this, 1.1f, stack -> stack.is(ModItemTags.CRAB_FOOD), false));
         this.goalSelector.addGoal(6, new FollowParentGoal(this, 1.1f));
@@ -119,6 +120,23 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     @Override
     public boolean checkSpawnObstruction(LevelReader level) {
         return level.isUnobstructed(this);
+    }
+
+    public boolean isPreparingToAttack() {
+        return preparingToAttack != -1;
+    }
+
+    public int getPreparationToAttackDuration() {
+        return 12;
+    }
+
+    public boolean prepareAttack(LivingEntity entity) {
+        this.setTarget(entity);
+        if (entity == null || !entity.isAlive()) return false;
+
+        this.preparingToAttack = getPreparationToAttackDuration();
+        this.triggerAnim("Attack", "attack");
+        return true;
     }
 
     public static boolean checkCrabInWaterGroundSpawnRules(
@@ -170,6 +188,11 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
             this.entityData.set(VARIANT_ID,CrabVariant.WARM.id);
         }
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+    }
+
+    @Override
+    protected boolean isImmobile() {
+        return super.isImmobile() || this.isPreparingToAttack();
     }
 
     @Override
@@ -249,7 +272,9 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         controllers.add(new AnimationController<>(this, "Walk/Idle", 5, state -> state.setAndContinue(state.isMoving() ? DefaultAnimations.WALK : DefaultAnimations.IDLE)));
         controllers.add(new AnimationController<>(this, "Swim", this::swimAnimController));
         controllers.add(new AnimationController<>(this, "Hurt", this::hurtAnimController));
-        controllers.add(DefaultAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_SWING));
+        controllers.add(new AnimationController<>(this, "Attack", state -> PlayState.STOP)
+                .triggerableAnim("attack", DefaultAnimations.ATTACK_SWING)
+        );
     }
 
     protected PlayState swimAnimController(final AnimationState<Crab> state) {
@@ -270,11 +295,6 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     }
 
     @Override
-    public void tick() {
-        super.tick();
-    }
-
-    @Override
     public boolean onClimbable() {
         return this.horizontalCollision;
     }
@@ -282,12 +302,18 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     @Override
     public void aiStep() {
         super.aiStep();
-        updateSwingTime();
-    }
 
-    @Override
-    public int getCurrentSwingDuration() {
-        return 27;
+        if (this.isAlive() && this.preparingToAttack > 0) {
+            this.preparingToAttack--;
+            if (this.preparingToAttack <= 0) {
+                this.preparingToAttack = -1;
+
+                LivingEntity target = this.getTarget();
+                if (target != null && target.isAlive() && this.isWithinMeleeAttackRange(target) && this.getSensing().hasLineOfSight(target)) {
+                    this.doHurtTarget(target);
+                }
+            }
+        }
     }
 
     @Override
