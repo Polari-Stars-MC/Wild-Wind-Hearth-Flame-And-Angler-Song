@@ -1,6 +1,8 @@
 package git.wildwind.wwhfas.entity;
 
-import git.wildwind.wwhfas.entity.ai.CrabAttackGoal;
+import git.wildwind.wwhfas.entity.ai.control.AmphibianMoveControl;
+import git.wildwind.wwhfas.entity.ai.goal.AmphibianRandomStrollGoal;
+import git.wildwind.wwhfas.entity.ai.goal.CrabAttackGoal;
 import git.wildwind.wwhfas.registry.ModEntities;
 import git.wildwind.wwhfas.registry.ModItems;
 import git.wildwind.wwhfas.tag.ModBlockTags;
@@ -28,6 +30,7 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WallClimberNavigation;
+import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Bucketable;
 import net.minecraft.world.entity.monster.CaveSpider;
@@ -45,6 +48,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -78,6 +82,8 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private final WaterBoundPathNavigation waterBoundPathNavigation;
+    private final WallClimberNavigation wallClimberPathNavigation;
     private int preparingToAttack = -1;
     public int clientSideTurnStart;
     public int clientSideTurnEnd;
@@ -87,6 +93,9 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     public Crab(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
         this.setPathfindingMalus(PathType.WATER, 0.0f);
+        this.moveControl = new AmphibianMoveControl(this);
+        this.waterBoundPathNavigation = new WaterBoundPathNavigation(this, level);
+        this.wallClimberPathNavigation = (WallClimberNavigation) this.navigation;
     }
 
     @Override
@@ -96,7 +105,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         this.goalSelector.addGoal(4, new BreedGoal(this, 1.0f));
         this.goalSelector.addGoal(5, new TemptGoal(this, 1.1f, stack -> stack.is(ModItemTags.CRAB_FOOD), false));
         this.goalSelector.addGoal(6, new FollowParentGoal(this, 1.1f));
-        this.goalSelector.addGoal(7, new RandomStrollGoal(this, 1.0f));
+        this.goalSelector.addGoal(7, new AmphibianRandomStrollGoal(this, 1.0f));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 7.0f));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Spider.class, true));
@@ -198,6 +207,34 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     }
 
     @Override
+    protected float getWaterSlowDown() {
+        return 0.98f;
+    }
+
+    @Override
+    public void updateSwimming() {
+        if (!this.level().isClientSide) {
+            if (this.isEffectiveAi() && this.isInWater()) {
+                this.navigation = this.waterBoundPathNavigation;
+                this.setSwimming(true);
+            } else {
+                this.navigation = this.wallClimberPathNavigation;
+                this.setSwimming(false);
+            }
+        }
+    }
+
+    @Override
+    public boolean isVisuallySwimming() {
+        return this.isSwimming();
+    }
+
+    @Override
+    public boolean isPushedByFluid(FluidType type) {
+        return false;
+    }
+
+    @Override
     public boolean requiresCustomPersistence() {
         return super.requiresCustomPersistence() || this.fromBucket();
     }
@@ -268,6 +305,12 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     @Override
     public SoundEvent getPickupSound() {
         return SoundEvents.BUCKET_FILL;
+    }
+
+    // TODO: 临时音效，添加专属音效
+    @Override
+    protected SoundEvent getSwimSound() {
+        return super.getSwimSound();
     }
 
     @Override

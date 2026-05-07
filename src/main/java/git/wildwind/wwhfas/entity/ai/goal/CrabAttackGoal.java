@@ -1,4 +1,4 @@
-package git.wildwind.wwhfas.entity.ai;
+package git.wildwind.wwhfas.entity.ai.goal;
 
 import git.wildwind.wwhfas.entity.Crab;
 import net.minecraft.world.entity.LivingEntity;
