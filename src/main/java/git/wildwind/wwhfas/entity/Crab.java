@@ -43,6 +43,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -71,14 +72,21 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     };
 
     protected static final RawAnimation HURT_ANIM = RawAnimation.begin().thenPlay("misc.hurt");
+    protected static final String INSTRUCTION_TURN_FORWARD = "turnForward;";
+    protected static final int CLIENT_SIDE_TURN_TIME = 5;
     private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private int preparingToAttack = -1;
+    public int clientSideTurnStart;
+    public int clientSideTurnEnd;
+    public float clientSideYRotOffset = 90.0f;
+    public float clientSidePreYRotOffset = this.clientSideYRotOffset;
 
     public Crab(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
+        this.setPathfindingMalus(PathType.WATER, 0.0f);
     }
 
     @Override
@@ -128,6 +136,34 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
 
     public int getPreparationToAttackDuration() {
         return 12;
+    }
+
+    public boolean isClientSideTurningForward() {
+        return clientSideTurnStart <= this.tickCount && this.tickCount < clientSideTurnEnd;
+    }
+
+    public void clientSideTurnForward(int duration) {
+        this.clientSideTurnStart = this.tickCount;
+        this.clientSideTurnEnd = this.tickCount + duration;
+    }
+
+    protected void updateClientSideYRotOffset() {
+        this.clientSidePreYRotOffset = this.clientSideYRotOffset;
+
+        if (this.isClientSideTurningForward()) {
+            int returnTick = this.clientSideTurnEnd - CLIENT_SIDE_TURN_TIME;
+            float currentTick = this.tickCount - this.clientSideTurnStart;
+
+            if (currentTick <= CLIENT_SIDE_TURN_TIME) {
+                this.clientSideYRotOffset -= 90.0f / CLIENT_SIDE_TURN_TIME;
+            } else if (this.tickCount >= returnTick) {
+                this.clientSideYRotOffset += 90.0f / CLIENT_SIDE_TURN_TIME;
+            }
+
+            return;
+        }
+
+        this.clientSideYRotOffset = 90.0f;
     }
 
     public boolean prepareAttack(LivingEntity entity) {
@@ -274,6 +310,11 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         controllers.add(new AnimationController<>(this, "Hurt", this::hurtAnimController));
         controllers.add(new AnimationController<>(this, "Attack", state -> PlayState.STOP)
                 .triggerableAnim("attack", DefaultAnimations.ATTACK_SWING)
+                .setCustomInstructionKeyframeHandler(handler -> {
+                    if (handler.getKeyframeData().getInstructions().equals(INSTRUCTION_TURN_FORWARD)) {
+                        handler.getAnimatable().clientSideTurnForward(20);
+                    }
+                })
         );
     }
 
@@ -303,12 +344,22 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     public void aiStep() {
         super.aiStep();
 
-        if (this.isAlive() && this.preparingToAttack > 0) {
+        if (!this.isAlive()) return;
+
+        if (this.level().isClientSide()) {
+            this.updateClientSideYRotOffset();
+        }
+
+        if (this.preparingToAttack > 0) {
             this.preparingToAttack--;
+            LivingEntity target = this.getTarget();
+            if (target != null && target.isAlive()) {
+                this.lookAt(target, 15.0f, 15.0f);
+            }
+
             if (this.preparingToAttack <= 0) {
                 this.preparingToAttack = -1;
 
-                LivingEntity target = this.getTarget();
                 if (target != null && target.isAlive() && this.isWithinMeleeAttackRange(target) && this.getSensing().hasLineOfSight(target)) {
                     this.doHurtTarget(target);
                 }
