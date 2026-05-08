@@ -104,11 +104,12 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(2, new PanicGoal(this, 1.25f));
-        this.goalSelector.addGoal(3, new CrabAttackGoal(this, 1.2f, true));
-        this.goalSelector.addGoal(4, new BreedGoal(this, 1.0f));
-        this.goalSelector.addGoal(5, new TemptGoal(this, 1.1f, stack -> stack.is(ModItemTags.CRAB_FOOD), false));
-        this.goalSelector.addGoal(6, new FollowParentGoal(this, 1.1f));
+        this.goalSelector.addGoal(1, new PanicGoal(this, 1.25f));
+        this.goalSelector.addGoal(2, new CrabAttackGoal(this, 1.2f, true));
+        this.goalSelector.addGoal(3, new BreedGoal(this, 1.0f));
+        this.goalSelector.addGoal(4, new TemptGoal(this, 1.1f, stack -> stack.is(ModItemTags.CRAB_FOOD), false));
+        this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.1f));
+        this.goalSelector.addGoal(6, new CrabFloatGoal(this, 0.04f));
         this.goalSelector.addGoal(7, new AmphibiousRandomStrollGoal(this, 1.0f));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 7.0f));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
@@ -420,20 +421,19 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "Walk/Idle", 5, state -> state.setAndContinue(state.isMoving() ? DefaultAnimations.WALK : DefaultAnimations.IDLE)));
-        controllers.add(new AnimationController<>(this, "Swim", this::swimAnimController));
+        controllers.add(new AnimationController<>(this, "Move", this::moveAnimController));
         controllers.add(new AnimationController<>(this, "Hurt", this::hurtAnimController));
         controllers.add(new AnimationController<>(this, "Attack", state -> PlayState.STOP)
                 .triggerableAnim("attack", DefaultAnimations.ATTACK_SWING)
         );
     }
 
-    protected PlayState swimAnimController(final AnimationState<Crab> state) {
-        if (state.isMoving() && !this.getEyeInFluidType().isAir()) {
-            return state.setAndContinue(DefaultAnimations.SWIM);
-        }
-
-        return state.setAndContinue(DefaultAnimations.IDLE);
+    protected PlayState moveAnimController(final AnimationState<Crab> state) {
+        return this.isInWater()
+                ? state.setAndContinue(DefaultAnimations.SWIM)
+                : state.isMoving()
+                  ? state.setAndContinue(DefaultAnimations.WALK)
+                  : state.setAndContinue(DefaultAnimations.IDLE);
     }
 
     protected PlayState hurtAnimController(final AnimationState<Crab> state) {
@@ -482,7 +482,36 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         return this.geoCache;
     }
 
-    public static class CrabMoveControl extends MoveControl {
+    protected static class CrabFloatGoal extends Goal {
+        private final Mob mob;
+        private final float strength;
+
+        public CrabFloatGoal(Mob mob, float strength) {
+            this.mob = mob;
+            this.strength = strength;
+        }
+
+        @Override
+        public boolean canUse() {
+            MoveControl moveControl = this.mob.getMoveControl();
+            return this.mob.isInFluidType((fluidType, height) -> height > this.mob.getBbHeight() && this.mob.canSwimInFluidType(fluidType))
+                    && !this.mob.level().getFluidState(new BlockPos((int) moveControl.getWantedX(), (int) moveControl.getWantedY(), (int) moveControl.getWantedZ())).isEmpty();
+        }
+
+        @Override
+        public boolean requiresUpdateEveryTick() {
+            return false;
+        }
+
+        @Override
+        public void tick() {
+            if (this.mob.getRandom().nextFloat() < 0.8f) {
+                this.mob.addDeltaMovement(new Vec3(0.0, this.strength, 0.0));
+            }
+        }
+    }
+
+    protected static class CrabMoveControl extends MoveControl {
         public CrabMoveControl(Mob mob) {
             super(mob);
         }
