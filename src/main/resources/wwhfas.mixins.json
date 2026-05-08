@@ -3,7 +3,9 @@
   "minVersion": "0.8",
   "package": "git.wildwind.wwhfas.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": [
+    "ThrownPotionMixin"
+  ],
   "client": [],
   "server": [],
   "injectors": {

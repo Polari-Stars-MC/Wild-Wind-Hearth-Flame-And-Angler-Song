@@ -1,7 +1,6 @@
 package git.wildwind.wwhfas.entity;
 
-import git.wildwind.wwhfas.entity.ai.control.AmphibianMoveControl;
-import git.wildwind.wwhfas.entity.ai.goal.AmphibianRandomStrollGoal;
+import git.wildwind.wwhfas.entity.ai.goal.AmphibiousRandomStrollGoal;
 import git.wildwind.wwhfas.entity.ai.goal.CrabAttackGoal;
 import git.wildwind.wwhfas.registry.ModEntities;
 import git.wildwind.wwhfas.registry.ModItems;
@@ -18,19 +17,22 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.ByIdMap;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.navigation.AmphibiousPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WallClimberNavigation;
-import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Bucketable;
 import net.minecraft.world.entity.monster.CaveSpider;
@@ -47,6 +49,8 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
@@ -76,26 +80,26 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     };
 
     protected static final RawAnimation HURT_ANIM = RawAnimation.begin().thenPlay("misc.hurt");
-    protected static final String INSTRUCTION_TURN_FORWARD = "turnForward;";
     protected static final int CLIENT_SIDE_TURN_TIME = 5;
     private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
+    private static final int TOTAL_AIR_SUPPLY = 7200;
+    private static final int REHYDRATE_AIR_SUPPLY = 1800;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private final WaterBoundPathNavigation waterBoundPathNavigation;
-    private final WallClimberNavigation wallClimberPathNavigation;
+    private final PathNavigation waterNavigation;
+    private final PathNavigation groundNavigation;
     private int preparingToAttack = -1;
-    public int clientSideTurnStart;
-    public int clientSideTurnEnd;
     public float clientSideYRotOffset = 90.0f;
     public float clientSidePreYRotOffset = this.clientSideYRotOffset;
 
     public Crab(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
         this.setPathfindingMalus(PathType.WATER, 0.0f);
-        this.moveControl = new AmphibianMoveControl(this);
-        this.waterBoundPathNavigation = new WaterBoundPathNavigation(this, level);
-        this.wallClimberPathNavigation = (WallClimberNavigation) this.navigation;
+
+        this.waterNavigation = new AmphibiousPathNavigation(this, level);
+        this.groundNavigation = this.navigation;
+        this.moveControl = new CrabMoveControl(this);
     }
 
     @Override
@@ -105,7 +109,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         this.goalSelector.addGoal(4, new BreedGoal(this, 1.0f));
         this.goalSelector.addGoal(5, new TemptGoal(this, 1.1f, stack -> stack.is(ModItemTags.CRAB_FOOD), false));
         this.goalSelector.addGoal(6, new FollowParentGoal(this, 1.1f));
-        this.goalSelector.addGoal(7, new AmphibianRandomStrollGoal(this, 1.0f));
+        this.goalSelector.addGoal(7, new AmphibiousRandomStrollGoal(this, 1.0f));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 7.0f));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Spider.class, true));
@@ -147,32 +151,27 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         return 12;
     }
 
-    public boolean isClientSideTurningForward() {
-        return clientSideTurnStart <= this.tickCount && this.tickCount < clientSideTurnEnd;
-    }
-
-    public void clientSideTurnForward(int duration) {
-        this.clientSideTurnStart = this.tickCount;
-        this.clientSideTurnEnd = this.tickCount + duration;
-    }
-
     protected void updateClientSideYRotOffset() {
         this.clientSidePreYRotOffset = this.clientSideYRotOffset;
 
-        if (this.isClientSideTurningForward()) {
-            int returnTick = this.clientSideTurnEnd - CLIENT_SIDE_TURN_TIME;
-            float currentTick = this.tickCount - this.clientSideTurnStart;
-
-            if (currentTick <= CLIENT_SIDE_TURN_TIME) {
-                this.clientSideYRotOffset -= 90.0f / CLIENT_SIDE_TURN_TIME;
-            } else if (this.tickCount >= returnTick) {
+        if (this.shouldTurnBody()) {
+            if (this.clientSideYRotOffset < 90.0f) {
                 this.clientSideYRotOffset += 90.0f / CLIENT_SIDE_TURN_TIME;
             }
-
-            return;
+        } else if (this.clientSideYRotOffset > 0.0) {
+            this.clientSideYRotOffset -= 90.0f / CLIENT_SIDE_TURN_TIME;
+        } else {
+            this.clientSideYRotOffset = 0.0f;
         }
+    }
 
-        this.clientSideYRotOffset = 90.0f;
+    protected boolean shouldTurnBody() {
+        Vec3 movement = this.getDeltaMovement();
+        return this.onGround()
+                && !this.isVisuallySwimming()
+                && !this.isImmobile()
+                && this.walkAnimation.speed() != 0.0f
+                && Math.abs(movement.x) + Math.abs(movement.z) / 2 > 0.015f;
     }
 
     public boolean prepareAttack(LivingEntity entity) {
@@ -182,6 +181,10 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         this.preparingToAttack = getPreparationToAttackDuration();
         this.triggerAnim("Attack", "attack");
         return true;
+    }
+
+    @Override
+    public void setJumping(boolean jumping) {
     }
 
     public static boolean checkCrabInWaterGroundSpawnRules(
@@ -207,6 +210,36 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     }
 
     @Override
+    public void baseTick() {
+        int currentAirSupply = this.getAirSupply();
+        super.baseTick();
+        if (!this.isNoAi()) this.handleAirSupply(currentAirSupply);
+    }
+
+    @Override
+    public int getMaxAirSupply() {
+        return TOTAL_AIR_SUPPLY;
+    }
+
+    public void handleAirSupply(int currentAirSupply) {
+        if (this.isAlive() && !this.isInWaterRainOrBubble()) {
+            this.setAirSupply(currentAirSupply - 1);
+            if (this.getAirSupply() == -20) {
+                this.setAirSupply(0);
+                this.hurt(this.damageSources().dryOut(), 2.0F);
+            }
+
+            return;
+        }
+
+        this.setAirSupply(this.getMaxAirSupply());
+    }
+
+    public void rehydrate() {
+        this.setAirSupply(Math.min(this.getAirSupply() + REHYDRATE_AIR_SUPPLY, this.getMaxAirSupply()));
+    }
+
+    @Override
     protected float getWaterSlowDown() {
         return 0.98f;
     }
@@ -215,13 +248,18 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     public void updateSwimming() {
         if (!this.level().isClientSide) {
             if (this.isEffectiveAi() && this.isInWater()) {
-                this.navigation = this.waterBoundPathNavigation;
                 this.setSwimming(true);
             } else {
-                this.navigation = this.wallClimberPathNavigation;
                 this.setSwimming(false);
             }
         }
+    }
+
+    @Override
+    public void setSwimming(boolean swimming) {
+        super.setSwimming(swimming);
+
+        this.navigation = swimming ? this.waterNavigation : this.groundNavigation;
     }
 
     @Override
@@ -301,10 +339,44 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         return new ItemStack(ModItems.CRAB_BUCKET);
     }
 
+    @Override
+    public int getMaxHeadXRot() {
+        return 0;
+    }
+
+    @Override
+    public int getMaxHeadYRot() {
+        return 0;
+    }
+
     // TODO: 临时音效，添加专属音效
     @Override
     public SoundEvent getPickupSound() {
         return SoundEvents.BUCKET_FILL;
+    }
+
+    // TODO: 临时音效，添加专属音效
+    @Override
+    protected @Nullable SoundEvent getAmbientSound() {
+        return super.getAmbientSound();
+    }
+
+    // TODO: 临时音效，添加专属音效
+    @Override
+    protected @Nullable SoundEvent getDeathSound() {
+        return super.getDeathSound();
+    }
+
+    // TODO: 临时音效，添加专属音效
+    @Override
+    protected @Nullable SoundEvent getHurtSound(DamageSource damageSource) {
+        return super.getHurtSound(damageSource);
+    }
+
+    // TODO: 临时音效，添加专属音效
+    @Override
+    protected SoundEvent getSwimSplashSound() {
+        return super.getSwimSplashSound();
     }
 
     // TODO: 临时音效，添加专属音效
@@ -353,11 +425,6 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         controllers.add(new AnimationController<>(this, "Hurt", this::hurtAnimController));
         controllers.add(new AnimationController<>(this, "Attack", state -> PlayState.STOP)
                 .triggerableAnim("attack", DefaultAnimations.ATTACK_SWING)
-                .setCustomInstructionKeyframeHandler(handler -> {
-                    if (handler.getKeyframeData().getInstructions().equals(INSTRUCTION_TURN_FORWARD)) {
-                        handler.getAnimatable().clientSideTurnForward(20);
-                    }
-                })
         );
     }
 
@@ -413,6 +480,42 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geoCache;
+    }
+
+    public static class CrabMoveControl extends MoveControl {
+        public CrabMoveControl(Mob mob) {
+            super(mob);
+        }
+
+        @Override
+        public void tick() {
+            if (!mob.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value())) {
+                super.tick();
+                return;
+            }
+
+            this.mob.setDeltaMovement(this.mob.getDeltaMovement().add(0.0, 0.005, 0.0));
+
+            if (this.operation == MoveControl.Operation.MOVE_TO && !this.mob.getNavigation().isDone()) {
+                float modifiedSpeed = (float) (this.speedModifier * this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED));
+                this.mob.setSpeed(Mth.lerp(0.125F, this.mob.getSpeed(), modifiedSpeed));
+                double relativeX = this.wantedX - this.mob.getX();
+                double relativeY = this.wantedY - this.mob.getY();
+                double relativeZ = this.wantedZ - this.mob.getZ();
+                if (relativeY != 0.0) {
+                    double distance = Math.sqrt(relativeX * relativeX + relativeY * relativeY + relativeZ * relativeZ);
+                    this.mob.setDeltaMovement(this.mob.getDeltaMovement()
+                            .add(0.0, (double) this.mob.getSpeed() * (relativeY / distance) * 0.1, 0.0)
+                    );
+                }
+
+                if (relativeX != 0.0 || relativeZ != 0.0) {
+                    float yRot = (float) (Mth.atan2(relativeZ, relativeX) * 180.0F / (float) Math.PI) - 90.0F;
+                    this.mob.setYRot(this.rotlerp(this.mob.getYRot(), yRot, 90.0F));
+                    this.mob.yBodyRot = this.mob.getYRot();
+                }
+            }
+        }
     }
 
     // TODO: 数据驱动
