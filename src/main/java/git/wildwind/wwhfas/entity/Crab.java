@@ -1,7 +1,6 @@
 package git.wildwind.wwhfas.entity;
 
 import git.wildwind.wwhfas.entity.ai.goal.AmphibiousRandomStrollGoal;
-import git.wildwind.wwhfas.entity.ai.goal.CrabAttackGoal;
 import git.wildwind.wwhfas.registry.ModEntities;
 import git.wildwind.wwhfas.registry.ModItems;
 import git.wildwind.wwhfas.tag.ModBlockTags;
@@ -83,6 +82,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     protected static final int CLIENT_SIDE_TURN_TIME = 5;
     private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> CLIMBING = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
     private static final int TOTAL_AIR_SUPPLY = 7200;
     private static final int REHYDRATE_AIR_SUPPLY = 1800;
 
@@ -129,6 +129,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         super.defineSynchedData(builder);
         builder.define(VARIANT_ID, CrabVariant.COLD.id);
         builder.define(FROM_BUCKET, false);
+        builder.define(CLIMBING, false);
     }
 
     @Override
@@ -168,11 +169,10 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
 
     protected boolean shouldTurnBody() {
         Vec3 movement = this.getDeltaMovement();
-        return this.onGround()
+        return ((this.onGround() && Math.abs(movement.x) + Math.abs(movement.z) / 2 > 0.015f && this.walkAnimation.speed() != 0.0f)
+                || (!this.onGround() && this.isClimbing() && Math.abs(movement.y) > 0.005f))
                 && !this.isVisuallySwimming()
-                && !this.isImmobile()
-                && this.walkAnimation.speed() != 0.0f
-                && Math.abs(movement.x) + Math.abs(movement.z) / 2 > 0.015f;
+                && !this.isImmobile();
     }
 
     public boolean prepareAttack(LivingEntity entity) {
@@ -248,11 +248,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     @Override
     public void updateSwimming() {
         if (!this.level().isClientSide) {
-            if (this.isEffectiveAi() && this.isInWater()) {
-                this.setSwimming(true);
-            } else {
-                this.setSwimming(false);
-            }
+            this.setSwimming(this.isEffectiveAi() && this.isInWater());
         }
     }
 
@@ -445,9 +441,17 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         return PlayState.STOP;
     }
 
+    public void setClimbing(boolean climbing) {
+        this.entityData.set(CLIMBING, climbing);
+    }
+
+    public boolean isClimbing() {
+        return this.entityData.get(CLIMBING);
+    }
+
     @Override
     public boolean onClimbable() {
-        return this.horizontalCollision;
+        return this.isClimbing();
     }
 
     @Override
@@ -458,7 +462,10 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
 
         if (this.level().isClientSide()) {
             this.updateClientSideYRotOffset();
+            return;
         }
+
+        this.setClimbing(this.horizontalCollision);
 
         if (this.preparingToAttack > 0) {
             this.preparingToAttack--;
@@ -544,6 +551,32 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
                     this.mob.yBodyRot = this.mob.getYRot();
                 }
             }
+        }
+    }
+
+    protected static class CrabAttackGoal extends MeleeAttackGoal {
+        private final Crab crab;
+
+        public CrabAttackGoal(Crab crab, double speedModifier, boolean followingTargetEvenIfNotSeen) {
+            super(crab, speedModifier, followingTargetEvenIfNotSeen);
+            this.crab = crab;
+        }
+
+        @Override
+        public boolean canUse() {
+            return !this.crab.isPreparingToAttack() && super.canUse();
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return !this.crab.isPreparingToAttack() && super.canContinueToUse();
+        }
+
+        @Override
+        protected void checkAndPerformAttack(@NotNull LivingEntity target) {
+            if (!canPerformAttack(target)) return;
+            this.resetAttackCooldown();
+            this.crab.prepareAttack(target);
         }
     }
 
