@@ -6,6 +6,7 @@ import git.wildwind.wwhfas.registry.ModItems;
 import git.wildwind.wwhfas.tag.ModBlockTags;
 import git.wildwind.wwhfas.tag.ModItemTags;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -29,9 +30,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.navigation.AmphibiousPathNavigation;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.entity.ai.navigation.WallClimberNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Bucketable;
 import net.minecraft.world.entity.monster.CaveSpider;
@@ -46,8 +46,12 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.AmphibiousNodeEvaluator;
+import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.Tags;
@@ -79,40 +83,44 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     };
 
     protected static final RawAnimation HURT_ANIM = RawAnimation.begin().thenPlay("misc.hurt");
-    protected static final int CLIENT_SIDE_TURN_TIME = 5;
+    protected static final RawAnimation GREETING_ANIM = RawAnimation.begin().thenPlay("misc.greeting");
+    protected static final float CLIENT_SIDE_MAX_MODEL_ROT = 90.0f;
+    protected static final int CLIENT_SIDE_MODEL_ROT_TIME = 5;
+    protected static final float CLIENT_SIDE_MODEL_ROT_PER_TICK = CLIENT_SIDE_MAX_MODEL_ROT / CLIENT_SIDE_MODEL_ROT_TIME;
     private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> CLIMBING = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
     private static final int TOTAL_AIR_SUPPLY = 7200;
+    private static final int START_FIND_WATER_AIR_SUPPLY = 2400;
     private static final int REHYDRATE_AIR_SUPPLY = 1800;
 
+    public float clientSideModelYRotOffset;
+    public float clientSidePreModelYRotOffset = this.clientSideModelYRotOffset;
+    public float clientSideModelXRotOffset;
+    public float clientSidePreModelXRotOffset = this.clientSideModelXRotOffset;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private final PathNavigation waterNavigation;
-    private final PathNavigation groundNavigation;
     private int preparingToAttack = -1;
-    public float clientSideYRotOffset = 90.0f;
-    public float clientSidePreYRotOffset = this.clientSideYRotOffset;
+    private int greetingTicks = -1;
 
     public Crab(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
         this.setPathfindingMalus(PathType.WATER, 0.0f);
-
-        this.waterNavigation = new AmphibiousPathNavigation(this, level);
-        this.groundNavigation = this.navigation;
         this.moveControl = new CrabMoveControl(this);
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.25f));
-        this.goalSelector.addGoal(2, new CrabAttackGoal(this, 1.2f, true));
-        this.goalSelector.addGoal(3, new BreedGoal(this, 1.0f));
-        this.goalSelector.addGoal(4, new TemptGoal(this, 1.1f, stack -> stack.is(ModItemTags.CRAB_FOOD), false));
-        this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.1f));
-        this.goalSelector.addGoal(6, new CrabFloatGoal(this, 0.04f));
-        this.goalSelector.addGoal(7, new AmphibiousRandomStrollGoal(this, 1.0f));
-        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 7.0f));
-        this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(2, new CrabTryFindWaterGoal(this));
+        this.goalSelector.addGoal(3, new CrabGoToGroundGoal(this, 1.0f, 20, 4));
+        this.goalSelector.addGoal(4, new CrabAttackGoal(this, 1.2f, true));
+        this.goalSelector.addGoal(5, new BreedGoal(this, 1.0f));
+        this.goalSelector.addGoal(6, new TemptGoal(this, 1.1f, stack -> stack.is(ModItemTags.CRAB_FOOD), false));
+        this.goalSelector.addGoal(7, new FollowParentGoal(this, 1.1f));
+        this.goalSelector.addGoal(8, new CrabFloatGoal(this, 0.04f));
+        this.goalSelector.addGoal(9, new AmphibiousRandomStrollGoal(this, 1.0f));
+        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 7.0f));
+        this.goalSelector.addGoal(11, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Spider.class, true));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, CaveSpider.class, true));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Silverfish.class, true));
@@ -121,7 +129,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
 
     @Override
     protected @NotNull PathNavigation createNavigation(Level level) {
-        return new WallClimberNavigation(this, level);
+        return new CrabPathNavigation(this, level);
     }
 
     @Override
@@ -134,8 +142,9 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
 
     @Override
     public float getWalkTargetValue(BlockPos pos, LevelReader level) {
-        if (level.getFluidState(pos).is(Fluids.WATER)) return 10.0f;
-        if (level.getBlockState(pos.below()).is(ModBlockTags.CARB_SPAWNABLE_IN_WATER_GROUND)) return 5.0f;
+        BlockState state = level.getBlockState(pos.below());
+        if (state.is(ModBlockTags.CRAB_PREFERRED_WANDER_BLOCKS)) return 10.0f;
+        if (state.is(ModBlockTags.CARB_SPAWNABLE_IN_WATER_GROUND)) return 5.0f;
 
         return level.getPathfindingCostFromLightLevels(pos);
     }
@@ -146,33 +155,48 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     }
 
     public boolean isPreparingToAttack() {
-        return preparingToAttack != -1;
+        return this.preparingToAttack != -1;
+    }
+
+    public boolean isGreeting() {
+        return this.greetingTicks != -1;
     }
 
     public int getPreparationToAttackDuration() {
         return 12;
     }
 
-    protected void updateClientSideYRotOffset() {
-        this.clientSidePreYRotOffset = this.clientSideYRotOffset;
+    protected void updateClientSideVisuals() {
+        this.clientSidePreModelYRotOffset = this.clientSideModelYRotOffset;
+        this.clientSidePreModelXRotOffset = this.clientSideModelXRotOffset;
 
-        if (this.shouldTurnBody()) {
-            if (this.clientSideYRotOffset < 90.0f) {
-                this.clientSideYRotOffset += 90.0f / CLIENT_SIDE_TURN_TIME;
+        if (this.shouldRotModelY()) {
+            if (this.clientSideModelYRotOffset < CLIENT_SIDE_MAX_MODEL_ROT) {
+                this.clientSideModelYRotOffset += CLIENT_SIDE_MODEL_ROT_PER_TICK;
             }
-        } else if (this.clientSideYRotOffset > 0.0) {
-            this.clientSideYRotOffset -= 90.0f / CLIENT_SIDE_TURN_TIME;
-        } else {
-            this.clientSideYRotOffset = 0.0f;
+        } else if (this.clientSideModelYRotOffset > 0.0 && this.clientSideModelXRotOffset <= 0.0f) {
+            this.clientSideModelYRotOffset -= CLIENT_SIDE_MODEL_ROT_PER_TICK;
+        }
+
+        if (this.shouldRotModelX()) {
+            if (this.clientSideModelXRotOffset < CLIENT_SIDE_MAX_MODEL_ROT) {
+                this.clientSideModelXRotOffset += CLIENT_SIDE_MODEL_ROT_PER_TICK;
+            }
+        } else if (this.clientSideModelXRotOffset > 0.0) {
+            this.clientSideModelXRotOffset -= CLIENT_SIDE_MODEL_ROT_PER_TICK;
         }
     }
 
-    protected boolean shouldTurnBody() {
+    protected boolean shouldRotModelY() {
         Vec3 movement = this.getDeltaMovement();
         return ((this.onGround() && Math.abs(movement.x) + Math.abs(movement.z) / 2 > 0.015f && this.walkAnimation.speed() != 0.0f)
                 || (!this.onGround() && this.isClimbing() && Math.abs(movement.y) > 0.005f))
                 && !this.isVisuallySwimming()
                 && !this.isImmobile();
+    }
+
+    protected boolean shouldRotModelX() {
+        return !this.onGround() && !this.isVisuallySwimming() && this.isClimbing();
     }
 
     public boolean prepareAttack(LivingEntity entity) {
@@ -227,7 +251,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
             this.setAirSupply(currentAirSupply - 1);
             if (this.getAirSupply() == -20) {
                 this.setAirSupply(0);
-                this.hurt(this.damageSources().dryOut(), 2.0F);
+                this.hurt(this.damageSources().dryOut(), 1.0F);
             }
 
             return;
@@ -240,6 +264,10 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         this.setAirSupply(Math.min(this.getAirSupply() + REHYDRATE_AIR_SUPPLY, this.getMaxAirSupply()));
     }
 
+    public boolean needWater() {
+        return this.getAirSupply() < START_FIND_WATER_AIR_SUPPLY;
+    }
+
     @Override
     protected float getWaterSlowDown() {
         return 0.98f;
@@ -250,13 +278,6 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         if (!this.level().isClientSide) {
             this.setSwimming(this.isEffectiveAi() && this.isInWater());
         }
-    }
-
-    @Override
-    public void setSwimming(boolean swimming) {
-        super.setSwimming(swimming);
-
-        this.navigation = swimming ? this.waterNavigation : this.groundNavigation;
     }
 
     @Override
@@ -300,7 +321,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
 
     @Override
     protected boolean isImmobile() {
-        return super.isImmobile() || this.isPreparingToAttack();
+        return super.isImmobile() || this.isPreparingToAttack() || this.isGreeting();
     }
 
     @Override
@@ -417,17 +438,20 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "Move", this::moveAnimController));
+        controllers.add(new AnimationController<>(this, "Move", 3, this::moveAnimController));
         controllers.add(new AnimationController<>(this, "Hurt", this::hurtAnimController));
         controllers.add(new AnimationController<>(this, "Attack", state -> PlayState.STOP)
                 .triggerableAnim("attack", DefaultAnimations.ATTACK_SWING)
+        );
+        controllers.add(new AnimationController<>(this, "Greeting", state -> PlayState.STOP)
+                .triggerableAnim("greeting", GREETING_ANIM)
         );
     }
 
     protected PlayState moveAnimController(final AnimationState<Crab> state) {
         return this.isInWater()
                 ? state.setAndContinue(DefaultAnimations.SWIM)
-                : state.isMoving()
+                : state.isMoving() || this.isClimbing()
                   ? state.setAndContinue(DefaultAnimations.WALK)
                   : state.setAndContinue(DefaultAnimations.IDLE);
     }
@@ -461,24 +485,41 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         if (!this.isAlive()) return;
 
         if (this.level().isClientSide()) {
-            this.updateClientSideYRotOffset();
+            this.updateClientSideVisuals();
             return;
         }
+
+        if (!this.isEffectiveAi()) return;
 
         this.setClimbing(this.horizontalCollision);
 
         if (this.preparingToAttack > 0) {
-            this.preparingToAttack--;
             LivingEntity target = this.getTarget();
             if (target != null && target.isAlive()) {
                 this.lookAt(target, 15.0f, 15.0f);
             }
 
-            if (this.preparingToAttack <= 0) {
+            if (--this.preparingToAttack <= 0) {
                 this.preparingToAttack = -1;
 
                 if (target != null && target.isAlive() && this.isWithinMeleeAttackRange(target) && this.getSensing().hasLineOfSight(target)) {
                     this.doHurtTarget(target);
+                }
+            }
+        }
+
+        if (this.greetingTicks > 0) {
+            if (--this.greetingTicks <= 0) {
+                this.greetingTicks = -1;
+            }
+        }
+
+        if (!this.isGreeting() && this.tickCount % 2 == 0 && this.random.nextFloat() <= 0.001) {
+            AABB box = this.getBoundingBox().inflate(6.0, 2.0, 6.0);
+            for (BlockPos pos : BlockPos.betweenClosed(BlockPos.containing(box.minX, box.minY, box.minZ), BlockPos.containing(box.maxX, box.maxY, box.maxZ))) {
+                if (this.level().getBlockState(pos).is(ModBlockTags.CRAB_PREFERRED_WANDER_BLOCKS)) {
+                    this.greetingTicks = 27;
+                    this.triggerAnim("Greeting", "greeting");
                 }
             }
         }
@@ -546,8 +587,8 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
                 }
 
                 if (relativeX != 0.0 || relativeZ != 0.0) {
-                    float yRot = (float) (Mth.atan2(relativeZ, relativeX) * 180.0F / (float) Math.PI) - 90.0F;
-                    this.mob.setYRot(this.rotlerp(this.mob.getYRot(), yRot, 90.0F));
+                    float yRot = (float) (Mth.atan2(relativeZ, relativeX) * 180.0F / (float) Math.PI) - CLIENT_SIDE_MAX_MODEL_ROT;
+                    this.mob.setYRot(this.rotlerp(this.mob.getYRot(), yRot, CLIENT_SIDE_MAX_MODEL_ROT));
                     this.mob.yBodyRot = this.mob.getYRot();
                 }
             }
@@ -564,12 +605,12 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
 
         @Override
         public boolean canUse() {
-            return !this.crab.isPreparingToAttack() && super.canUse();
+            return !this.crab.isImmobile() && super.canUse();
         }
 
         @Override
         public boolean canContinueToUse() {
-            return !this.crab.isPreparingToAttack() && super.canContinueToUse();
+            return !this.crab.isImmobile() && super.canContinueToUse();
         }
 
         @Override
@@ -577,6 +618,153 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
             if (!canPerformAttack(target)) return;
             this.resetAttackCooldown();
             this.crab.prepareAttack(target);
+        }
+    }
+
+    protected static class CrabTryFindWaterGoal extends TryFindWaterGoal {
+        private final Crab crab;
+
+        public CrabTryFindWaterGoal(Crab crab) {
+            super(crab);
+            this.crab = crab;
+        }
+
+        @Override
+        public boolean canUse() {
+            return this.crab.needWater() && super.canUse();
+        }
+    }
+
+    protected static class CrabGoToGroundGoal extends MoveToBlockGoal {
+        public CrabGoToGroundGoal(PathfinderMob mob, double speedModifier, int searchRange) {
+            super(mob, speedModifier, searchRange);
+        }
+
+        public CrabGoToGroundGoal(PathfinderMob mob, double speedModifier, int searchRange, int verticalSearchRange) {
+            super(mob, speedModifier, searchRange, verticalSearchRange);
+        }
+
+        @Override
+        public boolean canUse() {
+            return super.canUse()
+                    && this.mob.isInWater()
+                    && (!this.mob.level().isDay() || this.mob.level().isRaining());
+        }
+
+        @Override
+        protected boolean isValidTarget(LevelReader level, BlockPos pos) {
+            BlockPos blockpos = pos.above();
+            return level.isEmptyBlock(blockpos)
+                    && level.getBlockState(pos).entityCanStandOn(level, pos, this.mob);
+        }
+    }
+
+    protected static class CrabPathNavigation extends GroundPathNavigation {
+        private final Crab crab;
+        private BlockPos fallbackPos;
+
+        public CrabPathNavigation(Crab crab, Level level) {
+            super(crab, level);
+            this.crab = crab;
+        }
+
+        @Override
+        protected PathFinder createPathFinder(int maxVisitedNodes) {
+            this.nodeEvaluator = new AmphibiousNodeEvaluator(false);
+            this.nodeEvaluator.setCanPassDoors(true);
+            return new PathFinder(this.nodeEvaluator, maxVisitedNodes);
+        }
+
+        @Override
+        protected boolean canUpdatePath() {
+            return true;
+        }
+
+        @Override
+        protected Vec3 getTempMobPos() {
+            return new Vec3(this.mob.getX(), this.mob.getY(0.5), this.mob.getZ());
+        }
+
+        @Override
+        public Path createPath(BlockPos pos, int accuracy) {
+            this.fallbackPos = pos;
+            return super.createPath(pos, accuracy);
+        }
+
+        @Override
+        public Path createPath(Entity entity, int accuracy) {
+            this.fallbackPos = entity.blockPosition();
+            return super.createPath(entity, accuracy);
+        }
+
+        @Override
+        public boolean moveTo(Entity entity, double speed) {
+            Path path = this.createPath(entity, 0);
+            if (path != null) {
+                return this.moveTo(path, speed);
+            } else {
+                this.fallbackPos = entity.blockPosition();
+                this.speedModifier = speed;
+                return true;
+            }
+        }
+
+        @Override
+        public void tick() {
+            if (!this.isDone()) {
+                super.tick();
+                return;
+            }
+
+            if (forwardToFallbackPos()) {
+                MoveControl moveControl = this.mob.getMoveControl();
+                moveControl.setWantedPosition(this.fallbackPos.getX(), this.fallbackPos.getY(), this.fallbackPos.getZ(), this.speedModifier);
+                return;
+            }
+
+            this.fallbackPos = null;
+        }
+
+        private boolean forwardToFallbackPos() {
+            if (fallbackPos == null) return false;
+            if (this.crab.isClimbing()) return true;
+
+            double horizontalDistance = fallbackPos.distToCenterSqr(mob.getX(), fallbackPos.getY(), mob.getZ());
+            if (horizontalDistance < Mth.square(Math.max(this.mob.getBbWidth(), 1.0))) {
+                BlockPos pos = this.mob.blockPosition();
+                BlockState state = this.level.getBlockState(pos);
+                if (state.getCollisionShape(level, pos).isEmpty()) {
+                    for (Direction direction : Direction.Plane.HORIZONTAL) {
+                        BlockPos relativePos = pos.relative(direction);
+                        if (!level.getBlockState(relativePos).getCollisionShape(level, relativePos).isEmpty()) {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        protected double getGroundY(Vec3 vec) {
+            return vec.y;
+        }
+
+        @Override
+        protected boolean canMoveDirectly(Vec3 pos1, Vec3 pos2) {
+            return this.mob.isInLiquid() && isClearForMovementBetween(this.mob, pos1, pos2, false);
+        }
+
+        @Override
+        public boolean isStableDestination(BlockPos pos) {
+            return !this.level.getBlockState(pos.below()).isAir();
+        }
+
+        @Override
+        public void setCanFloat(boolean canSwim) {
         }
     }
 

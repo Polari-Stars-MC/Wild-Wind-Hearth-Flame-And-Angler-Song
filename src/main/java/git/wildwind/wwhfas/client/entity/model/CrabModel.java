@@ -1,4 +1,4 @@
-package git.wildwind.wwhfas.entity.model;
+package git.wildwind.wwhfas.client.entity.model;
 
 import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.entity.Crab;

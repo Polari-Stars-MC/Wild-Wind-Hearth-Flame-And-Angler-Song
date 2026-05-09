@@ -40,6 +40,11 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(Blocks.DIRT)
                 .add(Blocks.MUDDY_MANGROVE_ROOTS);
 
+        tag(ModBlockTags.CRAB_PREFERRED_WANDER_BLOCKS)
+                .add(Blocks.MANGROVE_LOG)
+                .add(Blocks.MANGROVE_ROOTS)
+                .add(Blocks.MUDDY_MANGROVE_ROOTS);
+
         for (ModBlocks.WoodSet woodSet : ModBlocks.WOOD_SETS) {
             TagKey<Block> logsTag = TagKey.create(
                 net.minecraft.core.registries.Registries.BLOCK,

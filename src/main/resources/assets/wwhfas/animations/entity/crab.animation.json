@@ -602,9 +602,6 @@
 						}
 					}
 				}
-			},
-			"timeline": {
-				"0.0": "turnForward;"
 			}
 		},
 		"move.walk": {
@@ -1976,7 +1973,6 @@
 			}
 		},
 		"misc.greeting": {
-			"loop": "hold_on_last_frame",
 			"animation_length": 1.148,
 			"bones": {
 				"root": {
@@ -2377,9 +2373,6 @@
 						}
 					}
 				}
-			},
-			"timeline": {
-				"0.0": "turnForward;"
 			}
 		},
 		"misc.hurt": {
