@@ -1,7 +1,7 @@
 package git.wildwind.wwhfas.registry;
 
 import git.wildwind.wwhfas.WildWindMod;
-import git.wildwind.wwhfas.entity.Crab;
+import git.wildwind.wwhfas.entity.animal.Crab;
 import git.wildwind.wwhfas.client.entity.render.CrabRenderer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;

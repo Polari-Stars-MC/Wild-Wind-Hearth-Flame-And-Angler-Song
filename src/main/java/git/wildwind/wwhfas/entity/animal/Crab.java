@@ -1,8 +1,10 @@
-package git.wildwind.wwhfas.entity;
+package git.wildwind.wwhfas.entity.animal;
 
+import com.mojang.logging.LogUtils;
+import git.wildwind.wwhfas.entity.ModSpawnPlacementTypes;
 import git.wildwind.wwhfas.entity.ai.goal.AmphibiousRandomStrollGoal;
-import git.wildwind.wwhfas.registry.ModEntities;
-import git.wildwind.wwhfas.registry.ModItems;
+import git.wildwind.wwhfas.registry.*;
+import git.wildwind.wwhfas.tag.ModBiomeTags;
 import git.wildwind.wwhfas.tag.ModBlockTags;
 import git.wildwind.wwhfas.tag.ModItemTags;
 import net.minecraft.core.BlockPos;
@@ -10,16 +12,15 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.ByIdMap;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -41,10 +42,7 @@ import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.AmphibiousNodeEvaluator;
@@ -58,6 +56,7 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
@@ -65,9 +64,7 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.function.IntFunction;
-
-public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabVariant>, GeoEntity {
+public class Crab extends Animal implements Bucketable, VariantHolder<Holder<CrabVariant>>, GeoEntity {
     public static final SpawnPlacementType SPAWN_PLACEMENT = new SpawnPlacementType() {
 
         @Override
@@ -87,18 +84,19 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     protected static final float CLIENT_SIDE_MAX_MODEL_ROT = 90.0f;
     protected static final int CLIENT_SIDE_MODEL_ROT_TIME = 5;
     protected static final float CLIENT_SIDE_MODEL_ROT_PER_TICK = CLIENT_SIDE_MAX_MODEL_ROT / CLIENT_SIDE_MODEL_ROT_TIME;
-    private static final EntityDataAccessor<Integer> VARIANT_ID = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Holder<CrabVariant>> VARIANT_ID = SynchedEntityData.defineId(Crab.class, ModEntityDataSerializers.CRAB_VARIANT.get());
     private static final EntityDataAccessor<Boolean> FROM_BUCKET = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> CLIMBING = SynchedEntityData.defineId(Crab.class, EntityDataSerializers.BOOLEAN);
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final int TOTAL_AIR_SUPPLY = 7200;
     private static final int START_FIND_WATER_AIR_SUPPLY = 2400;
     private static final int REHYDRATE_AIR_SUPPLY = 1800;
 
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     public float clientSideModelYRotOffset;
     public float clientSidePreModelYRotOffset = this.clientSideModelYRotOffset;
     public float clientSideModelXRotOffset;
     public float clientSidePreModelXRotOffset = this.clientSideModelXRotOffset;
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private int preparingToAttack = -1;
     private int greetingTicks = -1;
 
@@ -135,7 +133,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(VARIANT_ID, CrabVariant.COLD.id);
+        builder.define(VARIANT_ID, ModCrabVariants.TEMPERATE);
         builder.define(FROM_BUCKET, false);
         builder.define(CLIMBING, false);
     }
@@ -305,18 +303,15 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         return Bucketable.bucketMobPickup(player, hand, this).orElse(super.mobInteract(player, hand));
     }
 
-    // TODO: 当前变种生成异常，暂时保持原样，收尾阶段数据驱动化变种后再做调整。
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
-        Holder<Biome> biome = level.getBiome(this.blockPosition());
-        if (biome.is(Tags.Biomes.IS_COLD_OVERWORLD)){
-            this.entityData.set(VARIANT_ID,CrabVariant.COLD.id);
-        }else if (biome.is(Tags.Biomes.IS_TEMPERATE_OVERWORLD)){
-            this.entityData.set(VARIANT_ID,CrabVariant.TEMPERATE.id);
-        }else  if (biome.is(Tags.Biomes.IS_HOT_OVERWORLD)){
-            this.entityData.set(VARIANT_ID,CrabVariant.WARM.id);
-        }
+        chooseVariantByBiome(level.getBiome(this.blockPosition()));
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+    }
+
+    private void chooseVariantByBiome(Holder<Biome> biome) {
+        if (biome.is(ModBiomeTags.SPAWNS_WARM_VARIANT_CRABS)) this.setVariant(ModCrabVariants.WARM);
+        if (biome.is(ModBiomeTags.SPAWNS_COLD_VARIANT_CRABS)) this.setVariant(ModCrabVariants.COLD);
     }
 
     @Override
@@ -342,14 +337,18 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
     @Override
     public void saveToBucketTag(ItemStack stack) {
         Bucketable.saveDefaultDataToBucketTag(this, stack);
-        CustomData.update(DataComponents.BUCKET_ENTITY_DATA, stack, tag -> {
-            tag.putInt("Variant", this.entityData.get(VARIANT_ID));
-        });
+        CustomData.update(DataComponents.BUCKET_ENTITY_DATA, stack, tag ->
+                tag.put("Variant", CrabVariant.CODEC.encodeStart(NbtOps.INSTANCE, this.getVariant().value()).getOrThrow()));
     }
 
     @Override
     public void loadFromBucketTag(CompoundTag tag) {
-        this.setVariant(CrabVariant.byId(tag.getInt("Variant")));
+        if (tag.contains("Variant")) {
+            CrabVariant.CODEC
+                    .parse(NbtOps.INSTANCE, tag.get("Variant"))
+                    .resultOrPartial(LOGGER::error)
+                    .ifPresent(variant -> this.setVariant(ModRegistries.CRAB_VARIANT.wrapAsHolder(variant)));
+        }
     }
 
     @Override
@@ -373,67 +372,76 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         return SoundEvents.BUCKET_FILL;
     }
 
-    // TODO: 临时音效，添加专属音效
     @Override
     protected @Nullable SoundEvent getAmbientSound() {
         return super.getAmbientSound();
     }
 
-    // TODO: 临时音效，添加专属音效
     @Override
     protected @Nullable SoundEvent getDeathSound() {
         return super.getDeathSound();
     }
 
-    // TODO: 临时音效，添加专属音效
     @Override
     protected @Nullable SoundEvent getHurtSound(DamageSource damageSource) {
         return super.getHurtSound(damageSource);
     }
 
-    // TODO: 临时音效，添加专属音效
     @Override
     protected SoundEvent getSwimSplashSound() {
         return super.getSwimSplashSound();
     }
 
-    // TODO: 临时音效，添加专属音效
     @Override
     protected SoundEvent getSwimSound() {
         return super.getSwimSound();
     }
 
     @Override
+    protected void ageBoundaryReached() {
+        super.ageBoundaryReached();
+        if (!this.isBaby() && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
+            this.spawnAtLocation(ModItems.CRAB_CLAW.get(), 1);
+        }
+    }
+
+    @Override
     public @Nullable AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        return ModEntities.CRAB.get().create(level);
+        Crab crab = ModEntities.CRAB.get().create(level);
+        if (crab != null) {
+            crab.chooseVariantByBiome(level.getBiome(this.blockPosition()));
+        }
+
+        return crab;
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putInt("Variant", this.entityData.get(VARIANT_ID));
         tag.putBoolean("FromBucket", this.entityData.get(FROM_BUCKET));
+        tag.put("Variant", CrabVariant.CODEC.encodeStart(NbtOps.INSTANCE, this.getVariant().value()).getOrThrow());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        this.entityData.set(VARIANT_ID, tag.getInt("Variant"));
+        if (tag.contains("Variant")) {
+            CrabVariant.CODEC
+                    .parse(NbtOps.INSTANCE, tag.get("Variant"))
+                    .resultOrPartial(LOGGER::error)
+                    .ifPresent(variant -> this.setVariant(ModRegistries.CRAB_VARIANT.wrapAsHolder(variant)));
+        }
         this.setFromBucket(tag.getBoolean("FromBucket"));
     }
 
     @Override
-    public void setVariant(CrabVariant variant) {
-        this.entityData.set(VARIANT_ID, variant.id);
+    public void setVariant(Holder<CrabVariant> variant) {
+        this.entityData.set(VARIANT_ID, variant);
     }
 
     @Override
-    public @NotNull CrabVariant getVariant() {
-        int variantIndex = this.entityData.get(VARIANT_ID);
-        if (variantIndex < 0 || variantIndex >= CrabVariant.values().length) {
-            return CrabVariant.TEMPERATE;
-        }
-        return CrabVariant.values()[variantIndex];
+    public @NotNull Holder<CrabVariant> getVariant() {
+        return this.entityData.get(VARIANT_ID);
     }
 
     @Override
@@ -768,35 +776,4 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Crab.CrabV
         }
     }
 
-    // TODO: 数据驱动
-    public enum CrabVariant implements StringRepresentable {
-        /**
-         * 温 0
-         * 热 1
-         * 寒 2
-         */
-        TEMPERATE( 0),
-        WARM(2),
-        COLD(1);
-
-        private static final IntFunction<CrabVariant> BY_ID = ByIdMap.continuous(CrabVariant::id, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
-        private final int id;
-
-        CrabVariant(int id) {
-            this.id = id;
-        }
-
-        public static CrabVariant byId(int id) {
-            return BY_ID.apply(id);
-        }
-
-        public int id() {
-            return id;
-        }
-
-        @Override
-        public String getSerializedName() {
-            return String.valueOf(this.id);
-        }
-    }
 }

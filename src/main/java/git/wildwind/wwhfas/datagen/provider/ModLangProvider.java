@@ -3,16 +3,13 @@ package git.wildwind.wwhfas.datagen.provider;
 import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.block.ModBlocks;
 import git.wildwind.wwhfas.block.ModTerrainBlocks;
+import git.wildwind.wwhfas.registry.ModEntities;
 import git.wildwind.wwhfas.registry.ModItems;
 import git.wildwind.wwhfas.registry.ModMobEffects;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.item.alchemy.Potion;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
-
-import java.util.function.Supplier;
 
 public class ModLangProvider extends LanguageProvider {
     private final String locale;
@@ -31,6 +28,7 @@ public class ModLangProvider extends LanguageProvider {
         addBlockPropertyBookTranslations();
         addItems();
         addEffects();
+        addEntity();
     }
 
     private void addItems() {
@@ -42,6 +40,10 @@ public class ModLangProvider extends LanguageProvider {
 
     private void addEffects() {
         addEffectAndPotion(ModMobEffects.EXTENSION, text("Extension", "延展"));
+    }
+
+    private void addEntity() {
+        addEntityType(ModEntities.CRAB, text("Crab", "螃蟹"));
     }
 
     private void addWoodSet(ModBlocks.WoodSet woodSet, ModItems.WoodItems woodItems, String baseName) {

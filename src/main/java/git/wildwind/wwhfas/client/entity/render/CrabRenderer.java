@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import git.wildwind.wwhfas.client.entity.model.CrabModel;
-import git.wildwind.wwhfas.entity.Crab;
+import git.wildwind.wwhfas.entity.animal.Crab;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.util.Mth;

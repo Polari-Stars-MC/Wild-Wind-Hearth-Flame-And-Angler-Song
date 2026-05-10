@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
 import org.slf4j.Logger;
 
 @Mod(WildWindMod.MOD_ID)
@@ -17,10 +18,15 @@ public class WildWindMod {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public WildWindMod(IEventBus modBus, ModContainer modContainer) {
-        ModRegistries.register(modBus);
+        modBus.addListener(this::registerRegistries);
+        ModRegistries.registerAllEntries(modBus);
         ModCommonSetup.register(modBus);
         ModDataGen.register(modBus);
         ModConfigs.register(modContainer);
+    }
+
+    void registerRegistries(NewRegistryEvent event) {
+        event.register(ModRegistries.CRAB_VARIANT);
     }
 
     public static ResourceLocation id(String path) {

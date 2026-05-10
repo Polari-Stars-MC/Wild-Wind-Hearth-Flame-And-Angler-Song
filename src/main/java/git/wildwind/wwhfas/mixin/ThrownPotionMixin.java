@@ -1,7 +1,7 @@
 package git.wildwind.wwhfas.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import git.wildwind.wwhfas.entity.Crab;
+import git.wildwind.wwhfas.entity.animal.Crab;
 import net.minecraft.world.entity.projectile.ThrownPotion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
