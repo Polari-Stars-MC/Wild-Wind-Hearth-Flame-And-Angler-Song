@@ -9,6 +9,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
 public record CrabVariant(ResourceLocation textureLocation) {
-    public static final Codec<CrabVariant> CODEC = ModRegistries.CRAB_VARIANT.byNameCodec();
+    public static final Codec<CrabVariant> CODEC = ModRegistries.CRAB_VARIANTS.byNameCodec();
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<CrabVariant>> STREAM_CODEC = ByteBufCodecs.holderRegistry(ModRegistries.Keys.CRAB_VARIANT);
 }

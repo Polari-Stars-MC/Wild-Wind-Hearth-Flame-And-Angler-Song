@@ -10,30 +10,31 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 
 public final class ModRegistries {
-    public static final Registry<CrabVariant> CRAB_VARIANT = new RegistryBuilder<>(Keys.CRAB_VARIANT)
+    public static final Registry<CrabVariant> CRAB_VARIANTS = new RegistryBuilder<>(Keys.CRAB_VARIANT)
             .sync(true)
             .defaultKey(WildWindMod.id("temperate"))
             .create();
 
-    public static void registerAllEntries(IEventBus modBus) {
-        ModBlocks.register(modBus);
-        ModTerrainBlocks.register(modBus);
-        ModItems.register(modBus);
-        ModCreativeTabs.register(modBus);
-        ModSounds.register(modBus);
-        ModMenuTypes.register(modBus);
-        ModDataComponents.register(modBus);
-        ModDataAttachments.register(modBus);
-        ModBlockEntities.register(modBus);
-        ModEntities.register(modBus);
-        ModParticleTypes.register(modBus);
-        ModRecipeTypes.register(modBus);
-        ModRecipeSerializers.register(modBus);
-        ModFoliagePlacerTypes.FOLIAGE_PLACER_TYPE.register(modBus);
-        ModMobEffects.register(modBus);
-        ModPotions.register(modBus);
-        ModEntityDataSerializers.register(modBus);
-        ModCrabVariants.register(modBus);
+    public static void registerAllEntries(IEventBus modEventBus) {
+        ModBlocks.register(modEventBus);
+        ModTerrainBlocks.register(modEventBus);
+        ModItems.register(modEventBus);
+        ModCreativeTabs.register(modEventBus);
+        ModSounds.register(modEventBus);
+        ModMenuTypes.register(modEventBus);
+        ModDataComponents.register(modEventBus);
+        ModDataAttachments.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
+        ModEntities.register(modEventBus);
+        ModParticleTypes.register(modEventBus);
+        ModRecipeTypes.register(modEventBus);
+        ModRecipeSerializers.register(modEventBus);
+        ModFoliagePlacerTypes.FOLIAGE_PLACER_TYPE.register(modEventBus);
+        ModMobEffects.register(modEventBus);
+        ModPotions.register(modEventBus);
+        ModEntityDataSerializers.register(modEventBus);
+        ModCrabVariants.register(modEventBus);
+        ModAttributes.ATTRIBUTES.register(modEventBus);
     }
 
     public interface Keys {

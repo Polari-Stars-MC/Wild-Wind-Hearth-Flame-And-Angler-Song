@@ -7,7 +7,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class ModCrabVariants {
-    public static final DeferredRegister<CrabVariant> CRAB_VARIANTS = DeferredRegister.create(ModRegistries.CRAB_VARIANT, WildWindMod.MOD_ID);
+    public static final DeferredRegister<CrabVariant> CRAB_VARIANTS = DeferredRegister.create(ModRegistries.CRAB_VARIANTS, WildWindMod.MOD_ID);
 
     public static final DeferredHolder<CrabVariant, CrabVariant> TEMPERATE = register("temperate");
     public static final DeferredHolder<CrabVariant, CrabVariant> COLD = register("cold");

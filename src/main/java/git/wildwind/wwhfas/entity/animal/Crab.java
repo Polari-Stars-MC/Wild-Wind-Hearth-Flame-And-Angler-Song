@@ -225,7 +225,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Animal.createMobAttributes()
+        return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 10.0d)
                 .add(Attributes.MOVEMENT_SPEED, 0.22d)
                 .add(Attributes.ATTACK_DAMAGE, 10.0d)
@@ -347,7 +347,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
             CrabVariant.CODEC
                     .parse(NbtOps.INSTANCE, tag.get("Variant"))
                     .resultOrPartial(LOGGER::error)
-                    .ifPresent(variant -> this.setVariant(ModRegistries.CRAB_VARIANT.wrapAsHolder(variant)));
+                    .ifPresent(variant -> this.setVariant(ModRegistries.CRAB_VARIANTS.wrapAsHolder(variant)));
         }
     }
 
@@ -429,7 +429,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
             CrabVariant.CODEC
                     .parse(NbtOps.INSTANCE, tag.get("Variant"))
                     .resultOrPartial(LOGGER::error)
-                    .ifPresent(variant -> this.setVariant(ModRegistries.CRAB_VARIANT.wrapAsHolder(variant)));
+                    .ifPresent(variant -> this.setVariant(ModRegistries.CRAB_VARIANTS.wrapAsHolder(variant)));
         }
         this.setFromBucket(tag.getBoolean("FromBucket"));
     }

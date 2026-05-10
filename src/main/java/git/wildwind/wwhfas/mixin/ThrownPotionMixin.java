@@ -16,7 +16,6 @@ public abstract class ThrownPotionMixin {
     @Inject(method = "applyWater", at = @At("TAIL"))
     private void applyWaterForCrab(CallbackInfo ci, @Local AABB waterArea) {
         Level level = ((ThrownPotion) (Object) this).level();
-
         for (Crab crab : level.getEntitiesOfClass(Crab.class, waterArea)) {
             crab.rehydrate();
         }

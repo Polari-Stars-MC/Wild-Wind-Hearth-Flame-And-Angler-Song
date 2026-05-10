@@ -3,6 +3,7 @@ package git.wildwind.wwhfas.datagen.provider;
 import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.block.ModBlocks;
 import git.wildwind.wwhfas.block.ModTerrainBlocks;
+import git.wildwind.wwhfas.registry.ModAttributes;
 import git.wildwind.wwhfas.registry.ModEntities;
 import git.wildwind.wwhfas.registry.ModItems;
 import git.wildwind.wwhfas.registry.ModMobEffects;
@@ -29,6 +30,7 @@ public class ModLangProvider extends LanguageProvider {
         addItems();
         addEffects();
         addEntity();
+        addAttribute();
     }
 
     private void addItems() {
@@ -39,11 +41,15 @@ public class ModLangProvider extends LanguageProvider {
     }
 
     private void addEffects() {
-        addEffectAndPotion(ModMobEffects.EXTENSION, text("Extension", "延展"));
+        addEffectAndPotion(ModMobEffects.REACH, text("Reach", "延展"));
     }
 
     private void addEntity() {
         addEntityType(ModEntities.CRAB, text("Crab", "螃蟹"));
+    }
+
+    private void addAttribute() {
+        add("attributes.wwhfas." + ModAttributes.EXTRA_ITEM_PICKUP_RANGE.getId().getPath(), text("Extra Item Pickup Range", "额外物品拾取距离"));
     }
 
     private void addWoodSet(ModBlocks.WoodSet woodSet, ModItems.WoodItems woodItems, String baseName) {
@@ -139,11 +145,18 @@ public class ModLangProvider extends LanguageProvider {
     }
 
     private void addEffectAndPotion(DeferredHolder<MobEffect, MobEffect> effect, String text) {
+        addEffectAndPotion(effect, text, text);
+    }
+
+    private void addEffectAndPotion(DeferredHolder<MobEffect, MobEffect> effect, String text, String tippedArrowText) {
         String effectName = effect.getId().getPath();
         String potionText = "en_us".equals(this.locale) ? "Potion of " + text : text + "药水";
+        tippedArrowText = "en_us".equals(this.locale) ? "Arrow of " + tippedArrowText : tippedArrowText + "之箭";
+
         addEffect(effect, text);
         add("item.minecraft.potion.effect." + effectName, potionText);
         add("item.minecraft.splash_potion.effect." + effectName, text("Splash ", "喷溅型") + potionText);
         add("item.minecraft.lingering_potion.effect." + effectName, text("Lingering ", "滞留型") + potionText);
+        add("item.minecraft.tipped_arrow.effect." + effectName, tippedArrowText);
     }
 }

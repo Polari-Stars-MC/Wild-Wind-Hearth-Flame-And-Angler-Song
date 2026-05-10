@@ -2,6 +2,7 @@ package git.wildwind.wwhfas.datagen;
 
 import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.datagen.provider.*;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
@@ -9,6 +10,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 public final class ModDataGen {
     private ModDataGen() {
@@ -21,36 +23,37 @@ public final class ModDataGen {
     private static void gatherData(GatherDataEvent event) {
         var generator = event.getGenerator();
         PackOutput output = generator.getPackOutput();
-        ExistingFileHelper existing = event.getExistingFileHelper();
+        ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
+        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
-        var blockTags = new ModBlockTagsProvider(output, event.getLookupProvider(), existing);
+        var blockTags = new ModBlockTagsProvider(output, lookupProvider, existingFileHelper);
 
-        generator.addProvider(event.includeClient(), new ModBlockStateProvider(output, existing));
-        generator.addProvider(event.includeClient(), new ModItemModelProvider(output, existing));
+        generator.addProvider(event.includeClient(), new ModBlockStateProvider(output, existingFileHelper));
+        generator.addProvider(event.includeClient(), new ModItemModelProvider(output, existingFileHelper));
         generator.addProvider(event.includeClient(), new ModLangProvider(output, "en_us"));
         generator.addProvider(event.includeClient(), new ModLangProvider(output, "zh_cn"));
-        generator.addProvider(event.includeServer(), new ModLootTableProvider(output, event.getLookupProvider()));
+        generator.addProvider(event.includeServer(), new ModLootTableProvider(output, lookupProvider));
         generator.addProvider(event.includeServer(), blockTags);
-        generator.addProvider(event.includeServer(), new ModDataMapProvider(output, event.getLookupProvider()));
+        generator.addProvider(event.includeServer(), new ModDataMapProvider(output, lookupProvider));
         generator.addProvider(
                 event.includeServer(),
                 new DatapackBuiltinEntriesProvider(
                         output,
-                        event.getLookupProvider(),
+                        lookupProvider,
                         ModWorldGenProvider.BUILDER,
                         Set.of(WildWindMod.MOD_ID)
                 )
         );
         generator.addProvider(
                 event.includeServer(),
-                new ModConfiguredFeatureProvider(output, event.getLookupProvider(), existing)
+                new ModConfiguredFeatureProvider(output, lookupProvider, existingFileHelper)
         );
         generator.addProvider(
                 event.includeServer(),
-                new ModItemTagsProvider(output, event.getLookupProvider(), blockTags, existing)
+                new ModItemTagsProvider(output, lookupProvider, blockTags, existingFileHelper)
         );
-        generator.addProvider(event.includeServer(), new ModRecipeProvider(output, event.getLookupProvider()));
-        generator.addProvider(event.includeServer(), new ModEntityTypeTagsProvider(output, event.getLookupProvider(), event.getExistingFileHelper()));
-        generator.addProvider(event.includeServer(), new ModBiomeTagsProvider(output, event.getLookupProvider(), event.getExistingFileHelper()));
+        generator.addProvider(event.includeServer(), new ModRecipeProvider(output, lookupProvider));
+        generator.addProvider(event.includeServer(), new ModEntityTypeTagsProvider(output, lookupProvider, existingFileHelper));
+        generator.addProvider(event.includeServer(), new ModBiomeTagsProvider(output, lookupProvider, existingFileHelper));
     }
 }

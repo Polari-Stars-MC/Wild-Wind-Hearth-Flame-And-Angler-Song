@@ -4,6 +4,9 @@
   "package": "git.wildwind.wwhfas.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "LivingEntityMixin",
+    "MobMixin",
+    "PlayerMixin",
     "ThrownPotionMixin"
   ],
   "client": [],
