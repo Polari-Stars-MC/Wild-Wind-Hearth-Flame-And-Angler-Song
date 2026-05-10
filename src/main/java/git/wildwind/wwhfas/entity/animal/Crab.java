@@ -305,6 +305,8 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
 
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        if (spawnType == MobSpawnType.BUCKET) return spawnGroupData;
+
         chooseVariantByBiome(level.getBiome(this.blockPosition()));
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }

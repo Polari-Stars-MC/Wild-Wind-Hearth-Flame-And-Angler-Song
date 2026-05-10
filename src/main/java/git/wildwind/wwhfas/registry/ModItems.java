@@ -1,25 +1,51 @@
 package git.wildwind.wwhfas.registry;
 
+import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.block.ModBlocks;
 import git.wildwind.wwhfas.block.ModTerrainBlocks;
-import git.wildwind.wwhfas.WildWindMod;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.dispenser.BlockSource;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.asm.enumextension.EnumProxy;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public final class ModItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(Registries.ITEM, WildWindMod.MOD_ID);
+
+    public static final DefaultDispenseItemBehavior MOB_BUCKET_DISPENSE_ITEM_BEHAVIOR = new DefaultDispenseItemBehavior() {
+        private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
+
+        @Override
+        public @NotNull ItemStack execute(BlockSource blockSource, ItemStack stack) {
+            DispensibleContainerItem dispensiblecontaineritem = (DispensibleContainerItem) stack.getItem();
+            BlockPos blockpos = blockSource.pos().relative(blockSource.state().getValue(DispenserBlock.FACING));
+            Level level = blockSource.level();
+            if (dispensiblecontaineritem.emptyContents(null, level, blockpos, null, stack)) {
+                dispensiblecontaineritem.checkExtraContent(null, level, stack, blockpos);
+                return this.consumeWithRemainder(blockSource, stack, new ItemStack(Items.BUCKET));
+            } else {
+                return this.defaultDispenseItemBehavior.dispense(blockSource, stack);
+            }
+        }
+    };
 
     public static final WoodItems CINDER = registerWoodItems(ModBlocks.CINDER, ModBoatTypes.CINDER);
     public static final WoodItems EMBER = registerWoodItems(ModBlocks.EMBER, ModBoatTypes.EMBER);
@@ -39,9 +65,6 @@ public final class ModItems {
     public static final DeferredHolder<Item, Item> TINY_CACTUS = blockItem(ModTerrainBlocks.TINY_CACTUS);
 
     public static final List<WoodItems> WOOD_ITEMS = List.of(CINDER, EMBER, AZALEA);
-
-    private ModItems() {
-    }
 
     public static void register(IEventBus modBus) {
         ITEMS.register(modBus);
@@ -156,13 +179,11 @@ public final class ModItems {
 
 
     public static final DeferredHolder<Item, MobBucketItem> CRAB_BUCKET =
-            ITEMS.register("crab_bucket",
-                    () -> new MobBucketItem(
-                            ModEntities.CRAB.get(),
-                            Fluids.WATER,
-                            SoundEvents.BUCKET_EMPTY_FISH,
-                            new Item.Properties().stacksTo(1)
-                    ));
+            ITEMS.register("crab_bucket", () -> registerMobBucket(
+                    ModEntities.CRAB.get(),
+                    Fluids.WATER,
+                    SoundEvents.BUCKET_EMPTY)
+            );
 
     public static final DeferredHolder<Item, Item> CRAB_CLAW =
             ITEMS.register("crab_claw",
@@ -177,4 +198,15 @@ public final class ModItems {
                     ));
 
 
+    private static MobBucketItem registerMobBucket(EntityType<?> type, Fluid fluid, SoundEvent soundEvent) {
+        MobBucketItem item = new MobBucketItem(
+                type,
+                fluid,
+                soundEvent,
+                new Item.Properties().stacksTo(1)
+        );
+
+        DispenserBlock.registerBehavior(item, MOB_BUCKET_DISPENSE_ITEM_BEHAVIOR);
+        return item;
+    }
 }
