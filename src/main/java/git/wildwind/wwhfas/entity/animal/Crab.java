@@ -21,6 +21,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -305,13 +306,15 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         if (spawnType == MobSpawnType.BUCKET) return spawnGroupData;
 
-        chooseVariantByBiome(level.getBiome(this.blockPosition()));
+        this.setVariant(getVariantByBiome(level.getBiome(this.blockPosition())));
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
 
-    private void chooseVariantByBiome(Holder<Biome> biome) {
-        if (biome.is(ModBiomeTags.SPAWNS_WARM_VARIANT_CRABS)) this.setVariant(ModCrabVariants.WARM);
-        if (biome.is(ModBiomeTags.SPAWNS_COLD_VARIANT_CRABS)) this.setVariant(ModCrabVariants.COLD);
+    protected static Holder<CrabVariant> getVariantByBiome(Holder<Biome> biome) {
+        if (biome.is(ModBiomeTags.SPAWNS_WARM_VARIANT_CRABS)) return ModCrabVariants.WARM;
+        if (biome.is(ModBiomeTags.SPAWNS_COLD_VARIANT_CRABS)) return ModCrabVariants.COLD;
+
+        return ModCrabVariants.TEMPERATE;
     }
 
     @Override
@@ -409,7 +412,18 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
     public @Nullable AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
         Crab crab = ModEntities.CRAB.get().create(level);
         if (crab != null) {
-            crab.chooseVariantByBiome(level.getBiome(this.blockPosition()));
+            var variantList = SimpleWeightedRandomList.<Holder<CrabVariant>>builder();
+            variantList.add(this.getVariant());
+            if (otherParent instanceof Crab otherCrab) {
+                variantList.add(otherCrab.getVariant());
+            }
+            variantList.add(getVariantByBiome(level.getBiome(this.blockPosition())));
+
+            Holder<CrabVariant> variant = variantList
+                    .build()
+                    .getRandomValue(crab.getRandom())
+                    .orElse(ModCrabVariants.TEMPERATE);
+            crab.setVariant(variant);
         }
 
         return crab;
