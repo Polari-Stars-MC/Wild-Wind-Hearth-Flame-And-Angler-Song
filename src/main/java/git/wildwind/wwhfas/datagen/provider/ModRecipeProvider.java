@@ -2,16 +2,13 @@ package git.wildwind.wwhfas.datagen.provider;
 
 import git.wildwind.wwhfas.block.ModBlocks;
 import git.wildwind.wwhfas.registry.ModItems;
-import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.recipes.*;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.CompletableFuture;
 
 public class ModRecipeProvider extends RecipeProvider {
     public ModRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
@@ -30,7 +27,7 @@ public class ModRecipeProvider extends RecipeProvider {
     private void buildCraftingTable(RecipeOutput recipeOutput) {
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.OMNI_CLAW.get())
                 .define('I', Items.COPPER_INGOT)
-                .define('C', ModItems.OMNI_CLAW.get())
+                .define('C', ModItems.CRAB_CLAW.get())
                 .pattern("ICC")
                 .pattern("IIC")
                 .pattern("III")

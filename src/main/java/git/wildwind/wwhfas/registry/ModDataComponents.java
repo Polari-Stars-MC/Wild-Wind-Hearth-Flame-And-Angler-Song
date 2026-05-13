@@ -1,6 +1,7 @@
 package git.wildwind.wwhfas.registry;
 
 import git.wildwind.wwhfas.WildWindMod;
+import git.wildwind.wwhfas.item.component.OmniClawTools;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -27,6 +28,13 @@ public final class ModDataComponents {
             "arrow_head",
             builder -> builder.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC)
         );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<OmniClawTools>> OMNI_CLAW_TOOLS =
+            DATA_COMPONENTS.registerComponentType("omni_claw_tools",
+                    builder -> builder
+                            .persistent(OmniClawTools.CODEC)
+                            .networkSynchronized(OmniClawTools.STREAM_CODEC)
+    );
 
     private ModDataComponents() {
     }

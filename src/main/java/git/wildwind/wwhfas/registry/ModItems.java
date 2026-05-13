@@ -3,6 +3,8 @@ package git.wildwind.wwhfas.registry;
 import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.block.ModBlocks;
 import git.wildwind.wwhfas.block.ModTerrainBlocks;
+import git.wildwind.wwhfas.item.OmniClawItem;
+import git.wildwind.wwhfas.item.component.OmniClawTools;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.dispenser.BlockSource;
@@ -193,8 +195,11 @@ public final class ModItems {
 
     public static final DeferredHolder<Item, Item> OMNI_CLAW =
             ITEMS.register("omni_claw",
-                    () -> new Item(
-                            new Item.Properties().stacksTo(1)
+                    () -> new OmniClawItem(
+                            new Item.Properties()
+                                    .stacksTo(1)
+                                    .attributes(OmniClawItem.createAttributes())
+                                    .component(ModDataComponents.OMNI_CLAW_TOOLS, OmniClawTools.EMPTY)
                     ));
 
 

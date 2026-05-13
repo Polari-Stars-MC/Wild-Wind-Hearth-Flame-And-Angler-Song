@@ -3,6 +3,8 @@ package git.wildwind.wwhfas.client;
 import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.block.ModWoodType;
 import git.wildwind.wwhfas.client.screen.ArrowFletchingScreen;
+import git.wildwind.wwhfas.client.screen.inventory.tooltip.ClientOmniClawTooltip;
+import git.wildwind.wwhfas.item.component.OmniClawTools;
 import git.wildwind.wwhfas.registry.ModBlockEntities;
 import git.wildwind.wwhfas.registry.ModDataComponents;
 import git.wildwind.wwhfas.registry.ModMenuTypes;
@@ -19,6 +21,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
@@ -31,6 +34,7 @@ public class ModClientHooks {
         modBus.addListener(ModClientHooks::onClientSetup);
         modBus.addListener(ModClientHooks::onRegisterRenderers);
         modBus.addListener(ModClientHooks::onRegisterScreens);
+        modBus.addListener(ModClientHooks::onRegisterClientTooltipComponent);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(ModClientHooks::onTooltip);
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
     }
@@ -61,6 +65,10 @@ public class ModClientHooks {
         addPartTooltip(event, "tooltip.wwhfas.arrow.tail", stack.get(ModDataComponents.ARROW_TAIL.get()));
         addPartTooltip(event, "tooltip.wwhfas.arrow.shaft", stack.get(ModDataComponents.ARROW_SHAFT.get()));
         addPartTooltip(event, "tooltip.wwhfas.arrow.head", stack.get(ModDataComponents.ARROW_HEAD.get()));
+    }
+
+    public static void onRegisterClientTooltipComponent(RegisterClientTooltipComponentFactoriesEvent event) {
+        event.register(OmniClawTools.class, ClientOmniClawTooltip::new);
     }
 
     private static void addPartTooltip(ItemTooltipEvent event, String key, ResourceLocation material) {
