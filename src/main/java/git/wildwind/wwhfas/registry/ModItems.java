@@ -190,7 +190,7 @@ public final class ModItems {
     public static final DeferredHolder<Item, Item> CRAB_CLAW =
             ITEMS.register("crab_claw",
                     () -> new Item(
-                            new Item.Properties().stacksTo(1)
+                            new Item.Properties()
                     ));
 
     public static final DeferredHolder<Item, Item> OMNI_CLAW =
@@ -202,6 +202,17 @@ public final class ModItems {
                                     .component(ModDataComponents.OMNI_CLAW_TOOLS, OmniClawTools.EMPTY)
                     ));
 
+    public static final DeferredHolder<Item, Item> REED =
+            ITEMS.register("reed",
+                    () -> new Item(
+                            new Item.Properties()
+                    ));
+
+    public static final DeferredHolder<Item, Item> CATTAIL =
+            ITEMS.register("cattail",
+                    () -> new Item(
+                            new Item.Properties()
+                    ));
 
     private static MobBucketItem registerMobBucket(EntityType<?> type, Fluid fluid, SoundEvent soundEvent) {
         MobBucketItem item = new MobBucketItem(

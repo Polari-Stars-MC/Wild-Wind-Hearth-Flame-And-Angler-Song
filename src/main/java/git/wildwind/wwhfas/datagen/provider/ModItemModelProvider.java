@@ -25,6 +25,8 @@ public class ModItemModelProvider extends ItemModelProvider {
                 .texture("layer0", modLoc("item/crab_bucket"));
 
         basicItem(ModItems.CRAB_CLAW.get());
+        basicItem(ModItems.REED.get());
+        basicItem(ModItems.CATTAIL.get());
     }
 
     private void registerWoodSet(ModBlocks.WoodSet woodSet) {

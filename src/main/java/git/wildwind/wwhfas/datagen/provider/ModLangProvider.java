@@ -38,6 +38,8 @@ public class ModLangProvider extends LanguageProvider {
         addItem(ModItems.CRAB_BUCKET, text("Bucket of Crab", "螃蟹桶"));
         addItem(ModItems.CRAB_CLAW, text("Crab Claw", "蟹钳"));
         addItem(ModItems.OMNI_CLAW, text("Omni Craw", "万用蟹钳"));
+        addItem(ModItems.REED, text("Reed", "芦苇"));
+        addItem(ModItems.CATTAIL, text("Cattail", "香蒲"));
     }
 
     private void addEffects() {
