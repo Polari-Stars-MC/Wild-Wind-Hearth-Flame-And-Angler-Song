@@ -4,15 +4,14 @@ import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.item.component.OmniClawTools;
 import git.wildwind.wwhfas.registry.ModAttributes;
 import git.wildwind.wwhfas.registry.ModDataComponents;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.entity.SlotAccess;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -27,8 +26,9 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class OmniClawItem extends Item {
     public static final ResourceLocation BLOCK_INTERACTION_RANGE_ID = WildWindMod.id("omni_claw_block_interaction_range");
@@ -39,22 +39,70 @@ public class OmniClawItem extends Item {
         super(properties);
     }
 
-    public ItemStack getLastSelectedTool(ItemStack omniClawStack) {
-        if (!omniClawStack.has(ModDataComponents.OMNI_CLAW_TOOLS)) return omniClawStack;
+    @Override
+    public void setDamage(ItemStack stack, int damage) {
+        ItemStack tool = getLastSelectedTool(stack);
+        if (tool.isEmpty()) {
+            super.setDamage(stack, damage);
+            return;
+        }
+
+        ItemStack copiedTool = tool.copy();
+        copiedTool.setDamageValue(damage);
+        OmniClawTools tools = stack.get(ModDataComponents.OMNI_CLAW_TOOLS);
+        stack.set(ModDataComponents.OMNI_CLAW_TOOLS, tools
+                .toMutable()
+                .set(copiedTool, tools.indexOf(tool))
+                .toImmutable()
+        );
+    }
+
+    @Override
+    public int getDamage(ItemStack omniStack) {
+        return toolOr(omniStack, stack -> stack.getItem().getDamage(stack), () -> super.getDamage(omniStack));
+    }
+
+    @Override
+    public int getMaxDamage(ItemStack omniStack) {
+        return toolOr(omniStack, stack -> stack.getItem().getMaxDamage(stack), () -> super.getMaxDamage(omniStack));
+    }
+
+    @Override
+    public boolean isDamageable(ItemStack omniStack) {
+        return toolOr(omniStack, stack -> stack.getItem().isDamageable(stack), () -> super.isDamageable(omniStack));
+    }
+
+    public static <T> T toolOr(ItemStack omniStack, Function<ItemStack, T> resultFunction, Supplier<T> or) {
+        ItemStack tool = getLastSelectedTool(omniStack);
+        return tool.isEmpty() ? or.get() : resultFunction.apply(tool);
+    }
+
+    public static ItemStack getLastSelectedTool(ItemStack omniClawStack) {
+        if (!omniClawStack.has(ModDataComponents.OMNI_CLAW_TOOLS)) return ItemStack.EMPTY;
 
         OmniClawTools tools = omniClawStack.get(ModDataComponents.OMNI_CLAW_TOOLS);
         return tools.getTools().get(tools.getLastSelected());
     }
 
-    public ItemStack getToolFor(ItemStack omniClawStack, BlockState state) {
-        if (!omniClawStack.has(ModDataComponents.OMNI_CLAW_TOOLS)) return omniClawStack;
+    public static ItemStack getToolFor(ItemStack omniClawStack, BlockState state) {
+        if (!omniClawStack.has(ModDataComponents.OMNI_CLAW_TOOLS)) return ItemStack.EMPTY;
 
         OmniClawTools tools = omniClawStack.get(ModDataComponents.OMNI_CLAW_TOOLS);
         ItemStack result = tools.getToolFor(state);
         int lastSelected = tools.indexOf(result);
-        if (lastSelected != -1) omniClawStack.update(ModDataComponents.OMNI_CLAW_TOOLS, tools, operator -> operator.withLastSelected(lastSelected));
+        if (lastSelected != -1) omniClawStack.update(ModDataComponents.OMNI_CLAW_TOOLS, tools, operator -> operator.withSelectIndex(lastSelected));
 
         return result;
+    }
+
+    @Override
+    public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity miningEntity) {
+        if (!level.isClientSide && !getToolFor(stack, state).isEmpty()) {
+            stack.hurtAndBreak(1, miningEntity, EquipmentSlot.MAINHAND);
+            return true;
+        }
+
+        return super.mineBlock(stack, level, state, pos, miningEntity);
     }
 
     public static ItemAttributeModifiers createAttributes() {
@@ -66,18 +114,18 @@ public class OmniClawItem extends Item {
     }
 
     @Override
-    public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {
-        return getToolFor(stack, state).isCorrectToolForDrops(state);
+    public boolean isCorrectToolForDrops(ItemStack omniStack, BlockState state) {
+        return toolOr(omniStack, stack -> stack.isCorrectToolForDrops(state), () -> super.isCorrectToolForDrops(omniStack, state));
     }
 
     @Override
-    public ItemEnchantments getAllEnchantments(ItemStack stack, HolderLookup.RegistryLookup<Enchantment> lookup) {
-        return this.getLastSelectedTool(stack).getAllEnchantments(lookup);
+    public ItemEnchantments getAllEnchantments(ItemStack omniStack, HolderLookup.RegistryLookup<Enchantment> lookup) {
+        return toolOr(omniStack, stack -> stack.getAllEnchantments(lookup), () -> super.getAllEnchantments(omniStack, lookup));
     }
 
     @Override
-    public float getDestroySpeed(ItemStack stack, BlockState state) {
-        return getToolFor(stack, state).getDestroySpeed(state);
+    public float getDestroySpeed(ItemStack omniStack, BlockState state) {
+        return toolOr(omniStack, stack -> stack.getDestroySpeed(state), () -> super.getDestroySpeed(omniStack, state));
     }
 
     @Override
@@ -98,17 +146,7 @@ public class OmniClawItem extends Item {
                 stack.update(
                         ModDataComponents.OMNI_CLAW_TOOLS,
                         toolsComponent,
-                        tools -> {
-                            if (tools.isEmpty()) return tools;
-                            int index = tools.getLastSelected();
-                            List<ItemStack> stacks = tools.getTools();
-                            for (int i = 0; i < stacks.size(); i++) {
-                                index = (index + 1) % stacks.size();
-                                if (!stacks.get(index).isEmpty()) break;
-                            }
-
-                            return tools.withLastSelected(index);
-                        }
+                        tools -> tools.toMutable().scrollSelectToNoEmptyItem().toImmutable()
                 );
 
                 return InteractionResultHolder.success(stack);

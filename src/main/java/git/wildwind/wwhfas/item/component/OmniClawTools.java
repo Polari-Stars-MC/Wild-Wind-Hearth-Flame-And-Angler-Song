@@ -12,7 +12,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.Collection;
 import java.util.List;
 
-// TODO: 修复同步问题
 public class OmniClawTools implements TooltipComponent {
     public static final OmniClawTools EMPTY = new OmniClawTools(List.of(), 0);
     public static final Codec<OmniClawTools> CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -98,8 +97,8 @@ public class OmniClawTools implements TooltipComponent {
         return 31 * ItemStack.hashStackList(this.toolList) + this.lastSelected;
     }
 
-    public OmniClawTools withLastSelected(int lastSelected) {
-        return new OmniClawTools(this.toolList, lastSelected);
+    public OmniClawTools withSelectIndex(int index) {
+        return new OmniClawTools(this.toolList, index);
     }
 
     public Mutable toMutable() {
@@ -114,6 +113,28 @@ public class OmniClawTools implements TooltipComponent {
             this.stacks = stacks.toArray(new ItemStack[4]);
             this.lastSelected = lastSelected;
         }
+
+        public Mutable set(ItemStack stack, int index) {
+            this.stacks[index] = stack;
+            return this;
+        }
+
+        public Mutable select(int index) {
+            this.lastSelected = index;
+            return this;
+        }
+
+        public Mutable scrollSelectToNoEmptyItem() {
+            int index = this.lastSelected + 1;
+            for (int i = 0; i < this.stacks.length; i++) {
+                index = (index + i) % this.stacks.length;
+                ItemStack stack = this.stacks[index];
+                if (!stack.isEmpty()) return select(index);
+            }
+
+            return select(0);
+        }
+
 
         public ItemStack insert(ItemStack stack) {
             Item item = stack.getItem();
