@@ -19,7 +19,7 @@ import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStatePr
 import net.minecraft.world.level.levelgen.feature.trunkplacers.BendingTrunkPlacer;
 import com.mojang.serialization.Codec;
 import git.wildwind.wwhfas.WildWindMod;
-import git.wildwind.wwhfas.block.ModBlocks;
+import git.wildwind.wwhfas.registry.ModBlocks;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.data.JsonCodecProvider;
 

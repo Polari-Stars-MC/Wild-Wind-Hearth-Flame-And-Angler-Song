@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "EnchantmentHelperMixin",
+    "GrassBlockMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
     "MobMixin",

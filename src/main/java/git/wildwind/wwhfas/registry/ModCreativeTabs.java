@@ -50,8 +50,8 @@ public final class ModCreativeTabs {
         output.accept(ModItems.OMNI_CLAW.get().getDefaultInstance());
         output.accept(ModItems.CRAB_SPAWN_EGG.get().getDefaultInstance());
 
-        output.accept(ModItems.REED.get());
-        output.accept(ModItems.CATTAIL.get());
+        output.accept(ModItems.REEDS.get());
+        output.accept(ModItems.CATTAILS.get());
     }
 
     private static void addWoodBuildingSet(CreativeModeTab.Output output, ModItems.WoodItems woodItems) {

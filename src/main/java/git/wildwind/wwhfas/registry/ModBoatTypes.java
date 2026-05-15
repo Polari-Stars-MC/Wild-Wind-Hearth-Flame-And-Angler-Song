@@ -1,7 +1,7 @@
 package git.wildwind.wwhfas.registry;
 
 import git.wildwind.wwhfas.WildWindMod;
-import git.wildwind.wwhfas.block.ModBlocks;
+
 import java.util.function.Supplier;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.Item;

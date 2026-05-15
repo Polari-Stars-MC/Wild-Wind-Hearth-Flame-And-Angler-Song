@@ -1,7 +1,7 @@
 package git.wildwind.wwhfas.datagen.provider;
 
 import git.wildwind.wwhfas.WildWindMod;
-import git.wildwind.wwhfas.block.ModBlocks;
+import git.wildwind.wwhfas.registry.ModBlocks;
 import git.wildwind.wwhfas.block.ModTerrainBlocks;
 import git.wildwind.wwhfas.registry.ModItems;
 import net.minecraft.data.PackOutput;
@@ -25,8 +25,8 @@ public class ModItemModelProvider extends ItemModelProvider {
                 .texture("layer0", modLoc("item/crab_bucket"));
 
         basicItem(ModItems.CRAB_CLAW.get());
-        basicItem(ModItems.REED.get());
-        basicItem(ModItems.CATTAIL.get());
+        basicItem(ModItems.REEDS.get());
+        basicItem(ModItems.CATTAILS.get());
     }
 
     private void registerWoodSet(ModBlocks.WoodSet woodSet) {

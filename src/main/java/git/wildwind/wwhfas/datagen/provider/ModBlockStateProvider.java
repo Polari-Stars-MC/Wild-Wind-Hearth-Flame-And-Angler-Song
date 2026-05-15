@@ -1,7 +1,7 @@
 package git.wildwind.wwhfas.datagen.provider;
 
 import git.wildwind.wwhfas.WildWindMod;
-import git.wildwind.wwhfas.block.ModBlocks;
+import git.wildwind.wwhfas.registry.ModBlocks;
 import git.wildwind.wwhfas.block.ModTerrainBlocks;
 import git.wildwind.wwhfas.block.WallScorchedTwigBlock;
 import net.minecraft.core.Direction;
@@ -74,7 +74,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         );
 
         if (woodSet.hasTreeBlocks()) {
-            simpleBlockWithItem((LeavesBlock) woodSet.leaves().get(), cubeAll(woodSet.leaves().get()));
+            simpleBlockWithItem(woodSet.leaves().get(), cubeAll(woodSet.leaves().get()));
             simpleBlock(
                 woodSet.sapling().get(),
                 models().cross(name + "_sapling", modLoc("block/" + name + "_sapling")).renderType("cutout")

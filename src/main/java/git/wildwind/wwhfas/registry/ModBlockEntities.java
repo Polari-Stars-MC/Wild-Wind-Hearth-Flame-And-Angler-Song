@@ -1,6 +1,5 @@
 package git.wildwind.wwhfas.registry;
 
-import git.wildwind.wwhfas.block.ModBlocks;
 import git.wildwind.wwhfas.block.entity.ModHangingSignBlockEntity;
 import git.wildwind.wwhfas.block.entity.ModSignBlockEntity;
 import git.wildwind.wwhfas.WildWindMod;

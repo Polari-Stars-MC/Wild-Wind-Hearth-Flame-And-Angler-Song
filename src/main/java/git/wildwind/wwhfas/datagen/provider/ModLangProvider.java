@@ -1,7 +1,7 @@
 package git.wildwind.wwhfas.datagen.provider;
 
 import git.wildwind.wwhfas.WildWindMod;
-import git.wildwind.wwhfas.block.ModBlocks;
+import git.wildwind.wwhfas.registry.ModBlocks;
 import git.wildwind.wwhfas.block.ModTerrainBlocks;
 import git.wildwind.wwhfas.registry.ModAttributes;
 import git.wildwind.wwhfas.registry.ModEntities;
@@ -38,8 +38,8 @@ public class ModLangProvider extends LanguageProvider {
         addItem(ModItems.CRAB_BUCKET, text("Bucket of Crab", "螃蟹桶"));
         addItem(ModItems.CRAB_CLAW, text("Crab Claw", "蟹钳"));
         addItem(ModItems.OMNI_CLAW, text("Omni Craw", "万用蟹钳"));
-        addItem(ModItems.REED, text("Reed", "芦苇"));
-        addItem(ModItems.CATTAIL, text("Cattail", "香蒲"));
+        addItem(ModItems.REEDS, text("Reed", "芦苇"));
+        addItem(ModItems.CATTAILS, text("Cattail", "香蒲"));
     }
 
     private void addEffects() {

@@ -1,6 +1,6 @@
 package git.wildwind.wwhfas.datagen.provider;
 
-import git.wildwind.wwhfas.block.ModBlocks;
+import git.wildwind.wwhfas.registry.ModBlocks;
 import git.wildwind.wwhfas.registry.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -32,6 +32,16 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern("IIC")
                 .pattern("III")
                 .unlockedBy("has_" + ModItems.CRAB_CLAW.getId().getPath(), has(ModItems.OMNI_CLAW.get()))
+                .save(recipeOutput);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.PAPER)
+                .requires(ModItems.REEDS.get(), 3)
+                .unlockedBy("has" + ModItems.REEDS.getId().getPath(), has(ModItems.REEDS.get()))
+                .save(recipeOutput);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.STRING)
+                .requires(ModItems.CATTAILS.get(), 2)
+                .unlockedBy("has" + ModItems.CATTAILS.getId().getPath(), has(ModItems.CATTAILS.get()))
                 .save(recipeOutput);
     }
 

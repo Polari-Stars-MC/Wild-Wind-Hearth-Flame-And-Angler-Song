@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "half=lower": {
+      "model": "wwhfas:block/reeds_bottom"
+    },
+    "half=upper": {
+      "model": "wwhfas:block/reeds_top"
+    }
+  }
+}

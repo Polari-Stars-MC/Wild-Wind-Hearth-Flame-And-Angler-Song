@@ -1,6 +1,5 @@
 package git.wildwind.wwhfas.registry;
 
-import git.wildwind.wwhfas.block.ModBlocks;
 import git.wildwind.wwhfas.block.ModTerrainBlocks;
 import git.wildwind.wwhfas.interaction.BlockPropertyBookFactory;
 import git.wildwind.wwhfas.menu.ArrowFletchingMenu;
@@ -56,6 +55,8 @@ public final class ModCommonSetup {
             registerFlammable(ModTerrainBlocks.SCORCHED_GRASS.get(), 60, 100);
             registerFlammable(ModTerrainBlocks.SCORCHED_TWIG.get(), 60, 100);
             registerFlammable(ModTerrainBlocks.SCORCHED_TWIG_WALL.get(), 60, 100);
+            registerFlammable(ModBlocks.REEDS.get(), 60, 100);
+            registerFlammable(ModBlocks.CATTAILS.get(), 60, 100);
         });
     }
 

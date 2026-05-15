@@ -1,7 +1,6 @@
 package git.wildwind.wwhfas.registry;
 
 import git.wildwind.wwhfas.WildWindMod;
-import git.wildwind.wwhfas.block.ModBlocks;
 import git.wildwind.wwhfas.block.ModTerrainBlocks;
 import git.wildwind.wwhfas.item.OmniClawItem;
 import git.wildwind.wwhfas.item.component.OmniClawTools;
@@ -202,15 +201,17 @@ public final class ModItems {
                                     .component(ModDataComponents.OMNI_CLAW_TOOLS, OmniClawTools.EMPTY)
                     ));
 
-    public static final DeferredHolder<Item, Item> REED =
-            ITEMS.register("reed",
-                    () -> new Item(
+    public static final DeferredHolder<Item, Item> REEDS =
+            ITEMS.register("reeds",
+                    () -> new BlockItem(
+                            ModBlocks.REEDS.get(),
                             new Item.Properties()
                     ));
 
-    public static final DeferredHolder<Item, Item> CATTAIL =
-            ITEMS.register("cattail",
-                    () -> new Item(
+    public static final DeferredHolder<Item, Item> CATTAILS =
+            ITEMS.register("cattails",
+                    () -> new BlockItem(
+                            ModBlocks.CATTAILS.get(),
                             new Item.Properties()
                     ));
 

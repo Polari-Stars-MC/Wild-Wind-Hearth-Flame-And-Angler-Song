@@ -1,7 +1,7 @@
 package git.wildwind.wwhfas.datagen.provider;
 
 import git.wildwind.wwhfas.WildWindMod;
-import git.wildwind.wwhfas.block.ModBlocks;
+import git.wildwind.wwhfas.registry.ModBlocks;
 import git.wildwind.wwhfas.block.ModTerrainBlocks;
 import git.wildwind.wwhfas.tag.ModBlockTags;
 import net.minecraft.core.HolderLookup;
@@ -28,6 +28,18 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
+        tag(BlockTags.SWORD_EFFICIENT)
+                .add(ModBlocks.REEDS.get())
+                .add(ModBlocks.CATTAILS.get());
+
+        tag(BlockTags.MINEABLE_WITH_AXE)
+                .add(ModBlocks.REEDS.get())
+                .add(ModBlocks.CATTAILS.get());
+
+        tag(BlockTags.REPLACEABLE_BY_TREES)
+                .add(ModBlocks.REEDS.get())
+                .add(ModBlocks.CATTAILS.get());
+
         tag(ModBlockTags.CRAB_SPAWNABLE_ON)
                 .add(Blocks.MUD)
                 .add(Blocks.MUDDY_MANGROVE_ROOTS);

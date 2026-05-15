@@ -1,7 +1,7 @@
 package git.wildwind.wwhfas.datagen.provider;
 
 import git.wildwind.wwhfas.WildWindMod;
-import git.wildwind.wwhfas.block.ModBlocks;
+import git.wildwind.wwhfas.registry.ModBlocks;
 import git.wildwind.wwhfas.registry.ModItems;
 import git.wildwind.wwhfas.tag.ModItemTags;
 import net.minecraft.core.HolderLookup;

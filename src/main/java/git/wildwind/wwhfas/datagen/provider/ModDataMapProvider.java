@@ -1,6 +1,5 @@
 package git.wildwind.wwhfas.datagen.provider;
 
-import git.wildwind.wwhfas.block.ModBlocks;
 import git.wildwind.wwhfas.registry.ModItems;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
