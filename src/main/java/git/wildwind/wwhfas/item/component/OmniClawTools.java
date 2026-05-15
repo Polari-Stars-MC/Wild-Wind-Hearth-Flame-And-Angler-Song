@@ -8,6 +8,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.ItemAbility;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,25 +17,25 @@ public class OmniClawTools implements TooltipComponent {
     public static final OmniClawTools EMPTY = new OmniClawTools(List.of(), 0);
     public static final Codec<OmniClawTools> CODEC = RecordCodecBuilder.create(i -> i.group(
             ItemStack.OPTIONAL_CODEC.listOf(0, 4).fieldOf("tools").forGetter(OmniClawTools::getTools),
-            Codec.intRange(0, 4).fieldOf("last_selected").forGetter(OmniClawTools::getLastSelected)
+            Codec.intRange(0, 4).fieldOf("selectedTool").forGetter(OmniClawTools::getSelectedToolIndex)
     ).apply(i, OmniClawTools::new));
     public static final StreamCodec<RegistryFriendlyByteBuf, OmniClawTools> STREAM_CODEC = StreamCodec.composite(
             ItemStack.OPTIONAL_STREAM_CODEC.apply(ByteBufCodecs.list()), OmniClawTools::getTools,
-            ByteBufCodecs.VAR_INT, OmniClawTools::getLastSelected,
+            ByteBufCodecs.VAR_INT, OmniClawTools::getSelectedToolIndex,
             OmniClawTools::new
     );
 
     private final List<ItemStack> toolList;
-    private final int lastSelected;
+    private final int selectedTool;
 
-    public OmniClawTools(List<ItemStack> toolStacks, int lastSelected) {
+    public OmniClawTools(List<ItemStack> toolStacks, int selectedTool) {
         this.toolList = List.of(
                 getStackOrEmpty(toolStacks, 0),
                 getStackOrEmpty(toolStacks, 1),
                 getStackOrEmpty(toolStacks, 2),
                 getStackOrEmpty(toolStacks, 3)
         );
-        this.lastSelected = lastSelected;
+        this.selectedTool = selectedTool;
     }
 
     private static ItemStack getStackOrEmpty(List<ItemStack> stacks, int index) {
@@ -55,18 +56,35 @@ public class OmniClawTools implements TooltipComponent {
         return this.toolList;
     }
 
-    public int getLastSelected() {
-        return this.lastSelected;
+    public int getSelectedToolIndex() {
+        return this.selectedTool;
+    }
+
+    public ItemStack getSelectedTool() {
+        return this.toolList.get(this.selectedTool);
     }
 
     public int indexOf(ItemStack stack) {
+        if (stack.isEmpty()) return -1;
+
         return this.toolList.indexOf(stack);
+    }
+
+    public ItemStack getToolByAbility(ItemAbility ability) {
+        ItemStack tool = ItemStack.EMPTY;
+
+        for (ItemStack stack : this.getTools()) {
+            if (stack.isEmpty()) continue;
+            if (stack.canPerformAction(ability)) return stack;
+        }
+
+        return tool;
     }
 
     public ItemStack getToolFor(BlockState state) {
         ItemStack tool = ItemStack.EMPTY;
 
-        for (ItemStack stack : getTools()) {
+        for (ItemStack stack : this.getTools()) {
             if (!tool.isEmpty()) {
                 if (stack.isCorrectToolForDrops(state) && stack.getDestroySpeed(state) > tool.getDestroySpeed(state)) {
                     tool = stack;
@@ -89,12 +107,12 @@ public class OmniClawTools implements TooltipComponent {
 
         return obj instanceof OmniClawTools other
                 && ItemStack.listMatches(this.toolList, other.toolList)
-                && this.lastSelected == other.lastSelected;
+                && this.selectedTool == other.selectedTool;
     }
 
     @Override
     public int hashCode() {
-        return 31 * ItemStack.hashStackList(this.toolList) + this.lastSelected;
+        return 31 * ItemStack.hashStackList(this.toolList) + this.selectedTool;
     }
 
     public OmniClawTools withSelectIndex(int index) {
@@ -102,7 +120,7 @@ public class OmniClawTools implements TooltipComponent {
     }
 
     public Mutable toMutable() {
-        return new Mutable(this.toolList, this.lastSelected);
+        return new Mutable(this.toolList, this.selectedTool);
     }
 
     public static class Mutable {

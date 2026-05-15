@@ -9,8 +9,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -21,10 +20,13 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.ItemAbility;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -81,14 +83,22 @@ public class OmniClawItem extends Item {
         if (!omniClawStack.has(ModDataComponents.OMNI_CLAW_TOOLS)) return ItemStack.EMPTY;
 
         OmniClawTools tools = omniClawStack.get(ModDataComponents.OMNI_CLAW_TOOLS);
-        return tools.getTools().get(tools.getLastSelected());
+        return tools.getTools().get(tools.getSelectedToolIndex());
     }
 
     public static ItemStack getToolFor(ItemStack omniClawStack, BlockState state) {
+        return findToolAndSelect(omniClawStack, tools -> tools.getToolFor(state));
+    }
+
+    public static ItemStack getToolByAbility(ItemStack omniClawStack, ItemAbility ability) {
+        return findToolAndSelect(omniClawStack, tools -> tools.getToolByAbility(ability));
+    }
+
+    private static ItemStack findToolAndSelect(ItemStack omniClawStack, Function<OmniClawTools, ItemStack> selectRule) {
         if (!omniClawStack.has(ModDataComponents.OMNI_CLAW_TOOLS)) return ItemStack.EMPTY;
 
         OmniClawTools tools = omniClawStack.get(ModDataComponents.OMNI_CLAW_TOOLS);
-        ItemStack result = tools.getToolFor(state);
+        ItemStack result = selectRule.apply(tools);
         int lastSelected = tools.indexOf(result);
         if (lastSelected != -1) omniClawStack.update(ModDataComponents.OMNI_CLAW_TOOLS, tools, operator -> operator.withSelectIndex(lastSelected));
 
@@ -129,31 +139,59 @@ public class OmniClawItem extends Item {
     }
 
     @Override
+    public InteractionResult useOn(UseOnContext context) {
+        ItemStack stack = context.getItemInHand();
+        if (!stack.has(ModDataComponents.OMNI_CLAW_TOOLS)) return super.useOn(context);
+
+        OmniClawTools tools = stack.get(ModDataComponents.OMNI_CLAW_TOOLS);
+
+        ItemStack selectedTool = tools.getSelectedTool();
+        if (!selectedTool.isEmpty()) {
+            InteractionResult result = handleToolUseOn(stack, context, selectedTool, tools);
+            if (result.consumesAction()) return result;
+        }
+
+        for (ItemStack toolStack : tools.getTools()) {
+            if (toolStack.isEmpty()) continue;
+
+            InteractionResult result = handleToolUseOn(stack, context, toolStack, tools);
+            if (result.consumesAction()) return result;
+        }
+
+        return super.useOn(context);
+    }
+
+    private static @NotNull InteractionResult handleToolUseOn(ItemStack omniClawStack, UseOnContext context, ItemStack toolStack, OmniClawTools tools) {
+        ItemStack copiedToolStack = toolStack.copy();
+        UseOnContext toolContext = new UseOnContext(
+                context.getLevel(),
+                context.getPlayer(),
+                context.getHand(),
+                copiedToolStack,
+                context.hitResult
+        );
+
+        InteractionResult result = copiedToolStack.useOn(toolContext);
+        if (result.consumesAction()) {
+            if (!ItemStack.isSameItemSameComponents(toolStack, copiedToolStack)) {
+                int toolIndex = tools.indexOf(toolStack);
+                omniClawStack.set(ModDataComponents.OMNI_CLAW_TOOLS, tools
+                        .toMutable()
+                        .set(copiedToolStack, toolIndex)
+                        .select(toolIndex)
+                        .toImmutable()
+                );
+            }
+        }
+
+        return result;
+    }
+
+    @Override
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
         return !stack.has(DataComponents.HIDE_TOOLTIP) && !stack.has(DataComponents.HIDE_ADDITIONAL_TOOLTIP)
                 ? Optional.ofNullable(stack.get(ModDataComponents.OMNI_CLAW_TOOLS))
                 : Optional.empty();
-    }
-
-    @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
-        if (player.isShiftKeyDown()) {
-            ItemStack stack = player.getItemInHand(usedHand);
-            if (stack.has(ModDataComponents.OMNI_CLAW_TOOLS)) {
-                OmniClawTools toolsComponent = stack.get(ModDataComponents.OMNI_CLAW_TOOLS);
-                if (toolsComponent.isEmpty()) return super.use(level, player, usedHand);
-
-                stack.update(
-                        ModDataComponents.OMNI_CLAW_TOOLS,
-                        toolsComponent,
-                        tools -> tools.toMutable().scrollSelectToNoEmptyItem().toImmutable()
-                );
-
-                return InteractionResultHolder.success(stack);
-            }
-        }
-
-        return super.use(level, player, usedHand);
     }
 
     @Override

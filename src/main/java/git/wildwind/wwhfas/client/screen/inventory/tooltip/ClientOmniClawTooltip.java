@@ -61,7 +61,7 @@ public class ClientOmniClawTooltip implements ClientTooltipComponent {
             } else {
                 guiGraphics.renderItem(stack, x + 1, y + 1);
                 guiGraphics.renderItemDecorations(font, stack, x + 1, y + 1);
-                if (i == this.tools.getLastSelected()) {
+                if (i == this.tools.getSelectedToolIndex()) {
                     AbstractContainerScreen.renderSlotHighlight(guiGraphics, x + 1, y + 1, 0);
                 }
             }
