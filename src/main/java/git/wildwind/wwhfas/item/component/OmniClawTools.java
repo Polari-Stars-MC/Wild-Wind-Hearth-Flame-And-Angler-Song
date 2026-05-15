@@ -52,6 +52,15 @@ public class OmniClawTools implements TooltipComponent {
         return true;
     }
 
+    public int getNonEmptyItemCount() {
+        int count = 0;
+        for (ItemStack tool : this.getTools()) {
+            if (!tool.isEmpty()) count++;
+        }
+
+        return count;
+    }
+
     public List<ItemStack> getTools() {
         return this.toolList;
     }
@@ -125,11 +134,23 @@ public class OmniClawTools implements TooltipComponent {
 
     public static class Mutable {
         private final ItemStack[] stacks;
-        private int lastSelected;
+        private int selectedTool;
 
-        private Mutable(Collection<ItemStack> stacks, int lastSelected) {
+        private Mutable(Collection<ItemStack> stacks, int selectedTool) {
             this.stacks = stacks.toArray(new ItemStack[4]);
-            this.lastSelected = lastSelected;
+            this.selectedTool = selectedTool;
+        }
+
+        public int size() {
+            return this.stacks.length;
+        }
+
+        public int getSelectedToolIndex() {
+            return this.selectedTool;
+        }
+
+        public ItemStack get(int index) {
+            return this.stacks[index];
         }
 
         public Mutable set(ItemStack stack, int index) {
@@ -138,12 +159,12 @@ public class OmniClawTools implements TooltipComponent {
         }
 
         public Mutable select(int index) {
-            this.lastSelected = index;
+            this.selectedTool = index;
             return this;
         }
 
         public Mutable scrollSelectToNoEmptyItem() {
-            int index = this.lastSelected + 1;
+            int index = this.selectedTool + 1;
             for (int i = 0; i < this.stacks.length; i++) {
                 index = (index + i) % this.stacks.length;
                 ItemStack stack = this.stacks[index];
@@ -170,19 +191,19 @@ public class OmniClawTools implements TooltipComponent {
         }
 
         public ItemStack removeSelected() {
-            return swap(ItemStack.EMPTY, this.lastSelected);
+            return swap(ItemStack.EMPTY, this.selectedTool);
         }
 
         private ItemStack swap(ItemStack stack, int index) {
             ItemStack result = this.stacks[index];
             this.stacks[index] = stack;
             if (!this.stacks[index].isEmpty()) {
-                this.lastSelected = index;
+                this.selectedTool = index;
             } else {
                 for (int i = 0; i < this.stacks.length; i++) {
                     index = (index + 1) % this.stacks.length;
                     if (!this.stacks[index].isEmpty()) {
-                        this.lastSelected = index;
+                        this.selectedTool = index;
                         break;
                     }
                 }
@@ -192,7 +213,7 @@ public class OmniClawTools implements TooltipComponent {
         }
 
         public OmniClawTools toImmutable() {
-            return new OmniClawTools(List.of(this.stacks), this.lastSelected);
+            return new OmniClawTools(List.of(this.stacks), this.selectedTool);
         }
     }
 }
