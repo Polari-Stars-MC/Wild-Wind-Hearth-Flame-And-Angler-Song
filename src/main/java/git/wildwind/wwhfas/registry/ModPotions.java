@@ -14,20 +14,42 @@ import net.neoforged.neoforge.event.brewing.RegisterBrewingRecipesEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+/**
+ * 注册模组药水并处理酿造配方喵~
+ */
 @EventBusSubscriber(modid = WildWindMod.MOD_ID)
 public class ModPotions {
+    /**
+     * 药水延迟注册器喵~
+     */
     public static final DeferredRegister<Potion> POTIONS =
             DeferredRegister.create(BuiltInRegistries.POTION, WildWindMod.MOD_ID);
 
+    /**
+     * 延展药水喵~
+     */
     public static final DeferredHolder<Potion, Potion> REACH =
             POTIONS.register("reach", () -> new Potion(new MobEffectInstance(ModMobEffects.REACH, 3600)));
+    /**
+     * 长效延展药水喵~
+     */
     public static final DeferredHolder<Potion, Potion> LONG_REACH =
             POTIONS.register("long_reach", () -> new Potion("reach", new MobEffectInstance(ModMobEffects.REACH, 9600)));
 
+    /**
+     * 向模组事件总线注册药水喵~
+     *
+     * @param modBus 模组事件总线喵~
+     */
     public static void register(IEventBus modBus) {
         POTIONS.register(modBus);
     }
 
+    /**
+     * 注册药水酿造配方喵~
+     *
+     * @param event 酿造配方注册事件喵~
+     */
     @SubscribeEvent
     static void registerBrewingRecipes(RegisterBrewingRecipesEvent event) {
         PotionBrewing.Builder builder = event.getBuilder();
@@ -44,4 +66,7 @@ public class ModPotions {
                 ModPotions.LONG_REACH
         );
     }
+
+	private ModPotions() {
+	}
 }

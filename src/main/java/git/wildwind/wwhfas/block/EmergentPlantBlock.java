@@ -21,12 +21,22 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * 可生长在浅水中的挺水双格植物方块喵~
+ */
 public class EmergentPlantBlock extends DoublePlantBlock implements SimpleWaterloggedBlock {
+    /**
+     * 方块是否含水的状态属性喵~
+     */
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
+    /**
+     * 创建挺水植物方块喵~
+     *
+     * @param properties 方块属性喵~
+     */
     public EmergentPlantBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.defaultBlockState()
@@ -56,7 +66,7 @@ public class EmergentPlantBlock extends DoublePlantBlock implements SimpleWaterl
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(WATERLOGGED);
     }

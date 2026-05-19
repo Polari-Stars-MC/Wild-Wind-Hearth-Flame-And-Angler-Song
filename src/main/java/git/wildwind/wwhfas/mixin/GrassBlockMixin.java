@@ -20,11 +20,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/**
+ * 为草方块施肥生成逻辑注入芦苇替换行为的混入类喵~
+ */
 @Mixin(GrassBlock.class)
 public abstract class GrassBlockMixin {
 
     @Inject(method = "performBonemeal", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/levelgen/placement/PlacedFeature;place(Lnet/minecraft/world/level/WorldGenLevel;Lnet/minecraft/world/level/chunk/ChunkGenerator;Lnet/minecraft/util/RandomSource;Lnet/minecraft/core/BlockPos;)Z"))
-    private void replaceTallGrassToReeds(ServerLevel level, RandomSource random, BlockPos p_221272_, BlockState p_221273_, CallbackInfo ci, @Local(ordinal = 1) BlockPos blockPos) {
+    private void replaceTallGrassToReeds(ServerLevel level, RandomSource random, BlockPos plantedPos, BlockState blockState, CallbackInfo ci, @Local(ordinal = 1) BlockPos blockPos) {
         if (level.getBlockState(blockPos).is(Blocks.TALL_GRASS)) wwhfas$tryReplaceToReeds(level, random, blockPos);
     }
 

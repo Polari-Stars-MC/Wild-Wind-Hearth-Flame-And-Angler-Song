@@ -6,17 +6,25 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.world.item.Items;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * 生成模组合成配方数据喵~
+ */
 public class ModRecipeProvider extends RecipeProvider {
+    /**
+     * 创建配方提供器喵~
+     *
+     * @param output 输出目标喵~
+     * @param lookupProvider 注册表查询提供器喵~
+     */
     public ModRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(output, lookupProvider);
     }
 
     @Override
-    protected void buildRecipes(@NotNull RecipeOutput recipeOutput) {
+    protected void buildRecipes(RecipeOutput recipeOutput) {
         for (int index = 0; index < ModBlocks.WOOD_SETS.size(); index++) {
             buildWoodRecipes(recipeOutput, ModBlocks.WOOD_SETS.get(index), ModItems.WOOD_ITEMS.get(index));
         }

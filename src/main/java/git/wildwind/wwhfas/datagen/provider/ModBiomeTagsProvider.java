@@ -12,7 +12,17 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * 生成模组群系标签数据喵~
+ */
 public class ModBiomeTagsProvider extends BiomeTagsProvider {
+    /**
+     * 创建群系标签提供器喵~
+     *
+     * @param output 输出目标喵~
+     * @param provider 注册表查询提供器喵~
+     * @param existingFileHelper 已有文件辅助器喵~
+     */
     public ModBiomeTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, @Nullable ExistingFileHelper existingFileHelper) {
         super(output, provider, WildWindMod.MOD_ID, existingFileHelper);
     }

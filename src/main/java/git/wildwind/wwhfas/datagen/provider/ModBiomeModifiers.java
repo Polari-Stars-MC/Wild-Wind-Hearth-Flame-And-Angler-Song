@@ -20,8 +20,17 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import java.util.List;
 
 // NOTE: 在ModDataGen中此类的使用之前被注释了，所以我暂时注释掉所有此类中因为被注释掉不会生效的内容。
+/**
+ * 定义群系修改器的数据生成内容喵~
+ */
 public final class ModBiomeModifiers {
+    /**
+     * 为螃蟹添加生成规则的群系修改器键喵~
+     */
     public static final ResourceKey<BiomeModifier> ADD_CRAB_SPAWNS = createKey("add_crab_spawns");
+    /**
+     * 为挺水植物补丁添加生成规则的群系修改器键喵~
+     */
     public static final ResourceKey<BiomeModifier> ADD_EMERGENT_PLANT_PATCHES = createKey("add_emergent_plant_patches");
 //    public static final ResourceKey<BiomeModifier> ADD_CINDER = createKey("add_cinder");
 //    public static final ResourceKey<BiomeModifier> ADD_EMBER = createKey("add_ember");
@@ -29,6 +38,11 @@ public final class ModBiomeModifiers {
     private ModBiomeModifiers() {
     }
 
+    /**
+     * 向引导上下文注册群系修改器喵~
+     *
+     * @param context 群系修改器引导上下文喵~
+     */
     public static void bootstrap(BootstrapContext<BiomeModifier> context) {
         HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
         HolderGetter<PlacedFeature> features = context.lookup(Registries.PLACED_FEATURE);

@@ -21,7 +21,16 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * 生成模组战利品表数据喵~
+ */
 public class ModLootTableProvider extends LootTableProvider {
+    /**
+     * 创建战利品表提供器喵~
+     *
+     * @param output 输出目标喵~
+     * @param lookupProvider 注册表查询提供器喵~
+     */
     public ModLootTableProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(
                 output,
@@ -71,6 +80,12 @@ public class ModLootTableProvider extends LootTableProvider {
             this.add(ModBlocks.CATTAILS.get(), createShearsOtherDrop(ModItems.CATTAILS.get()));
         }
 
+        /**
+         * 创建仅在使用剪刀时掉落指定物品的战利品表喵~
+         *
+         * @param drop 掉落物喵~
+         * @return 构建中的战利品表喵~
+         */
         public LootTable.Builder createShearsOtherDrop(ItemLike drop) {
             return LootTable.lootTable()
                     .withPool(

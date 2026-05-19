@@ -12,6 +12,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/**
+ * 扩展玩家拾取物品范围的混入类喵~
+ */
 @Mixin(Player.class)
 public abstract class PlayerMixin {
 

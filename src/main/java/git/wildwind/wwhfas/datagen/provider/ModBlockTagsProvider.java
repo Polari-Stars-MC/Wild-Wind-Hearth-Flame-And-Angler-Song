@@ -1,8 +1,8 @@
 package git.wildwind.wwhfas.datagen.provider;
 
 import git.wildwind.wwhfas.WildWindMod;
-import git.wildwind.wwhfas.registry.ModBlocks;
 import git.wildwind.wwhfas.block.ModTerrainBlocks;
+import git.wildwind.wwhfas.registry.ModBlocks;
 import git.wildwind.wwhfas.tag.ModBlockTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -17,7 +17,17 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * 生成模组方块标签数据喵~
+ */
 public class ModBlockTagsProvider extends BlockTagsProvider {
+    /**
+     * 创建方块标签提供器喵~
+     *
+     * @param output 输出目标喵~
+     * @param lookupProvider 注册表查询提供器喵~
+     * @param existingFileHelper 已有文件辅助器喵~
+     */
     public ModBlockTagsProvider(
             PackOutput output,
             CompletableFuture<HolderLookup.Provider> lookupProvider,

@@ -1,9 +1,5 @@
 package git.wildwind.wwhfas.interaction;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
 import git.wildwind.wwhfas.WildWindMod;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -27,7 +23,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+
+/**
+ * 用于生成方块属性说明书的工厂类喵~
+ */
 public final class BlockPropertyBookFactory {
     private static final int MAX_LINES_PER_PAGE = 13;
     private static final String KEY_PREFIX = "book." + WildWindMod.MOD_ID + ".block_property.";
@@ -36,7 +41,13 @@ public final class BlockPropertyBookFactory {
     }
 
     /**
-     * Build a lectern-readable written book that summarizes the clicked block's core properties and current state.
+     * 生成一本可在讲台上阅读的方块属性说明书喵~
+     *
+     * @param player 查看说明书的玩家喵~
+     * @param level 当前世界喵~
+     * @param pos 方块位置喵~
+     * @param state 方块状态喵~
+     * @return 写好的说明书物品喵~
      */
     public static ItemStack create(ServerPlayer player, Level level, BlockPos pos, BlockState state) {
         Block block = state.getBlock();
@@ -159,6 +170,7 @@ public final class BlockPropertyBookFactory {
         return reaction.name().toLowerCase(Locale.ROOT);
     }
 
+	@Nullable
     private static ResourceLocation getItemId(Item item) {
         return item == Items.AIR ? null : BuiltInRegistries.ITEM.getKey(item);
     }
@@ -190,17 +202,14 @@ public final class BlockPropertyBookFactory {
 
     private static Component entry(String suffix, Object... value) {
         // 防止不合法value
-        var args=new Object[value.length];
+        var args = new Object[value.length];
         for (int i = 0; i < value.length; i++) {
-            if (value[i] == null) {
-                args[i] = "";
-            } else if (value[i] instanceof Component c) {
-                args[i] = c.getString();
-            } else if (value[i] instanceof ResourceLocation r) {
-                args[i]=Component.translatable(r.toLanguageKey()).getString();
-            } else {
-                args[i] = value[i].toString();
-            }
+			switch (value[i]) {
+				case null -> args[i] = "";
+				case Component c -> args[i] = c.getString();
+				case ResourceLocation r -> args[i] = Component.translatable(r.toLanguageKey()).getString();
+				default -> args[i] = value[i].toString();
+			}
         }
         return Component.translatable(KEY_PREFIX + "entry." + suffix, args);
     }

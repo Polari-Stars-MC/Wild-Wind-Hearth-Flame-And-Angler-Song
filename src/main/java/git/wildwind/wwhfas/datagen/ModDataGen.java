@@ -12,10 +12,18 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * 注册模组数据生成入口喵~
+ */
 public final class ModDataGen {
     private ModDataGen() {
     }
 
+    /**
+     * 向模组事件总线注册数据生成监听器喵~
+     *
+     * @param modBus 模组事件总线喵~
+     */
     public static void register(IEventBus modBus) {
         modBus.addListener(ModDataGen::gatherData);
     }

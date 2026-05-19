@@ -13,9 +13,18 @@ import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
+/**
+ * 为物品堆中的万用蟹钳代理工具行为提供支持的混入类喵~
+ */
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
 
+    /**
+     * 让万用蟹钳沿用当前选中工具的耐久判定喵~
+     *
+     * @param original 原始方法调用喵~
+     * @return 是否可损坏喵~
+     */
     @WrapMethod(method = "isDamageableItem")
     public boolean omniClawIsDamageableItem(Operation<Boolean> original) {
         ItemStack tool = OmniClawItem.getLastSelectedTool((ItemStack) (Object) this);

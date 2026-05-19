@@ -1,10 +1,10 @@
 package git.wildwind.wwhfas.registry;
 
 import git.wildwind.wwhfas.WildWindMod;
+import git.wildwind.wwhfas.block.EmergentPlantBlock;
 import git.wildwind.wwhfas.block.ModBlockSetType;
 import git.wildwind.wwhfas.block.ModTreeGrower;
 import git.wildwind.wwhfas.block.ModWoodType;
-import git.wildwind.wwhfas.block.EmergentPlantBlock;
 import git.wildwind.wwhfas.block.sign.ModCeilingHangingSignBlock;
 import git.wildwind.wwhfas.block.sign.ModStandingSignBlock;
 import git.wildwind.wwhfas.block.sign.ModWallHangingSignBlock;
@@ -27,10 +27,19 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.List;
 
+/**
+ * 模组方块注册入口，负责注册基础植物方块与木材套装方块喵~
+ */
 public final class ModBlocks {
+    /**
+     * 模组方块延迟寄存器喵~
+     */
     public static final DeferredRegister.Blocks BLOCKS =
             DeferredRegister.createBlocks(WildWindMod.MOD_ID);
 
+    /**
+     * 芦苇方块喵~
+     */
     public static final DeferredBlock<Block> REEDS =
             BLOCKS.register("reeds", () -> new EmergentPlantBlock(
                     BlockBehaviour.Properties.of()
@@ -44,6 +53,9 @@ public final class ModBlocks {
                             .pushReaction(PushReaction.DESTROY)
             ));
 
+    /**
+     * 香蒲方块喵~
+     */
     public static final DeferredBlock<Block> CATTAILS =
             BLOCKS.register("cattails", () -> new EmergentPlantBlock(
                     BlockBehaviour.Properties.of()
@@ -57,6 +69,9 @@ public final class ModBlocks {
                             .pushReaction(PushReaction.DESTROY)
             ));
 
+    /**
+     * 灰烬木套装方块集合喵~
+     */
     public static final WoodSet CINDER = registerWoodSet(
         "cinder",
         MapColor.PODZOL,
@@ -66,6 +81,9 @@ public final class ModBlocks {
         ModBlockSetType.CINDER,
         ModWoodType.CINDER
     );
+    /**
+     * 余烬木套装方块集合喵~
+     */
     public static final WoodSet EMBER = registerWoodSet(
         "ember",
         MapColor.COLOR_ORANGE,
@@ -75,6 +93,9 @@ public final class ModBlocks {
         ModBlockSetType.EMBER,
         ModWoodType.EMBER
     );
+    /**
+     * 杜鹃木套装方块集合喵~
+     */
     public static final WoodSet AZALEA = registerWoodSet(
         "azalea",
         MapColor.COLOR_PINK,
@@ -84,11 +105,19 @@ public final class ModBlocks {
         ModWoodType.AZALEA
     );
 
+    /**
+     * 全部木材套装方块集合喵~
+     */
     public static final List<WoodSet> WOOD_SETS = List.of(CINDER, EMBER, AZALEA);
 
     private ModBlocks() {
     }
 
+    /**
+     * 向事件总线注册方块延迟寄存器喵~
+     *
+     * @param modBus 模组事件总线喵~
+     */
     public static void register(IEventBus modBus) {
         BLOCKS.register(modBus);
     }
@@ -335,6 +364,31 @@ public final class ModBlocks {
         return false;
     }
 
+    /**
+     * 木材套装方块集合定义喵~
+     *
+     * @param name 木材名称喵~
+     * @param log 原木方块喵~
+     * @param wood 树皮方块喵~
+     * @param strippedLog 去皮原木方块喵~
+     * @param strippedWood 去皮树皮方块喵~
+     * @param leaves 树叶方块喵~
+     * @param planks 木板方块喵~
+     * @param stairs 楼梯方块喵~
+     * @param slab 台阶方块喵~
+     * @param fence 栅栏方块喵~
+     * @param fenceGate 栅栏门方块喵~
+     * @param door 木门方块喵~
+     * @param trapdoor 活板门方块喵~
+     * @param pressurePlate 压力板方块喵~
+     * @param button 按钮方块喵~
+     * @param sapling 树苗方块喵~
+     * @param pottedSapling 盆栽树苗方块喵~
+     * @param sign 站立告示牌方块喵~
+     * @param wallSign 墙上告示牌方块喵~
+     * @param hangingSign 悬挂告示牌方块喵~
+     * @param wallHangingSign 墙上悬挂告示牌方块喵~
+     */
     public record WoodSet(
             String name,
             DeferredHolder<Block, Block> log,
@@ -358,6 +412,11 @@ public final class ModBlocks {
             DeferredHolder<Block, Block> hangingSign,
             DeferredHolder<Block, Block> wallHangingSign
     ) {
+        /**
+         * 判断当前木材套装是否包含树木相关方块喵~
+         *
+         * @return 若包含树叶与树苗相关方块则返回 true 喵~
+         */
         public boolean hasTreeBlocks() {
             return leaves != null && sapling != null && pottedSapling != null;
         }

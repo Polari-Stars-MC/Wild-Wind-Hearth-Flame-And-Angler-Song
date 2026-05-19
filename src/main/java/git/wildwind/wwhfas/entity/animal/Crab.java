@@ -56,7 +56,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidType;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -68,7 +67,15 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.EnumSet;
 
+/**
+ * 螃蟹生物实体喵~
+ * <br/>
+ * 负责陆水两栖移动、变种同步、桶装存取与动画控制喵~
+ */
 public class Crab extends Animal implements Bucketable, VariantHolder<Holder<CrabVariant>>, GeoEntity {
+    /**
+     * 螃蟹使用的自定义生成位置类型喵~
+     */
     public static final SpawnPlacementType SPAWN_PLACEMENT = new SpawnPlacementType() {
 
         @Override
@@ -97,13 +104,31 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
     private static final int REHYDRATE_AIR_SUPPLY = 1800;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    /**
+     * 客户端渲染时模型的 Y 轴附加旋转偏移喵~
+     */
     public float clientSideModelYRotOffset;
+    /**
+     * 客户端渲染时上一刻模型的 Y 轴附加旋转偏移喵~
+     */
     public float clientSidePreModelYRotOffset = this.clientSideModelYRotOffset;
+    /**
+     * 客户端渲染时模型的 X 轴附加旋转偏移喵~
+     */
     public float clientSideModelXRotOffset;
+    /**
+     * 客户端渲染时上一刻模型的 X 轴附加旋转偏移喵~
+     */
     public float clientSidePreModelXRotOffset = this.clientSideModelXRotOffset;
     private int preparingToAttack = -1;
     private int greetingTicks = -1;
 
+    /**
+     * 创建螃蟹实体喵~
+     *
+     * @param entityType 实体类型喵~
+     * @param level 所在世界喵~
+     */
     public Crab(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
         this.setPathfindingMalus(PathType.WATER, 0.0f);
@@ -129,7 +154,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
     }
 
     @Override
-    protected @NotNull PathNavigation createNavigation(Level level) {
+    protected PathNavigation createNavigation(Level level) {
         return new CrabPathNavigation(this, level);
     }
 
@@ -141,6 +166,13 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
         builder.define(CLIMBING, false);
     }
 
+    /**
+     * 计算指定位置对螃蟹寻路的吸引值喵~
+     *
+     * @param pos 待评估的位置喵~
+     * @param level 当前关卡读取器喵~
+     * @return 越高表示越适合作为行走目标喵~
+     */
     @Override
     public float getWalkTargetValue(BlockPos pos, LevelReader level) {
         BlockState state = level.getBlockState(pos.below());
@@ -150,19 +182,40 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
         return level.getPathfindingCostFromLightLevels(pos);
     }
 
+    /**
+     * 判断当前实体在所在位置是否被阻挡喵~
+     *
+     * @param level 当前关卡读取器喵~
+     * @return 未被阻挡时返回 true 喵~
+     */
     @Override
     public boolean checkSpawnObstruction(LevelReader level) {
         return level.isUnobstructed(this);
     }
 
+    /**
+     * 判断当前是否处于攻击蓄力阶段喵~
+     *
+     * @return 处于攻击蓄力时返回 true 喵~
+     */
     public boolean isPreparingToAttack() {
         return this.preparingToAttack != -1;
     }
 
+    /**
+     * 判断当前是否处于打招呼动画阶段喵~
+     *
+     * @return 正在打招呼时返回 true 喵~
+     */
     public boolean isGreeting() {
         return this.greetingTicks != -1;
     }
 
+    /**
+     * 获取攻击蓄力持续刻数喵~
+     *
+     * @return 蓄力持续刻数喵~
+     */
     public int getPreparationToAttackDuration() {
         return 12;
     }
@@ -200,6 +253,12 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
         return !this.onGround() && !this.isVisuallySwimming() && this.isClimbing();
     }
 
+    /**
+     * 进入攻击蓄力状态并准备对目标发动攻击喵~
+     *
+     * @param entity 攻击目标喵~
+     * @return 成功进入蓄力状态时返回 true 喵~
+     */
     public boolean prepareAttack(LivingEntity entity) {
         this.setTarget(entity);
         if (entity == null || !entity.isAlive()) return false;
@@ -209,6 +268,16 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
         return true;
     }
 
+    /**
+     * 检查螃蟹是否可在水中地面生成喵~
+     *
+     * @param crab 螃蟹实体类型喵~
+     * @param level 世界访问器喵~
+     * @param spawnType 生成类型喵~
+     * @param pos 生成位置喵~
+     * @param random 随机源喵~
+     * @return 满足生成条件时返回 true 喵~
+     */
     public static boolean checkCrabInWaterGroundSpawnRules(
             EntityType<? extends Crab> crab, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random
     ) {
@@ -217,12 +286,27 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
         return level.getBlockState(pos.below()).is(ModBlockTags.CARB_SPAWNABLE_IN_WATER_GROUND);
     }
 
+    /**
+     * 检查螃蟹是否可在陆地生成喵~
+     *
+     * @param crab 螃蟹实体类型喵~
+     * @param level 世界访问器喵~
+     * @param spawnType 生成类型喵~
+     * @param pos 生成位置喵~
+     * @param random 随机源喵~
+     * @return 满足生成条件时返回 true 喵~
+     */
     public static boolean checkCrabOnGroundSpawnRules(EntityType<? extends Crab> crab, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         if (!(MobSpawnType.ignoresLightRequirements(spawnType) || isBrightEnoughToSpawn(level, pos))) return false;
 
         return level.getBlockState(pos.below()).is(ModBlockTags.CRAB_SPAWNABLE_ON);
     }
 
+    /**
+     * 创建螃蟹实体的基础属性喵~
+     *
+     * @return 属性构建器喵~
+     */
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 10.0d)
@@ -231,6 +315,9 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
                 .add(Attributes.STEP_HEIGHT, 1.0d);
     }
 
+    /**
+     * 执行每刻更新并维持空气值变化喵~
+     */
     @Override
     public void baseTick() {
         int currentAirSupply = this.getAirSupply();
@@ -238,11 +325,21 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
         if (!this.isNoAi()) this.handleAirSupply(currentAirSupply);
     }
 
+    /**
+     * 获取螃蟹最大空气值喵~
+     *
+     * @return 最大空气值喵~
+     */
     @Override
     public int getMaxAirSupply() {
         return TOTAL_AIR_SUPPLY;
     }
 
+    /**
+     * 处理离水状态下的空气值变化喵~
+     *
+     * @param currentAirSupply 当前空气值喵~
+     */
     public void handleAirSupply(int currentAirSupply) {
         if (this.isAlive() && !this.isInWaterRainOrBubble()) {
             this.setAirSupply(currentAirSupply - 1);
@@ -257,19 +354,35 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
         this.setAirSupply(this.getMaxAirSupply());
     }
 
+    /**
+     * 让螃蟹在接触到水后恢复部分空气值喵~
+     */
     public void rehydrate() {
         this.setAirSupply(Math.min(this.getAirSupply() + REHYDRATE_AIR_SUPPLY, this.getMaxAirSupply()));
     }
 
+    /**
+     * 判断当前是否需要主动寻找水源喵~
+     *
+     * @return 需要找水时返回 true 喵~
+     */
     public boolean needWater() {
         return this.getAirSupply() < START_FIND_WATER_AIR_SUPPLY;
     }
 
+    /**
+     * 获取水中移动减速系数喵~
+     *
+     * @return 水中减速系数喵~
+     */
     @Override
     protected float getWaterSlowDown() {
         return 0.98f;
     }
 
+    /**
+     * 更新游泳状态喵~
+     */
     @Override
     public void updateSwimming() {
         if (!this.level().isClientSide) {
@@ -277,31 +390,69 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
         }
     }
 
+    /**
+     * 判断是否在视觉上表现为游泳喵~
+     *
+     * @return 是否视觉游泳喵~
+     */
     @Override
     public boolean isVisuallySwimming() {
         return this.isSwimming();
     }
 
+    /**
+     * 判断是否会被流体推动喵~
+     *
+     * @param type 流体类型喵~
+     * @return 不会被推动喵~
+     */
     @Override
     public boolean isPushedByFluid(FluidType type) {
         return false;
     }
 
+    /**
+     * 判断是否需要自定义持久化喵~
+     *
+     * @return 需要时返回 true 喵~
+     */
     @Override
     public boolean requiresCustomPersistence() {
         return super.requiresCustomPersistence() || this.fromBucket();
     }
 
+    /**
+     * 判断离玩家较远时是否应被清除喵~
+     *
+     * @param distanceToClosestPlayer 最近玩家距离喵~
+     * @return 不应远距离消失时返回 true 喵~
+     */
     @Override
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
         return !this.fromBucket() && !this.hasCustomName();
     }
 
+    /**
+     * 处理玩家与螃蟹的交互喵~
+     *
+     * @param player 玩家喵~
+     * @param hand 使用的手喵~
+     * @return 交互结果喵~
+     */
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         return Bucketable.bucketMobPickup(player, hand, this).orElse(super.mobInteract(player, hand));
     }
 
+    /**
+     * 完成螃蟹生成时的初始化喵~
+     *
+     * @param level 服务端世界喵~
+     * @param difficulty 生成难度喵~
+     * @param spawnType 生成类型喵~
+     * @param spawnGroupData 群组生成数据喵~
+     * @return 生成后的群组数据喵~
+     */
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         if (spawnType == MobSpawnType.BUCKET) return spawnGroupData;
@@ -310,6 +461,12 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
 
+    /**
+     * 根据生物群系获取默认螃蟹变种喵~
+     *
+     * @param biome 生物群系喵~
+     * @return 对应变种喵~
+     */
     protected static Holder<CrabVariant> getVariantByBiome(Holder<Biome> biome) {
         if (biome.is(ModBiomeTags.SPAWNS_WARM_VARIANT_CRABS)) return ModCrabVariants.WARM;
         if (biome.is(ModBiomeTags.SPAWNS_COLD_VARIANT_CRABS)) return ModCrabVariants.COLD;
@@ -317,26 +474,52 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
         return ModCrabVariants.TEMPERATE;
     }
 
+    /**
+     * 判断螃蟹是否无视默认行动限制喵~
+     *
+     * @return 处于攻击或打招呼时返回 true 喵~
+     */
     @Override
     protected boolean isImmobile() {
         return super.isImmobile() || this.isPreparingToAttack() || this.isGreeting();
     }
 
+    /**
+     * 判断指定物品是否可作为螃蟹食物喵~
+     *
+     * @param stack 待检查物品喵~
+     * @return 可食用时返回 true 喵~
+     */
     @Override
     public boolean isFood(ItemStack stack) {
         return stack.is(ModItemTags.CRAB_FOOD);
     }
 
+    /**
+     * 判断该螃蟹是否来自桶装释放喵~
+     *
+     * @return 来自桶装时返回 true 喵~
+     */
     @Override
     public boolean fromBucket() {
         return this.entityData.get(FROM_BUCKET);
     }
 
+    /**
+     * 设置该螃蟹是否来自桶装释放喵~
+     *
+     * @param fromBucket 是否来自桶装喵~
+     */
     @Override
     public void setFromBucket(boolean fromBucket) {
         this.entityData.set(FROM_BUCKET, fromBucket);
     }
 
+    /**
+     * 将螃蟹数据写入桶物品标签喵~
+     *
+     * @param stack 蟹桶物品栈喵~
+     */
     @Override
     public void saveToBucketTag(ItemStack stack) {
         Bucketable.saveDefaultDataToBucketTag(this, stack);
@@ -344,6 +527,11 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
                 tag.put("Variant", CrabVariant.CODEC.encodeStart(NbtOps.INSTANCE, this.getVariant().value()).getOrThrow()));
     }
 
+    /**
+     * 从桶物品标签中读取螃蟹数据喵~
+     *
+     * @param tag 桶数据标签喵~
+     */
     @Override
     public void loadFromBucketTag(CompoundTag tag) {
         if (tag.contains("Variant")) {
@@ -354,39 +542,58 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
         }
     }
 
+    /**
+     * 获取装载该实体所对应的桶物品喵~
+     *
+     * @return 蟹桶物品栈喵~
+     */
     @Override
     public ItemStack getBucketItemStack() {
         return new ItemStack(ModItems.CRAB_BUCKET);
     }
 
+    /**
+     * 获取头部 X 轴旋转上限喵~
+     *
+     * @return 头部 X 轴旋转上限喵~
+     */
     @Override
     public int getMaxHeadXRot() {
         return 0;
     }
 
+    /**
+     * 获取头部 Y 轴旋转上限喵~
+     *
+     * @return 头部 Y 轴旋转上限喵~
+     */
     @Override
     public int getMaxHeadYRot() {
         return 0;
     }
 
-    // TODO: 临时音效，添加专属音效
+    /**
+     * 获取被装桶时播放的音效喵~
+     *
+     * @return 装桶音效喵~
+     */
     @Override
     public SoundEvent getPickupSound() {
         return SoundEvents.BUCKET_FILL;
     }
 
-    @Override
-    protected @Nullable SoundEvent getAmbientSound() {
+    @Override @Nullable
+    protected SoundEvent getAmbientSound() {
         return super.getAmbientSound();
     }
 
-    @Override
-    protected @Nullable SoundEvent getDeathSound() {
+    @Override @Nullable
+    protected SoundEvent getDeathSound() {
         return super.getDeathSound();
     }
 
-    @Override
-    protected @Nullable SoundEvent getHurtSound(DamageSource damageSource) {
+    @Override @Nullable
+    protected SoundEvent getHurtSound(DamageSource damageSource) {
         return super.getHurtSound(damageSource);
     }
 
@@ -408,8 +615,15 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
         }
     }
 
-    @Override
-    public @Nullable AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
+    /**
+     * 生成繁殖后的幼年螃蟹实体喵~
+     *
+     * @param level 服务端世界喵~
+     * @param otherParent 另一只亲代喵~
+     * @return 新生成的幼年螃蟹，无法生成时返回 null 喵~
+     */
+    @Override @Nullable
+    public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
         Crab crab = ModEntities.CRAB.get().create(level);
         if (crab != null) {
             var variantList = SimpleWeightedRandomList.<Holder<CrabVariant>>builder();
@@ -429,6 +643,11 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
         return crab;
     }
 
+    /**
+     * 保存额外实体数据喵~
+     *
+     * @param tag 保存目标标签喵~
+     */
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
@@ -436,6 +655,11 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
         tag.put("Variant", CrabVariant.CODEC.encodeStart(NbtOps.INSTANCE, this.getVariant().value()).getOrThrow());
     }
 
+    /**
+     * 读取额外实体数据喵~
+     *
+     * @param tag 源数据标签喵~
+     */
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
@@ -448,16 +672,31 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
         this.setFromBucket(tag.getBoolean("FromBucket"));
     }
 
+    /**
+     * 设置螃蟹的变种喵~
+     *
+     * @param variant 变种喵~
+     */
     @Override
     public void setVariant(Holder<CrabVariant> variant) {
         this.entityData.set(VARIANT_ID, variant);
     }
 
+    /**
+     * 获取螃蟹当前的变种喵~
+     *
+     * @return 当前变种喵~
+     */
     @Override
-    public @NotNull Holder<CrabVariant> getVariant() {
+    public Holder<CrabVariant> getVariant() {
         return this.entityData.get(VARIANT_ID);
     }
 
+    /**
+     * 注册螃蟹的动画控制器喵~
+     *
+     * @param controllers 动画控制器注册器喵~
+     */
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "Move", 3, this::moveAnimController));
@@ -487,19 +726,37 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
         return PlayState.STOP;
     }
 
+    /**
+     * 设置螃蟹当前是否处于攀爬状态喵~
+     *
+     * @param climbing 是否攀爬喵~
+     */
     public void setClimbing(boolean climbing) {
         this.entityData.set(CLIMBING, climbing);
     }
 
+    /**
+     * 判断螃蟹当前是否处于攀爬状态喵~
+     *
+     * @return 攀爬中返回 true 喵~
+     */
     public boolean isClimbing() {
         return this.entityData.get(CLIMBING);
     }
 
+    /**
+     * 判断当前实体是否可攀附喵~
+     *
+     * @return 攀爬中返回 true 喵~
+     */
     @Override
     public boolean onClimbable() {
         return this.isClimbing();
     }
 
+    /**
+     * 执行螃蟹的 AI 逻辑与客户端视觉更新喵~
+     */
     @Override
     public void aiStep() {
         super.aiStep();
@@ -547,10 +804,20 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
         }
     }
 
+    /**
+     * 屏蔽默认跳跃状态设置，避免螃蟹出现不符合预期的跳跃表现喵~
+     *
+     * @param jumping 是否正在跳跃喵~
+     */
     @Override
     public void setJumping(boolean jumping) {
     }
 
+    /**
+     * 获取 GeckoLib 动画缓存喵~
+     *
+     * @return 动画缓存喵~
+     */
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geoCache;
@@ -649,7 +916,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
         }
 
         @Override
-        protected void checkAndPerformAttack(@NotNull LivingEntity target) {
+        protected void checkAndPerformAttack(LivingEntity target) {
             if (!canPerformAttack(target)) return;
             this.resetAttackCooldown();
             this.crab.prepareAttack(target);
@@ -661,6 +928,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
         private final float speedModifier;
         private final int waterSearchRange;
         private final int interval;
+		@Nullable
         private BlockPos waterPos;
         private int cooldown;
 
@@ -740,6 +1008,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
 
     protected static class CrabPathNavigation extends GroundPathNavigation {
         private final Crab crab;
+		@Nullable
         private BlockPos fallbackPos;
 
         public CrabPathNavigation(Crab crab, Level level) {

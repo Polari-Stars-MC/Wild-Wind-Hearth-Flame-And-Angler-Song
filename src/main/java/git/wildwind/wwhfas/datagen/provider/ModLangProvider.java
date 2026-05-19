@@ -1,19 +1,25 @@
 package git.wildwind.wwhfas.datagen.provider;
 
 import git.wildwind.wwhfas.WildWindMod;
-import git.wildwind.wwhfas.registry.ModBlocks;
 import git.wildwind.wwhfas.block.ModTerrainBlocks;
-import git.wildwind.wwhfas.registry.ModAttributes;
-import git.wildwind.wwhfas.registry.ModEntities;
-import git.wildwind.wwhfas.registry.ModItems;
-import git.wildwind.wwhfas.registry.ModMobEffects;
+import git.wildwind.wwhfas.registry.*;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.effect.MobEffect;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
+/**
+ * 生成模组语言文件喵~
+ */
 public class ModLangProvider extends LanguageProvider {
     private final String locale;
+
+    /**
+     * 创建语言提供器喵~
+     *
+     * @param output 输出目标喵~
+     * @param locale 语言区域代码喵~
+     */
     public ModLangProvider(PackOutput output, String locale) {
         super(output, WildWindMod.MOD_ID, locale);
         this.locale = locale;

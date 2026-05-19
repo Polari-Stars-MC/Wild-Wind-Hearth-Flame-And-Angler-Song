@@ -14,15 +14,35 @@ import net.minecraft.world.level.levelgen.placement.*;
 
 import java.util.List;
 
+/**
+ * 定义模组已放置特征喵~
+ */
 public final class ModPlacedFeatures {
+    /**
+     * 灵焰木的已放置特征键喵~
+     */
     public static final ResourceKey<PlacedFeature> CINDER = createKey("cinder");
+    /**
+     * 焚烬木的已放置特征键喵~
+     */
     public static final ResourceKey<PlacedFeature> EMBER = createKey("ember");
+    /**
+     * 地表芦苇补丁的已放置特征键喵~
+     */
     public static final ResourceKey<PlacedFeature> PATCH_REEDS_SURFACE = createKey("patch_reeds_surface");
+    /**
+     * 水中芦苇补丁的已放置特征键喵~
+     */
     public static final ResourceKey<PlacedFeature> PATCH_REEDS_IN_WATER = createKey("patch_reeds_in_water");
 
     private ModPlacedFeatures() {
     }
 
+    /**
+     * 向引导上下文注册已放置特征喵~
+     *
+     * @param context 已放置特征引导上下文喵~
+     */
     public static void bootstrap(BootstrapContext<PlacedFeature> context) {
         HolderGetter<ConfiguredFeature<?, ?>> configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
 

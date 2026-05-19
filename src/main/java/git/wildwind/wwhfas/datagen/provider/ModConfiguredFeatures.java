@@ -4,7 +4,6 @@ import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.registry.ModBlocks;
 import git.wildwind.wwhfas.worldgen.tree.CinderFoliagePlacer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
@@ -26,17 +25,32 @@ import net.minecraft.world.level.levelgen.feature.trunkplacers.CherryTrunkPlacer
 import net.minecraft.world.level.levelgen.feature.trunkplacers.StraightTrunkPlacer;
 import net.minecraft.world.level.levelgen.placement.BlockPredicateFilter;
 
+/**
+ * 定义模组已配置特征喵~
+ */
 public final class ModConfiguredFeatures {
+    /**
+     * 灵焰木的已配置特征键喵~
+     */
     public static final ResourceKey<ConfiguredFeature<?, ?>> CINDER = createKey("cinder");
+    /**
+     * 焚烬木的已配置特征键喵~
+     */
     public static final ResourceKey<ConfiguredFeature<?, ?>> EMBER = createKey("ember");
+    /**
+     * 芦苇补丁的已配置特征键喵~
+     */
     public static final ResourceKey<ConfiguredFeature<?, ?>> PATCH_REEDS = createKey("patch_reeds_in_water");
 
     private ModConfiguredFeatures() {
     }
 
+    /**
+     * 向引导上下文注册已配置特征喵~
+     *
+     * @param context 已配置特征引导上下文喵~
+     */
     public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
-        HolderGetter<net.minecraft.world.level.block.Block> blocks = context.lookup(Registries.BLOCK);
-
         context.register(PATCH_REEDS, new ConfiguredFeature<>(Feature.RANDOM_PATCH, new RandomPatchConfiguration(
                 20,
                 6,

@@ -1,20 +1,28 @@
 package git.wildwind.wwhfas.datagen.provider;
 
 import git.wildwind.wwhfas.WildWindMod;
-import git.wildwind.wwhfas.registry.ModBlocks;
 import git.wildwind.wwhfas.block.ModTerrainBlocks;
 import git.wildwind.wwhfas.block.WallScorchedTwigBlock;
+import git.wildwind.wwhfas.registry.ModBlocks;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
-import net.minecraft.world.level.block.SnowyDirtBlock;
 import net.minecraft.world.level.block.*;
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
+/**
+ * 生成模组方块状态与方块模型数据喵~
+ */
 public class ModBlockStateProvider extends BlockStateProvider {
+    /**
+     * 创建方块状态提供器喵~
+     *
+     * @param output 输出目标喵~
+     * @param existingFileHelper 已有文件辅助器喵~
+     */
     public ModBlockStateProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
         super(output, WildWindMod.MOD_ID, existingFileHelper);
     }

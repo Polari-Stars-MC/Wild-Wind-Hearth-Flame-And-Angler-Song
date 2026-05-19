@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.GrassBlock;
@@ -11,15 +12,30 @@ import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.lighting.LightEngine;
-import net.minecraft.util.RandomSource;
 
+/**
+ * 焦草方块喵~
+ */
 public class ScorchedGrassBlock extends GrassBlock {
+    /**
+     * 焦草方块的编解码器喵~
+     */
     public static final MapCodec<GrassBlock> CODEC = simpleCodec(ScorchedGrassBlock::new);
 
+    /**
+     * 创建焦草方块喵~
+     *
+     * @param properties 方块属性喵~
+     */
     public ScorchedGrassBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }
 
+    /**
+     * 获取焦草方块的编解码器喵~
+     *
+     * @return 焦草方块编解码器喵~
+     */
     @Override
     public MapCodec<GrassBlock> codec() {
         return CODEC;

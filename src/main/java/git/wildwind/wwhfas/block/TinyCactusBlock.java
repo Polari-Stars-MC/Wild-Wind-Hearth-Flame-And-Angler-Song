@@ -11,13 +11,29 @@ import net.minecraft.world.level.block.CactusBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
+/**
+ * 迷你仙人掌方块喵~
+ */
 public class TinyCactusBlock extends CactusBlock {
+    /**
+     * 迷你仙人掌方块的编解码器喵~
+     */
     public static final MapCodec<CactusBlock> CODEC = simpleCodec(TinyCactusBlock::new);
 
+    /**
+     * 创建迷你仙人掌方块喵~
+     *
+     * @param properties 方块属性喵~
+     */
     public TinyCactusBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }
 
+    /**
+     * 获取迷你仙人掌方块的编解码器喵~
+     *
+     * @return 迷你仙人掌方块编解码器喵~
+     */
     @Override
     public MapCodec<CactusBlock> codec() {
         return CODEC;

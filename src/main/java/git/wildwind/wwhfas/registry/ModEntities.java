@@ -1,8 +1,8 @@
 package git.wildwind.wwhfas.registry;
 
 import git.wildwind.wwhfas.WildWindMod;
-import git.wildwind.wwhfas.entity.animal.Crab;
 import git.wildwind.wwhfas.client.entity.render.CrabRenderer;
+import git.wildwind.wwhfas.entity.animal.Crab;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -17,13 +17,22 @@ import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+/**
+ * 注册模组实体类型喵~
+ */
 public final class ModEntities {
+    /**
+     * 实体类型延迟注册器喵~
+     */
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
             DeferredRegister.create(Registries.ENTITY_TYPE, WildWindMod.MOD_ID);
 
     private ModEntities() {
     }
 
+    /**
+     * 螃蟹实体类型喵~
+     */
     public static final DeferredHolder<EntityType<?>, EntityType<Crab>> CRAB =
             ENTITY_TYPES.register("crab",
                     () -> EntityType.Builder.of(Crab::new, MobCategory.WATER_CREATURE)
@@ -31,6 +40,11 @@ public final class ModEntities {
                             .clientTrackingRange(10)
                             .build("crab"));
 
+    /**
+     * 向模组事件总线注册实体类型喵~
+     *
+     * @param modBus 模组事件总线喵~
+     */
     public static void register(IEventBus modBus) {
         ENTITY_TYPES.register(modBus);
     }
@@ -42,6 +56,9 @@ public final class ModEntities {
         static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerEntityRenderer(ModEntities.CRAB.get(), CrabRenderer::new);
         }
+
+		private EntitiesClientEvent() {
+		}
     }
 
     @EventBusSubscriber
@@ -57,5 +74,8 @@ public final class ModEntities {
             event.register(CRAB.get(), Crab.SPAWN_PLACEMENT, Heightmap.Types.OCEAN_FLOOR, Crab::checkCrabInWaterGroundSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
             event.register(CRAB.get(), Crab::checkCrabOnGroundSpawnRules);
         }
+
+		private EntitiesSeverEvent() {
+		}
     }
 }

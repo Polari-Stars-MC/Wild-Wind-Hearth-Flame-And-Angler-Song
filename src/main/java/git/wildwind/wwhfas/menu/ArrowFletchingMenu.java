@@ -5,8 +5,6 @@ import git.wildwind.wwhfas.recipe.ArrowFletchingRecipeInput;
 import git.wildwind.wwhfas.recipe.ArrowFletchingSlot;
 import git.wildwind.wwhfas.registry.ModMenuTypes;
 import git.wildwind.wwhfas.registry.ModRecipeTypes;
-import java.util.Optional;
-import javax.annotation.Nullable;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -21,6 +19,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
+import javax.annotation.Nullable;
+import java.util.Optional;
+
+/**
+ * 制箭台菜单喵~
+ */
 public final class ArrowFletchingMenu extends ItemCombinerMenu {
     private static final int TAIL_SLOT = 0;
     private static final int SHAFT_SLOT = 1;
@@ -33,14 +37,49 @@ public final class ArrowFletchingMenu extends ItemCombinerMenu {
     @Nullable
     private RecipeHolder<ArrowFletchingRecipe> selectedRecipe;
 
+    /**
+     * 通过网络额外数据创建制箭台菜单喵~
+     *
+     * @param containerId 容器编号喵~
+     * @param playerInventory 玩家背包喵~
+     * @param extraData 额外同步数据喵~
+     */
     public ArrowFletchingMenu(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf extraData) {
         this(containerId, playerInventory, ContainerLevelAccess.create(playerInventory.player.level(), extraData.readBlockPos()));
     }
 
+    /**
+     * 创建制箭台菜单喵~
+     *
+     * @param containerId 容器编号喵~
+     * @param playerInventory 玩家背包喵~
+     * @param access 方块访问上下文喵~
+     */
     public ArrowFletchingMenu(int containerId, Inventory playerInventory, ContainerLevelAccess access) {
         super(ModMenuTypes.ARROW_FLETCHING.get(), containerId, playerInventory, access);
         this.level = playerInventory.player.level();
         this.addDataSlot(this.hasError);
+    }
+
+    /**
+     * 判断是否需要显示配方错误提示喵~
+     *
+     * @return 需要显示错误提示时返回 true 喵~
+     */
+    public boolean shouldShowError() {
+        return this.hasError.get() == 1;
+    }
+
+    /**
+     * 判断当前是否存在任意输入物品喵~
+     *
+     * @return 只要任一输入槽非空则返回 true 喵~
+     */
+    public boolean hasAnyInputItem() {
+        return !this.inputSlots.getItem(TAIL_SLOT).isEmpty()
+            || !this.inputSlots.getItem(SHAFT_SLOT).isEmpty()
+            || !this.inputSlots.getItem(HEAD_SLOT).isEmpty()
+            || !this.inputSlots.getItem(BINDING_SLOT).isEmpty();
     }
 
     @Override
@@ -71,6 +110,9 @@ public final class ArrowFletchingMenu extends ItemCombinerMenu {
         return state.is(Blocks.FLETCHING_TABLE);
     }
 
+    /**
+     * 根据当前输入重新计算制箭结果喵~
+     */
     @Override
     public void createResult() {
         ArrowFletchingRecipeInput input = this.createRecipeInput();
@@ -108,17 +150,6 @@ public final class ArrowFletchingMenu extends ItemCombinerMenu {
             || this.accepts(ArrowFletchingSlot.SHAFT, stack)
             || this.accepts(ArrowFletchingSlot.HEAD, stack)
             || this.accepts(ArrowFletchingSlot.BINDING, stack);
-    }
-
-    public boolean shouldShowError() {
-        return this.hasError.get() == 1;
-    }
-
-    public boolean hasAnyInputItem() {
-        return !this.inputSlots.getItem(TAIL_SLOT).isEmpty()
-            || !this.inputSlots.getItem(SHAFT_SLOT).isEmpty()
-            || !this.inputSlots.getItem(HEAD_SLOT).isEmpty()
-            || !this.inputSlots.getItem(BINDING_SLOT).isEmpty();
     }
 
     private boolean accepts(ArrowFletchingSlot slot, ItemStack stack) {

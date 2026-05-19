@@ -17,7 +17,18 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * 生成模组物品标签数据喵~
+ */
 public class ModItemTagsProvider extends ItemTagsProvider {
+    /**
+     * 创建物品标签提供器喵~
+     *
+     * @param output 输出目标喵~
+     * @param lookupProvider 注册表查询提供器喵~
+     * @param blockTagsProvider 方块标签提供器喵~
+     * @param existingFileHelper 已有文件辅助器喵~
+     */
     public ModItemTagsProvider(
             PackOutput output,
             CompletableFuture<HolderLookup.Provider> lookupProvider,

@@ -1,14 +1,23 @@
 package git.wildwind.wwhfas.datagen.provider;
 
 import git.wildwind.wwhfas.WildWindMod;
-import git.wildwind.wwhfas.registry.ModBlocks;
 import git.wildwind.wwhfas.block.ModTerrainBlocks;
+import git.wildwind.wwhfas.registry.ModBlocks;
 import git.wildwind.wwhfas.registry.ModItems;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
+/**
+ * 生成模组物品模型数据喵~
+ */
 public class ModItemModelProvider extends ItemModelProvider {
+    /**
+     * 创建物品模型提供器喵~
+     *
+     * @param output 输出目标喵~
+     * @param existingFileHelper 已有文件辅助器喵~
+     */
     public ModItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
         super(output, WildWindMod.MOD_ID, existingFileHelper);
     }

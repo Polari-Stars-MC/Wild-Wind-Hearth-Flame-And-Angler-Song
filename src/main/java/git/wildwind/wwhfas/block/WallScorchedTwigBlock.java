@@ -3,8 +3,6 @@ package git.wildwind.wwhfas.block;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.MapCodec;
-import java.util.Map;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
@@ -12,11 +10,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -24,8 +18,20 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import javax.annotation.Nullable;
+import java.util.Map;
+
+/**
+ * 附着在可燃木头侧面的焦枝方块喵~
+ */
 public class WallScorchedTwigBlock extends Block {
+    /**
+     * 墙面焦枝方块的编解码器喵~
+     */
     public static final MapCodec<WallScorchedTwigBlock> CODEC = simpleCodec(WallScorchedTwigBlock::new);
+    /**
+     * 墙面焦枝朝向属性喵~
+     */
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     private static final Map<Direction, VoxelShape> SHAPES = Maps.newEnumMap(
         ImmutableMap.of(
@@ -36,16 +42,31 @@ public class WallScorchedTwigBlock extends Block {
         )
     );
 
+    /**
+     * 创建墙面焦枝方块喵~
+     *
+     * @param properties 方块属性喵~
+     */
     public WallScorchedTwigBlock(BlockBehaviour.Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
+    /**
+     * 获取墙面焦枝方块的编解码器喵~
+     *
+     * @return 墙面焦枝方块编解码器喵~
+     */
     @Override
     public MapCodec<WallScorchedTwigBlock> codec() {
         return CODEC;
     }
 
+    /**
+     * 获取对应物品的本地化描述键喵~
+     *
+     * @return 描述键喵~
+     */
     @Override
     public String getDescriptionId() {
         return this.asItem().getDescriptionId();

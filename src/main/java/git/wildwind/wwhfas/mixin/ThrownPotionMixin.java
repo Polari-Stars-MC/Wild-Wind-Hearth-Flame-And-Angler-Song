@@ -10,6 +10,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/**
+ * 为水瓶泼洒效果补充螃蟹复水逻辑的混入类喵~
+ */
 @Mixin(ThrownPotion.class)
 public abstract class ThrownPotionMixin {
 

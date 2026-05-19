@@ -1,5 +1,8 @@
 package git.wildwind.wwhfas.datagen.provider;
 
+import com.mojang.serialization.Codec;
+import git.wildwind.wwhfas.WildWindMod;
+import git.wildwind.wwhfas.registry.ModBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -17,20 +20,24 @@ import net.minecraft.world.level.levelgen.feature.foliageplacers.RandomSpreadFol
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.BendingTrunkPlacer;
-import com.mojang.serialization.Codec;
-import git.wildwind.wwhfas.WildWindMod;
-import git.wildwind.wwhfas.registry.ModBlocks;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.data.JsonCodecProvider;
 
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Generates dynamic registry overrides that need to live under the vanilla namespace.
+ * 生成需要写入原版命名空间的已配置特征覆盖数据喵~
  */
 public final class ModConfiguredFeatureProvider extends JsonCodecProvider<ConfiguredFeature<?, ?>> {
     private static final Codec<ConfiguredFeature<?, ?>> CODEC = ConfiguredFeature.DIRECT_CODEC;
 
+    /**
+     * 创建已配置特征数据提供器喵~
+     *
+     * @param output 输出目标喵~
+     * @param lookupProvider 注册表查询提供器喵~
+     * @param existingFileHelper 已有文件辅助器喵~
+     */
     public ModConfiguredFeatureProvider(
             PackOutput output,
             CompletableFuture<HolderLookup.Provider> lookupProvider,

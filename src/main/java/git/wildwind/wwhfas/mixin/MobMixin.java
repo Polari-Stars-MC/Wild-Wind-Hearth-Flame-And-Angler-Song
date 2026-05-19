@@ -8,6 +8,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
+/**
+ * 扩展生物拾取物品范围判定的混入类喵~
+ */
 @Mixin(Mob.class)
 public abstract class MobMixin {
 

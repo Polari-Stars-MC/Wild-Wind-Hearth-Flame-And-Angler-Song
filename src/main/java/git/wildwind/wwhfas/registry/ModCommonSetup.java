@@ -26,10 +26,18 @@ import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 
+/**
+ * 模组通用阶段初始化逻辑，负责注册公共事件与交互行为喵~
+ */
 public final class ModCommonSetup {
     private ModCommonSetup() {
     }
 
+    /**
+     * 注册模组通用初始化监听器与运行时事件喵~
+     *
+     * @param modBus 模组事件总线喵~
+     */
     public static void register(IEventBus modBus) {
         modBus.addListener(ModCommonSetup::onCommonSetup);
         NeoForge.EVENT_BUS.addListener(ModCommonSetup::onBlockToolModification);
