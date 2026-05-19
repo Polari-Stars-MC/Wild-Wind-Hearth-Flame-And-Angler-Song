@@ -1,0 +1,160 @@
+package org.polaris2023.wwhfas.datagen.provider;
+
+import org.polaris2023.wwhfas.WildWindMod;
+import org.polaris2023.wwhfas.block.ModTerrainBlocks;
+import org.polaris2023.wwhfas.registry.ModBlocks;
+import org.polaris2023.wwhfas.tag.ModBlockTags;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.data.BlockTagsProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+
+import java.util.concurrent.CompletableFuture;
+
+/**
+ * 生成模组方块标签数据喵~
+ */
+public class ModBlockTagsProvider extends BlockTagsProvider {
+	/**
+	 * 创建方块标签提供器喵~
+	 *
+	 * @param output 输出目标喵~
+	 * @param lookupProvider 注册表查询提供器喵~
+	 * @param existingFileHelper 已有文件辅助器喵~
+	 */
+	public ModBlockTagsProvider(
+			PackOutput output,
+			CompletableFuture<HolderLookup.Provider> lookupProvider,
+			ExistingFileHelper existingFileHelper
+	) {
+		super(output, lookupProvider, WildWindMod.MOD_ID, existingFileHelper);
+	}
+
+	@Override
+	protected void addTags(HolderLookup.Provider provider) {
+		tag(BlockTags.SWORD_EFFICIENT)
+				.add(ModBlocks.REEDS.get())
+				.add(ModBlocks.CATTAILS.get());
+
+		tag(BlockTags.MINEABLE_WITH_AXE)
+				.add(ModBlocks.REEDS.get())
+				.add(ModBlocks.CATTAILS.get());
+
+		tag(BlockTags.REPLACEABLE_BY_TREES)
+				.add(ModBlocks.REEDS.get())
+				.add(ModBlocks.CATTAILS.get());
+
+		tag(ModBlockTags.CRAB_SPAWNABLE_ON)
+				.add(Blocks.MUD)
+				.add(Blocks.MUDDY_MANGROVE_ROOTS);
+
+		tag(ModBlockTags.CARB_SPAWNABLE_IN_WATER_GROUND)
+				.addTag(BlockTags.SAND)
+				.addTag(Tags.Blocks.GRAVELS)
+				.add(Blocks.CLAY)
+				.add(Blocks.MUD)
+				.add(Blocks.DIRT)
+				.add(Blocks.MUDDY_MANGROVE_ROOTS);
+
+		tag(ModBlockTags.CRAB_PREFERRED_WANDER_BLOCKS)
+				.add(Blocks.MANGROVE_LOG)
+				.add(Blocks.MANGROVE_ROOTS)
+				.add(Blocks.MUDDY_MANGROVE_ROOTS);
+
+		for (ModBlocks.WoodSet woodSet : ModBlocks.WOOD_SETS) {
+			TagKey<Block> logsTag = TagKey.create(
+				net.minecraft.core.registries.Registries.BLOCK,
+				ResourceLocation.fromNamespaceAndPath(WildWindMod.MOD_ID, woodSet.name() + "_logs")
+			);
+
+			tag(logsTag)
+				.add(woodSet.log().get(), woodSet.wood().get(), woodSet.strippedLog().get(), woodSet.strippedWood().get());
+
+			tag(BlockTags.LOGS)
+				.addTag(logsTag);
+			tag(BlockTags.LOGS_THAT_BURN)
+				.addTag(logsTag);
+			tag(BlockTags.PLANKS)
+				.add(woodSet.planks().get());
+			tag(BlockTags.WOODEN_STAIRS)
+				.add(woodSet.stairs().get());
+			tag(BlockTags.WOODEN_SLABS)
+				.add(woodSet.slab().get());
+			tag(BlockTags.WOODEN_FENCES)
+				.add(woodSet.fence().get());
+			tag(BlockTags.FENCE_GATES)
+				.add(woodSet.fenceGate().get());
+			tag(BlockTags.WOODEN_DOORS)
+				.add(woodSet.door().get());
+			tag(BlockTags.WOODEN_TRAPDOORS)
+				.add(woodSet.trapdoor().get());
+			tag(BlockTags.WOODEN_PRESSURE_PLATES)
+				.add(woodSet.pressurePlate().get());
+			tag(BlockTags.WOODEN_BUTTONS)
+				.add(woodSet.button().get());
+			tag(BlockTags.STANDING_SIGNS)
+				.add(woodSet.sign().get());
+			tag(BlockTags.WALL_SIGNS)
+				.add(woodSet.wallSign().get());
+			tag(BlockTags.ALL_SIGNS)
+				.add(woodSet.sign().get(), woodSet.wallSign().get());
+			tag(BlockTags.CEILING_HANGING_SIGNS)
+				.add(woodSet.hangingSign().get());
+			tag(BlockTags.WALL_HANGING_SIGNS)
+				.add(woodSet.wallHangingSign().get());
+			tag(BlockTags.ALL_HANGING_SIGNS)
+				.add(woodSet.hangingSign().get(), woodSet.wallHangingSign().get());
+			tag(BlockTags.MINEABLE_WITH_AXE)
+				.add(
+					woodSet.log().get(),
+					woodSet.wood().get(),
+					woodSet.strippedLog().get(),
+					woodSet.strippedWood().get(),
+					woodSet.planks().get(),
+					woodSet.stairs().get(),
+					woodSet.slab().get(),
+					woodSet.fence().get(),
+					woodSet.fenceGate().get(),
+					woodSet.door().get(),
+					woodSet.trapdoor().get(),
+					woodSet.pressurePlate().get(),
+					woodSet.button().get(),
+					woodSet.sign().get(),
+					woodSet.wallSign().get(),
+					woodSet.hangingSign().get(),
+					woodSet.wallHangingSign().get()
+				);
+			tag(Tags.Blocks.STRIPPED_LOGS)
+				.add(woodSet.strippedLog().get());
+			tag(Tags.Blocks.STRIPPED_WOODS)
+				.add(woodSet.strippedWood().get());
+			tag(Tags.Blocks.FENCES_WOODEN)
+				.add(woodSet.fence().get());
+			tag(Tags.Blocks.FENCE_GATES_WOODEN)
+				.add(woodSet.fenceGate().get());
+			if (woodSet.hasTreeBlocks()) {
+				tag(BlockTags.OVERWORLD_NATURAL_LOGS)
+					.add(woodSet.log().get());
+				tag(BlockTags.LEAVES)
+					.add(woodSet.leaves().get());
+				tag(BlockTags.SAPLINGS)
+					.add(woodSet.sapling().get());
+				tag(BlockTags.FLOWER_POTS)
+					.add(woodSet.pottedSapling().get());
+			}
+		}
+
+		tag(BlockTags.DIRT)
+			.add(ModTerrainBlocks.SCORCHED_GRASS_BLOCK.get(), ModTerrainBlocks.SCORCHED_DIRT.get());
+		tag(BlockTags.MINEABLE_WITH_SHOVEL)
+			.add(ModTerrainBlocks.SCORCHED_GRASS_BLOCK.get(), ModTerrainBlocks.SCORCHED_DIRT.get());
+		tag(BlockTags.DEAD_BUSH_MAY_PLACE_ON)
+			.add(ModTerrainBlocks.SCORCHED_GRASS_BLOCK.get(), ModTerrainBlocks.SCORCHED_DIRT.get());
+	}
+}

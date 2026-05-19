@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "git.wildwind.wwhfas.mixin",
+  "package": "org.polaris2023.wwhfas.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "EnchantmentHelperMixin",
