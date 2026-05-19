@@ -58,7 +58,10 @@ public final class ModPlacedFeatures {
         context.register(PATCH_REEDS_SURFACE, new PlacedFeature(
                 configuredFeatures.getOrThrow(ModConfiguredFeatures.PATCH_REEDS),
                 List.of(
-                        BiomeFilter.biome()
+                        BiomeFilter.biome(),
+						CountPlacement.of(16),
+						InSquarePlacement.spread(),
+						HeightmapPlacement.onHeightmap(Heightmap.Types.OCEAN_FLOOR_WG)
                 )
         ));
 
@@ -66,7 +69,10 @@ public final class ModPlacedFeatures {
                 configuredFeatures.getOrThrow(ModConfiguredFeatures.PATCH_REEDS),
                 List.of(
                         BiomeFilter.biome(),
-                        BlockPredicateFilter.forPredicate(BlockPredicate.matchesBlocks(Blocks.WATER))
+                        BlockPredicateFilter.forPredicate(BlockPredicate.matchesBlocks(Blocks.WATER)),
+						CountPlacement.of(16),
+						InSquarePlacement.spread(),
+						HeightmapPlacement.onHeightmap(Heightmap.Types.OCEAN_FLOOR_WG)
                 )
         ));
     }
