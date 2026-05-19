@@ -1,6 +1,6 @@
 package git.wildwind.wwhfas.block;
 
-import git.wildwind.wwhfas.worldgen.ModConfiguredFeatures;
+import git.wildwind.wwhfas.datagen.provider.ModConfiguredFeatures;
 import net.minecraft.world.level.block.grower.TreeGrower;
 
 import java.util.Optional;

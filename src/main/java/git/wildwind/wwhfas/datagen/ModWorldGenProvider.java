@@ -1,8 +1,8 @@
 package git.wildwind.wwhfas.datagen;
 
-import git.wildwind.wwhfas.worldgen.ModBiomeModifiers;
-import git.wildwind.wwhfas.worldgen.ModConfiguredFeatures;
-import git.wildwind.wwhfas.worldgen.ModPlacedFeatures;
+import git.wildwind.wwhfas.datagen.provider.ModBiomeModifiers;
+import git.wildwind.wwhfas.datagen.provider.ModConfiguredFeatures;
+import git.wildwind.wwhfas.datagen.provider.ModPlacedFeatures;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;

@@ -10,7 +10,8 @@
             "state": {
               "Name": "wwhfas:reeds",
               "Properties": {
-                "half": "lower"
+                "half": "lower",
+                "waterlogged": "false"
               }
             }
           }
@@ -20,14 +21,25 @@
         {
           "type": "minecraft:block_predicate_filter",
           "predicate": {
-            "type": "minecraft:matching_blocks",
-            "blocks": "minecraft:air"
+            "type": "minecraft:all_of",
+            "predicates": [
+              {
+                "type": "minecraft:would_survive",
+                "state": {
+                  "Name": "wwhfas:reeds",
+                  "Properties": {
+                    "half": "lower",
+                    "waterlogged": "false"
+                  }
+                }
+              }
+            ]
           }
         }
       ]
     },
-    "tries": 96,
-    "xz_spread": 7,
-    "y_spread": 3
+    "tries": 20,
+    "xz_spread": 6,
+    "y_spread": 2
   }
 }

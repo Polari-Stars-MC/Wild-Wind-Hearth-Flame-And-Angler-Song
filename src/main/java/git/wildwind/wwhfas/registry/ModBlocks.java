@@ -4,6 +4,7 @@ import git.wildwind.wwhfas.WildWindMod;
 import git.wildwind.wwhfas.block.ModBlockSetType;
 import git.wildwind.wwhfas.block.ModTreeGrower;
 import git.wildwind.wwhfas.block.ModWoodType;
+import git.wildwind.wwhfas.block.EmergentPlantBlock;
 import git.wildwind.wwhfas.block.sign.ModCeilingHangingSignBlock;
 import git.wildwind.wwhfas.block.sign.ModStandingSignBlock;
 import git.wildwind.wwhfas.block.sign.ModWallHangingSignBlock;
@@ -31,7 +32,7 @@ public final class ModBlocks {
             DeferredRegister.createBlocks(WildWindMod.MOD_ID);
 
     public static final DeferredBlock<Block> REEDS =
-            BLOCKS.register("reeds", () -> new DoublePlantBlock(
+            BLOCKS.register("reeds", () -> new EmergentPlantBlock(
                     BlockBehaviour.Properties.of()
                             .mapColor(MapColor.COLOR_BROWN)
                             .replaceable()
@@ -44,7 +45,7 @@ public final class ModBlocks {
             ));
 
     public static final DeferredBlock<Block> CATTAILS =
-            BLOCKS.register("cattails", () -> new DoublePlantBlock(
+            BLOCKS.register("cattails", () -> new EmergentPlantBlock(
                     BlockBehaviour.Properties.of()
                             .mapColor(MapColor.TERRACOTTA_WHITE)
                             .replaceable()
