@@ -11,43 +11,63 @@ import net.minecraft.world.level.levelgen.feature.configurations.TreeConfigurati
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 
+/**
+ * 灵焰木树叶放置器喵~
+ */
 public class CinderFoliagePlacer extends FoliagePlacer {
 
-    public static final MapCodec<CinderFoliagePlacer> CODEC =
-            RecordCodecBuilder.mapCodec(instance ->
-                    foliagePlacerParts(instance)
-                            .apply(instance, CinderFoliagePlacer::new)
-            );
+	/**
+	 * 灵焰木树叶放置器的编解码器喵~
+	 */
+	public static final MapCodec<CinderFoliagePlacer> CODEC =
+			RecordCodecBuilder.mapCodec(instance ->
+					foliagePlacerParts(instance)
+							.apply(instance, CinderFoliagePlacer::new)
+			);
 
-    public CinderFoliagePlacer(IntProvider radius, IntProvider offset) {
-        super(radius, offset);
-    }
+	/**
+	 * 创建灵焰木树叶放置器喵~
+	 *
+	 * @param radius 树叶半径提供器喵~
+	 * @param offset 树叶偏移提供器喵~
+	 */
+	public CinderFoliagePlacer(IntProvider radius, IntProvider offset) {
+		super(radius, offset);
+	}
 
-    @Override
-    protected FoliagePlacerType<?> type() {
-        return ModFoliagePlacerTypes.CINDER.get();
-    }
+	@Override
+	protected FoliagePlacerType<?> type() {
+		return ModFoliagePlacerTypes.CINDER.get();
+	}
 
-    @Override
-    protected void createFoliage(LevelSimulatedReader level, FoliageSetter blockSetter,
-                                 RandomSource random, TreeConfiguration config,
-                                 int maxFreeTreeHeight, FoliageAttachment attachment,
-                                 int foliageHeight, int foliageRadius, int offset) {
-        BlockPos trunkPos = attachment.pos();
-
-
-    }
-    
+	@Override
+	protected void createFoliage(LevelSimulatedReader level, FoliageSetter blockSetter,
+								 RandomSource random, TreeConfiguration config,
+								 int maxFreeTreeHeight, FoliageAttachment attachment,
+								 int foliageHeight, int foliageRadius, int offset) {
+		BlockPos trunkPos = attachment.pos();
 
 
+	}
+	
 
-    @Override
-    public int foliageHeight(RandomSource random, int height, TreeConfiguration config) {
-        return 1;
-    }
 
-    @Override
-    protected boolean shouldSkipLocation(RandomSource random, int localX, int localY, int localZ, int range, boolean large) {
-        return false;
-    }
+
+	/**
+	 * 获取灵焰木树叶高度喵~
+	 *
+	 * @param random 随机源喵~
+	 * @param height 树木高度喵~
+	 * @param config 树木配置喵~
+	 * @return 树叶高度喵~
+	 */
+	@Override
+	public int foliageHeight(RandomSource random, int height, TreeConfiguration config) {
+		return 1;
+	}
+
+	@Override
+	protected boolean shouldSkipLocation(RandomSource random, int localX, int localY, int localZ, int range, boolean large) {
+		return false;
+	}
 }

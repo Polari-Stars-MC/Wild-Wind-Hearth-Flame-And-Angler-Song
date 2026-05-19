@@ -26,225 +26,356 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.ItemAbility;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * 可收纳多种工具并代理其行为的万用蟹钳物品喵~
+ */
 public class OmniClawItem extends Item {
-    public static final ResourceLocation BLOCK_INTERACTION_RANGE_ID = WildWindMod.id("omni_claw_block_interaction_range");
-    public static final ResourceLocation ENTITY_INTERACTION_RANGE_ID = WildWindMod.id("omni_claw_entity_interaction_range");
-    public static final ResourceLocation EXTRA_ITEM_PICKUP_RANGE_ID = WildWindMod.id("omni_claw_extra_item_pickup_range");
+	/**
+	 * 额外交互方块距离属性修饰符标识喵~
+	 */
+	public static final ResourceLocation BLOCK_INTERACTION_RANGE_ID = WildWindMod.id("omni_claw_block_interaction_range");
+	/**
+	 * 额外交互实体距离属性修饰符标识喵~
+	 */
+	public static final ResourceLocation ENTITY_INTERACTION_RANGE_ID = WildWindMod.id("omni_claw_entity_interaction_range");
+	/**
+	 * 额外拾取物品距离属性修饰符标识喵~
+	 */
+	public static final ResourceLocation EXTRA_ITEM_PICKUP_RANGE_ID = WildWindMod.id("omni_claw_extra_item_pickup_range");
 
-    public OmniClawItem(Properties properties) {
-        super(properties);
-    }
+	/**
+	 * 创建万用蟹钳物品喵~
+	 *
+	 * @param properties 物品属性喵~
+	 */
+	public OmniClawItem(Properties properties) {
+		super(properties);
+	}
 
-    @Override
-    public void setDamage(ItemStack stack, int damage) {
-        ItemStack tool = getLastSelectedTool(stack);
-        if (tool.isEmpty()) {
-            super.setDamage(stack, damage);
-            return;
-        }
+	/**
+	 * 获取内部工具结果，若没有已选工具则返回备用结果喵~
+	 *
+	 * @param omniStack 万用蟹钳物品栈喵~
+	 * @param resultFunction 对内部工具执行的计算喵~
+	 * @param or 没有工具时的备用结果提供器喵~
+	 * @param <T> 返回值类型喵~
+	 * @return 计算结果喵~
+	 */
+	public static <T> T toolOr(ItemStack omniStack, Function<ItemStack, T> resultFunction, Supplier<T> or) {
+		ItemStack tool = getLastSelectedTool(omniStack);
+		return tool.isEmpty() ? or.get() : resultFunction.apply(tool);
+	}
 
-        ItemStack copiedTool = tool.copy();
-        copiedTool.setDamageValue(damage);
-        OmniClawTools tools = stack.get(ModDataComponents.OMNI_CLAW_TOOLS);
-        stack.set(ModDataComponents.OMNI_CLAW_TOOLS, tools
-                .toMutable()
-                .set(copiedTool, tools.indexOf(tool))
-                .toImmutable()
-        );
-    }
+	/**
+	 * 获取最近一次选中的内部工具喵~
+	 *
+	 * @param omniClawStack 万用蟹钳物品栈喵~
+	 * @return 最近一次选中的工具喵~
+	 */
+	public static ItemStack getLastSelectedTool(ItemStack omniClawStack) {
+		if (!omniClawStack.has(ModDataComponents.OMNI_CLAW_TOOLS)) return ItemStack.EMPTY;
 
-    @Override
-    public int getDamage(ItemStack omniStack) {
-        return toolOr(omniStack, stack -> stack.getItem().getDamage(stack), () -> super.getDamage(omniStack));
-    }
+		OmniClawTools tools = omniClawStack.get(ModDataComponents.OMNI_CLAW_TOOLS);
+		return tools.getTools().get(tools.getSelectedToolIndex());
+	}
 
-    @Override
-    public int getMaxDamage(ItemStack omniStack) {
-        return toolOr(omniStack, stack -> stack.getItem().getMaxDamage(stack), () -> super.getMaxDamage(omniStack));
-    }
+	/**
+	 * 为指定方块状态选择内部工具喵~
+	 *
+	 * @param omniClawStack 万用蟹钳物品栈喵~
+	 * @param state 方块状态喵~
+	 * @return 适合挖掘该方块的工具喵~
+	 */
+	public static ItemStack getToolFor(ItemStack omniClawStack, BlockState state) {
+		return findToolAndSelect(omniClawStack, tools -> tools.getToolFor(state));
+	}
 
-    @Override
-    public boolean isDamageable(ItemStack omniStack) {
-        return toolOr(omniStack, stack -> stack.getItem().isDamageable(stack), () -> super.isDamageable(omniStack));
-    }
+	/**
+	 * 按能力选择内部工具喵~
+	 *
+	 * @param omniClawStack 万用蟹钳物品栈喵~
+	 * @param ability 目标能力喵~
+	 * @return 具备该能力的工具喵~
+	 */
+	public static ItemStack getToolByAbility(ItemStack omniClawStack, ItemAbility ability) {
+		return findToolAndSelect(omniClawStack, tools -> tools.getToolByAbility(ability));
+	}
 
-    public static <T> T toolOr(ItemStack omniStack, Function<ItemStack, T> resultFunction, Supplier<T> or) {
-        ItemStack tool = getLastSelectedTool(omniStack);
-        return tool.isEmpty() ? or.get() : resultFunction.apply(tool);
-    }
+	/**
+	 * 创建万用蟹钳持有时提供的属性修饰器喵~
+	 *
+	 * @return 属性修饰器集合喵~
+	 */
+	public static ItemAttributeModifiers createAttributes() {
+		return ItemAttributeModifiers.builder()
+				.add(Attributes.BLOCK_INTERACTION_RANGE, new AttributeModifier(BLOCK_INTERACTION_RANGE_ID, 2.0, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+				.add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(ENTITY_INTERACTION_RANGE_ID, 2.0, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+				.add(ModAttributes.EXTRA_ITEM_PICKUP_RANGE, new AttributeModifier(EXTRA_ITEM_PICKUP_RANGE_ID, 2.0, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+				.build();
+	}
 
-    public static ItemStack getLastSelectedTool(ItemStack omniClawStack) {
-        if (!omniClawStack.has(ModDataComponents.OMNI_CLAW_TOOLS)) return ItemStack.EMPTY;
+	@Override
+	public void setDamage(ItemStack stack, int damage) {
+		ItemStack tool = getLastSelectedTool(stack);
+		if (tool.isEmpty()) {
+			super.setDamage(stack, damage);
+			return;
+		}
 
-        OmniClawTools tools = omniClawStack.get(ModDataComponents.OMNI_CLAW_TOOLS);
-        return tools.getTools().get(tools.getSelectedToolIndex());
-    }
+		ItemStack copiedTool = tool.copy();
+		copiedTool.setDamageValue(damage);
+		OmniClawTools tools = stack.get(ModDataComponents.OMNI_CLAW_TOOLS);
+		stack.set(ModDataComponents.OMNI_CLAW_TOOLS, tools
+				.toMutable()
+				.set(copiedTool, tools.indexOf(tool))
+				.toImmutable()
+		);
+	}
 
-    public static ItemStack getToolFor(ItemStack omniClawStack, BlockState state) {
-        return findToolAndSelect(omniClawStack, tools -> tools.getToolFor(state));
-    }
+	/**
+	 * 获取当前选中内部工具的耐久损耗值喵~
+	 *
+	 * @param omniStack 万用蟹钳物品栈喵~
+	 * @return 当前耐久损耗值喵~
+	 */
+	@Override
+	public int getDamage(ItemStack omniStack) {
+		return toolOr(omniStack, stack -> stack.getItem().getDamage(stack), () -> super.getDamage(omniStack));
+	}
 
-    public static ItemStack getToolByAbility(ItemStack omniClawStack, ItemAbility ability) {
-        return findToolAndSelect(omniClawStack, tools -> tools.getToolByAbility(ability));
-    }
+	/**
+	 * 获取当前选中内部工具的最大耐久喵~
+	 *
+	 * @param omniStack 万用蟹钳物品栈喵~
+	 * @return 最大耐久值喵~
+	 */
+	@Override
+	public int getMaxDamage(ItemStack omniStack) {
+		return toolOr(omniStack, stack -> stack.getItem().getMaxDamage(stack), () -> super.getMaxDamage(omniStack));
+	}
 
-    private static ItemStack findToolAndSelect(ItemStack omniClawStack, Function<OmniClawTools, ItemStack> selectRule) {
-        if (!omniClawStack.has(ModDataComponents.OMNI_CLAW_TOOLS)) return ItemStack.EMPTY;
+	/**
+	 * 判断当前选中内部工具是否可损坏喵~
+	 *
+	 * @param omniStack 万用蟹钳物品栈喵~
+	 * @return 可损坏时返回 true 喵~
+	 */
+	@Override
+	public boolean isDamageable(ItemStack omniStack) {
+		return toolOr(omniStack, stack -> stack.getItem().isDamageable(stack), () -> super.isDamageable(omniStack));
+	}
 
-        OmniClawTools tools = omniClawStack.get(ModDataComponents.OMNI_CLAW_TOOLS);
-        ItemStack result = selectRule.apply(tools);
-        int lastSelected = tools.indexOf(result);
-        if (lastSelected != -1) omniClawStack.update(ModDataComponents.OMNI_CLAW_TOOLS, tools, operator -> operator.withSelectIndex(lastSelected));
+	/**
+	 * 使用当前匹配的内部工具执行方块挖掘耐久消耗喵~
+	 *
+	 * @param stack 万用蟹钳物品栈喵~
+	 * @param level 当前世界喵~
+	 * @param state 被挖掘的方块状态喵~
+	 * @param pos 方块位置喵~
+	 * @param miningEntity 挖掘实体喵~
+	 * @return 成功代理内部工具时返回 true 喵~
+	 */
+	@Override
+	public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity miningEntity) {
+		if (!level.isClientSide && !getToolFor(stack, state).isEmpty()) {
+			stack.hurtAndBreak(1, miningEntity, EquipmentSlot.MAINHAND);
+			return true;
+		}
 
-        return result;
-    }
+		return super.mineBlock(stack, level, state, pos, miningEntity);
+	}
 
-    @Override
-    public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity miningEntity) {
-        if (!level.isClientSide && !getToolFor(stack, state).isEmpty()) {
-            stack.hurtAndBreak(1, miningEntity, EquipmentSlot.MAINHAND);
-            return true;
-        }
+	/**
+	 * 判断当前选中内部工具是否能正确采集该方块掉落物喵~
+	 *
+	 * @param omniStack 万用蟹钳物品栈喵~
+	 * @param state 方块状态喵~
+	 * @return 能正确采集时返回 true 喵~
+	 */
+	@Override
+	public boolean isCorrectToolForDrops(ItemStack omniStack, BlockState state) {
+		return toolOr(omniStack, stack -> stack.isCorrectToolForDrops(state), () -> super.isCorrectToolForDrops(omniStack, state));
+	}
 
-        return super.mineBlock(stack, level, state, pos, miningEntity);
-    }
+	/**
+	 * 获取当前选中内部工具上的全部附魔喵~
+	 *
+	 * @param omniStack 万用蟹钳物品栈喵~
+	 * @param lookup 附魔注册表查询器喵~
+	 * @return 附魔集合喵~
+	 */
+	@Override
+	public ItemEnchantments getAllEnchantments(ItemStack omniStack, HolderLookup.RegistryLookup<Enchantment> lookup) {
+		return toolOr(omniStack, stack -> stack.getAllEnchantments(lookup), () -> super.getAllEnchantments(omniStack, lookup));
+	}
 
-    public static ItemAttributeModifiers createAttributes() {
-        return ItemAttributeModifiers.builder()
-                .add(Attributes.BLOCK_INTERACTION_RANGE, new AttributeModifier(BLOCK_INTERACTION_RANGE_ID, 2.0, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
-                .add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(ENTITY_INTERACTION_RANGE_ID, 2.0, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
-                .add(ModAttributes.EXTRA_ITEM_PICKUP_RANGE, new AttributeModifier(EXTRA_ITEM_PICKUP_RANGE_ID, 2.0, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
-                .build();
-    }
+	/**
+	 * 获取当前选中内部工具对方块的挖掘速度喵~
+	 *
+	 * @param omniStack 万用蟹钳物品栈喵~
+	 * @param state 方块状态喵~
+	 * @return 挖掘速度喵~
+	 */
+	@Override
+	public float getDestroySpeed(ItemStack omniStack, BlockState state) {
+		return toolOr(omniStack, stack -> stack.getDestroySpeed(state), () -> super.getDestroySpeed(omniStack, state));
+	}
 
-    @Override
-    public boolean isCorrectToolForDrops(ItemStack omniStack, BlockState state) {
-        return toolOr(omniStack, stack -> stack.isCorrectToolForDrops(state), () -> super.isCorrectToolForDrops(omniStack, state));
-    }
+	/**
+	 * 代理内部工具执行对方块的右键交互喵~
+	 *
+	 * @param context 交互上下文喵~
+	 * @return 交互结果喵~
+	 */
+	@Override
+	public InteractionResult useOn(UseOnContext context) {
+		ItemStack stack = context.getItemInHand();
+		if (!stack.has(ModDataComponents.OMNI_CLAW_TOOLS)) return super.useOn(context);
 
-    @Override
-    public ItemEnchantments getAllEnchantments(ItemStack omniStack, HolderLookup.RegistryLookup<Enchantment> lookup) {
-        return toolOr(omniStack, stack -> stack.getAllEnchantments(lookup), () -> super.getAllEnchantments(omniStack, lookup));
-    }
+		OmniClawTools tools = stack.get(ModDataComponents.OMNI_CLAW_TOOLS);
 
-    @Override
-    public float getDestroySpeed(ItemStack omniStack, BlockState state) {
-        return toolOr(omniStack, stack -> stack.getDestroySpeed(state), () -> super.getDestroySpeed(omniStack, state));
-    }
+		ItemStack selectedTool = tools.getSelectedTool();
+		if (!selectedTool.isEmpty()) {
+			InteractionResult result = handleToolUseOn(stack, context, selectedTool, tools);
+			if (result.consumesAction()) return result;
+		}
 
-    @Override
-    public InteractionResult useOn(UseOnContext context) {
-        ItemStack stack = context.getItemInHand();
-        if (!stack.has(ModDataComponents.OMNI_CLAW_TOOLS)) return super.useOn(context);
+		for (ItemStack toolStack : tools.getTools()) {
+			if (toolStack.isEmpty()) continue;
 
-        OmniClawTools tools = stack.get(ModDataComponents.OMNI_CLAW_TOOLS);
+			InteractionResult result = handleToolUseOn(stack, context, toolStack, tools);
+			if (result.consumesAction()) return result;
+		}
 
-        ItemStack selectedTool = tools.getSelectedTool();
-        if (!selectedTool.isEmpty()) {
-            InteractionResult result = handleToolUseOn(stack, context, selectedTool, tools);
-            if (result.consumesAction()) return result;
-        }
+		return super.useOn(context);
+	}
 
-        for (ItemStack toolStack : tools.getTools()) {
-            if (toolStack.isEmpty()) continue;
+	/**
+	 * 获取万用蟹钳的自定义提示图像组件喵~
+	 *
+	 * @param stack 万用蟹钳物品栈喵~
+	 * @return 提示图像组件喵~
+	 */
+	@Override
+	public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
+		return !stack.has(DataComponents.HIDE_TOOLTIP) && !stack.has(DataComponents.HIDE_ADDITIONAL_TOOLTIP)
+				? Optional.ofNullable(stack.get(ModDataComponents.OMNI_CLAW_TOOLS))
+				: Optional.empty();
+	}
 
-            InteractionResult result = handleToolUseOn(stack, context, toolStack, tools);
-            if (result.consumesAction()) return result;
-        }
+	/**
+	 * 处理万用蟹钳堆叠到其他槽位物品上的右键交换逻辑喵~
+	 *
+	 * @param stack 万用蟹钳物品栈喵~
+	 * @param slot 目标槽位喵~
+	 * @param action 点击动作喵~
+	 * @param player 玩家喵~
+	 * @return 处理成功时返回 true 喵~
+	 */
+	@Override
+	public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
+		if (stack.getCount() != 1 || action != ClickAction.SECONDARY) {
+			return false;
+		}
 
-        return super.useOn(context);
-    }
+		return swapItem(stack, slot.getItem(), player, SlotAccess.of(slot::getItem, slot::set));
+	}
 
-    private static @NotNull InteractionResult handleToolUseOn(ItemStack omniClawStack, UseOnContext context, ItemStack toolStack, OmniClawTools tools) {
-        ItemStack copiedToolStack = toolStack.copy();
-        UseOnContext toolContext = new UseOnContext(
-                context.getLevel(),
-                context.getPlayer(),
-                context.getHand(),
-                copiedToolStack,
-                context.hitResult
-        );
+	/**
+	 * 处理其他物品右键堆叠到万用蟹钳上的交换逻辑喵~
+	 *
+	 * @param stack 万用蟹钳物品栈喵~
+	 * @param other 另一物品栈喵~
+	 * @param slot 槽位喵~
+	 * @param action 点击动作喵~
+	 * @param player 玩家喵~
+	 * @param access 槽位访问器喵~
+	 * @return 处理成功时返回 true 喵~
+	 */
+	@Override
+	public boolean overrideOtherStackedOnMe(
+			ItemStack stack, ItemStack other, Slot slot, ClickAction action, Player player, SlotAccess access
+	) {
+		if (stack.getCount() != 1) return false;
+		if (action != ClickAction.SECONDARY || !slot.allowModification(player)) {
+			return false;
+		}
 
-        InteractionResult result = copiedToolStack.useOn(toolContext);
-        if (result.consumesAction()) {
-            if (!ItemStack.isSameItemSameComponents(toolStack, copiedToolStack)) {
-                int toolIndex = tools.indexOf(toolStack);
-                omniClawStack.set(ModDataComponents.OMNI_CLAW_TOOLS, tools
-                        .toMutable()
-                        .set(copiedToolStack, toolIndex)
-                        .select(toolIndex)
-                        .toImmutable()
-                );
-            }
-        }
+		return swapItem(stack, other, player, access);
+	}
 
-        return result;
-    }
+	private static ItemStack findToolAndSelect(ItemStack omniClawStack, Function<OmniClawTools, ItemStack> selectRule) {
+		if (!omniClawStack.has(ModDataComponents.OMNI_CLAW_TOOLS)) return ItemStack.EMPTY;
 
-    @Override
-    public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
-        return !stack.has(DataComponents.HIDE_TOOLTIP) && !stack.has(DataComponents.HIDE_ADDITIONAL_TOOLTIP)
-                ? Optional.ofNullable(stack.get(ModDataComponents.OMNI_CLAW_TOOLS))
-                : Optional.empty();
-    }
+		OmniClawTools tools = omniClawStack.get(ModDataComponents.OMNI_CLAW_TOOLS);
+		ItemStack result = selectRule.apply(tools);
+		int lastSelected = tools.indexOf(result);
+		if (lastSelected != -1) omniClawStack.update(ModDataComponents.OMNI_CLAW_TOOLS, tools, operator -> operator.withSelectIndex(lastSelected));
 
-    @Override
-    public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
-        if (stack.getCount() != 1 || action != ClickAction.SECONDARY) {
-            return false;
-        }
+		return result;
+	}
 
-        return swapItem(stack, slot.getItem(), player, SlotAccess.of(slot::getItem, slot::set));
-    }
+	private static InteractionResult handleToolUseOn(ItemStack omniClawStack, UseOnContext context, ItemStack toolStack, OmniClawTools tools) {
+		ItemStack copiedToolStack = toolStack.copy();
+		UseOnContext toolContext = new UseOnContext(
+				context.getLevel(),
+				context.getPlayer(),
+				context.getHand(),
+				copiedToolStack,
+				context.hitResult
+		);
 
-    @Override
-    public boolean overrideOtherStackedOnMe(
-            ItemStack stack, ItemStack other, Slot slot, ClickAction action, Player player, SlotAccess access
-    ) {
-        if (stack.getCount() != 1) return false;
-        if (action != ClickAction.SECONDARY || !slot.allowModification(player)) {
-            return false;
-        }
+		InteractionResult result = copiedToolStack.useOn(toolContext);
+		if (result.consumesAction()) {
+			if (!ItemStack.isSameItemSameComponents(toolStack, copiedToolStack)) {
+				int toolIndex = tools.indexOf(toolStack);
+				omniClawStack.set(ModDataComponents.OMNI_CLAW_TOOLS, tools
+						.toMutable()
+						.set(copiedToolStack, toolIndex)
+						.select(toolIndex)
+						.toImmutable()
+				);
+			}
+		}
 
-        return swapItem(stack, other, player, access);
-    }
+		return result;
+	}
 
-    private boolean swapItem(ItemStack omniClaw, ItemStack other, Player player, SlotAccess access) {
-        OmniClawTools tools = omniClaw.get(ModDataComponents.OMNI_CLAW_TOOLS);
-        if (tools == null) {
-            return false;
-        }
+	private boolean swapItem(ItemStack omniClaw, ItemStack other, Player player, SlotAccess access) {
+		OmniClawTools tools = omniClaw.get(ModDataComponents.OMNI_CLAW_TOOLS);
+		if (tools == null) {
+			return false;
+		}
 
-        OmniClawTools.Mutable mutable = tools.toMutable();
-        if (other.isEmpty()) {
-            ItemStack output = mutable.removeSelected();
-            if (!output.isEmpty()) {
-                this.playRemoveOneSound(player);
-                access.set(output);
-            }
-        } else {
-            ItemStack output = mutable.insert(other);
-            if (!ItemStack.isSameItemSameComponents(other, output)) {
-                this.playInsertSound(player);
-                access.set(output);
-            }
-        }
+		OmniClawTools.Mutable mutable = tools.toMutable();
+		if (other.isEmpty()) {
+			ItemStack output = mutable.removeSelected();
+			if (!output.isEmpty()) {
+				this.playRemoveOneSound(player);
+				access.set(output);
+			}
+		} else {
+			ItemStack output = mutable.insert(other);
+			if (!ItemStack.isSameItemSameComponents(other, output)) {
+				this.playInsertSound(player);
+				access.set(output);
+			}
+		}
 
-        omniClaw.set(ModDataComponents.OMNI_CLAW_TOOLS, mutable.toImmutable());
-        return true;
-    }
+		omniClaw.set(ModDataComponents.OMNI_CLAW_TOOLS, mutable.toImmutable());
+		return true;
+	}
 
-    private void playRemoveOneSound(Entity entity) {
-        entity.playSound(SoundEvents.BUNDLE_REMOVE_ONE, 0.8F, 0.8F + entity.level().getRandom().nextFloat() * 0.4F);
-    }
+	private void playRemoveOneSound(Entity entity) {
+		entity.playSound(SoundEvents.BUNDLE_REMOVE_ONE, 0.8F, 0.8F + entity.level().getRandom().nextFloat() * 0.4F);
+	}
 
-    private void playInsertSound(Entity entity) {
-        entity.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 0.8F + entity.level().getRandom().nextFloat() * 0.4F);
-    }
+	private void playInsertSound(Entity entity) {
+		entity.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 0.8F + entity.level().getRandom().nextFloat() * 0.4F);
+	}
 }

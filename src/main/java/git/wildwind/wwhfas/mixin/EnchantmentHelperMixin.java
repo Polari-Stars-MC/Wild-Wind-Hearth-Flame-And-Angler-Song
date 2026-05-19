@@ -10,13 +10,16 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
+/**
+ * 为附魔辅助逻辑补充万用蟹钳工具上下文的混入类喵~
+ */
 @Mixin(EnchantmentHelper.class)
 public abstract class EnchantmentHelperMixin {
 
-    @ModifyVariable(method = "getRandomItemWith", at = @At(value = "STORE", ordinal = 0))
-    private static ItemEnchantments getRandomItemWithUnwarpOmniClaw(ItemEnchantments enchantments, @Local ItemStack stack) {
-        ItemStack tool = OmniClawItem.getLastSelectedTool(stack);
-        if (!tool.isEmpty()) enchantments = tool.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-        return enchantments;
-    }
+	@ModifyVariable(method = "getRandomItemWith", at = @At(value = "STORE", ordinal = 0))
+	private static ItemEnchantments getRandomItemWithUnwarpOmniClaw(ItemEnchantments enchantments, @Local ItemStack stack) {
+		ItemStack tool = OmniClawItem.getLastSelectedTool(stack);
+		if (!tool.isEmpty()) enchantments = tool.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+		return enchantments;
+	}
 }

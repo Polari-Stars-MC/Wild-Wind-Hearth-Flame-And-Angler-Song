@@ -8,21 +8,24 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
+/**
+ * 扩展生物拾取物品范围判定的混入类喵~
+ */
 @Mixin(Mob.class)
 public abstract class MobMixin {
 
-    @ModifyVariable(method = "aiStep", at = @At(value = "STORE", ordinal = 0))
-    private Vec3i reachMobEffectPickupRange(Vec3i vec3i) {
-        Mob self = (Mob) (Object) this;
+	@ModifyVariable(method = "aiStep", at = @At(value = "STORE", ordinal = 0))
+	private Vec3i reachMobEffectPickupRange(Vec3i vec3i) {
+		Mob self = (Mob) (Object) this;
 
-        AttributeMap attributes = self.getAttributes();
-        if (attributes.hasAttribute(ModAttributes.EXTRA_ITEM_PICKUP_RANGE)) {
-            double extraItemPickupRange = attributes.getValue(ModAttributes.EXTRA_ITEM_PICKUP_RANGE);
-            if (extraItemPickupRange != 0.0) {
-                vec3i = vec3i.offset((int) extraItemPickupRange, (int) extraItemPickupRange, (int) extraItemPickupRange);
-            }
-        }
+		AttributeMap attributes = self.getAttributes();
+		if (attributes.hasAttribute(ModAttributes.EXTRA_ITEM_PICKUP_RANGE)) {
+			double extraItemPickupRange = attributes.getValue(ModAttributes.EXTRA_ITEM_PICKUP_RANGE);
+			if (extraItemPickupRange != 0.0) {
+				vec3i = vec3i.offset((int) extraItemPickupRange, (int) extraItemPickupRange, (int) extraItemPickupRange);
+			}
+		}
 
-        return vec3i;
-    }
+		return vec3i;
+	}
 }

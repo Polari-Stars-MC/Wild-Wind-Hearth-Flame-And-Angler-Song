@@ -9,16 +9,30 @@ import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+/**
+ * 注册模组菜单类型喵~
+ */
 public final class ModMenuTypes {
-    public static final DeferredRegister<MenuType<?>> MENU_TYPES =
-            DeferredRegister.create(Registries.MENU, WildWindMod.MOD_ID);
-    public static final DeferredHolder<MenuType<?>, MenuType<ArrowFletchingMenu>> ARROW_FLETCHING =
-            MENU_TYPES.register("arrow_fletching", () -> IMenuTypeExtension.create(ArrowFletchingMenu::new));
+	/**
+	 * 菜单类型延迟注册器喵~
+	 */
+	public static final DeferredRegister<MenuType<?>> MENU_TYPES =
+			DeferredRegister.create(Registries.MENU, WildWindMod.MOD_ID);
+	/**
+	 * 制箭台菜单类型喵~
+	 */
+	public static final DeferredHolder<MenuType<?>, MenuType<ArrowFletchingMenu>> ARROW_FLETCHING =
+			MENU_TYPES.register("arrow_fletching", () -> IMenuTypeExtension.create(ArrowFletchingMenu::new));
 
-    private ModMenuTypes() {
-    }
+	private ModMenuTypes() {
+	}
 
-    public static void register(IEventBus modBus) {
-        MENU_TYPES.register(modBus);
-    }
+	/**
+	 * 向模组事件总线注册菜单类型喵~
+	 *
+	 * @param modBus 模组事件总线喵~
+	 */
+	public static void register(IEventBus modBus) {
+		MENU_TYPES.register(modBus);
+	}
 }
