@@ -22,25 +22,25 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(ServerPlayerGameMode.class)
 public abstract class ServerPlayerGameModeMixin {
 
-    @WrapOperation(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;playerDestroy(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/item/ItemStack;)V"))
-    private void destroyBlockUnwarpOmniClawForLootContext(Block instance, Level level, Player player, BlockPos pos, BlockState state, BlockEntity blockEntity, ItemStack tool, Operation<Void> original) {
-        ItemStack clawTool = OmniClawItem.getLastSelectedTool(tool);
-        if (!clawTool.isEmpty()) tool = clawTool;
+	@WrapOperation(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;playerDestroy(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/item/ItemStack;)V"))
+	private void destroyBlockUnwarpOmniClawForLootContext(Block instance, Level level, Player player, BlockPos pos, BlockState state, BlockEntity blockEntity, ItemStack tool, Operation<Void> original) {
+		ItemStack clawTool = OmniClawItem.getLastSelectedTool(tool);
+		if (!clawTool.isEmpty()) tool = clawTool;
 
-        original.call(instance, level, player, pos, state, blockEntity, tool);
-    }
+		original.call(instance, level, player, pos, state, blockEntity, tool);
+	}
 
-    @WrapOperation(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;getMainHandItem()Lnet/minecraft/world/item/ItemStack;"))
-    private ItemStack destroyBlockOmniClawSelectTool(ServerPlayer instance, Operation<ItemStack> original, @Local(ordinal = 1) BlockState state) {
-        ItemStack stack = original.call(instance);
-        OmniClawItem.getToolFor(stack, state);
-        return stack;
-    }
+	@WrapOperation(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;getMainHandItem()Lnet/minecraft/world/item/ItemStack;"))
+	private ItemStack destroyBlockOmniClawSelectTool(ServerPlayer instance, Operation<ItemStack> original, @Local(ordinal = 1) BlockState state) {
+		ItemStack stack = original.call(instance);
+		OmniClawItem.getToolFor(stack, state);
+		return stack;
+	}
 
-    @WrapOperation(method = "handleBlockBreakAction", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;getMainHandItem()Lnet/minecraft/world/item/ItemStack;"))
-    private ItemStack handleBlockBreakOmniClawSelectTool(ServerPlayer instance, Operation<ItemStack> original, @Local BlockState state) {
-        ItemStack stack = original.call(instance);
-        OmniClawItem.getToolFor(stack, state);
-        return stack;
-    }
+	@WrapOperation(method = "handleBlockBreakAction", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;getMainHandItem()Lnet/minecraft/world/item/ItemStack;"))
+	private ItemStack handleBlockBreakOmniClawSelectTool(ServerPlayer instance, Operation<ItemStack> original, @Local BlockState state) {
+		ItemStack stack = original.call(instance);
+		OmniClawItem.getToolFor(stack, state);
+		return stack;
+	}
 }

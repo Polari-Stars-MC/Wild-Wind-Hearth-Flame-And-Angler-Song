@@ -29,72 +29,72 @@ import net.minecraft.world.level.levelgen.placement.BlockPredicateFilter;
  * 定义模组已配置特征喵~
  */
 public final class ModConfiguredFeatures {
-    /**
-     * 灵焰木的已配置特征键喵~
-     */
-    public static final ResourceKey<ConfiguredFeature<?, ?>> CINDER = createKey("cinder");
-    /**
-     * 焚烬木的已配置特征键喵~
-     */
-    public static final ResourceKey<ConfiguredFeature<?, ?>> EMBER = createKey("ember");
-    /**
-     * 芦苇补丁的已配置特征键喵~
-     */
-    public static final ResourceKey<ConfiguredFeature<?, ?>> PATCH_REEDS = createKey("patch_reeds_in_water");
+	/**
+	 * 灵焰木的已配置特征键喵~
+	 */
+	public static final ResourceKey<ConfiguredFeature<?, ?>> CINDER = createKey("cinder");
+	/**
+	 * 焚烬木的已配置特征键喵~
+	 */
+	public static final ResourceKey<ConfiguredFeature<?, ?>> EMBER = createKey("ember");
+	/**
+	 * 芦苇补丁的已配置特征键喵~
+	 */
+	public static final ResourceKey<ConfiguredFeature<?, ?>> PATCH_REEDS = createKey("patch_reeds_in_water");
 
-    private ModConfiguredFeatures() {
-    }
+	private ModConfiguredFeatures() {
+	}
 
-    /**
-     * 向引导上下文注册已配置特征喵~
-     *
-     * @param context 已配置特征引导上下文喵~
-     */
-    public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
-        context.register(PATCH_REEDS, new ConfiguredFeature<>(Feature.RANDOM_PATCH, new RandomPatchConfiguration(
-                20,
-                6,
-                2,
-                PlacementUtils.inlinePlaced(
-                        Feature.SIMPLE_BLOCK,
-                        new SimpleBlockConfiguration(BlockStateProvider.simple(ModBlocks.REEDS.get())),
-                        BlockPredicateFilter.forPredicate(
-                                BlockPredicate.allOf(
-                                        BlockPredicate.wouldSurvive(ModBlocks.REEDS.get().defaultBlockState(), BlockPos.ZERO)
-                                )
-                        )
-                )
-        )));
+	/**
+	 * 向引导上下文注册已配置特征喵~
+	 *
+	 * @param context 已配置特征引导上下文喵~
+	 */
+	public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
+		context.register(PATCH_REEDS, new ConfiguredFeature<>(Feature.RANDOM_PATCH, new RandomPatchConfiguration(
+				20,
+				6,
+				2,
+				PlacementUtils.inlinePlaced(
+						Feature.SIMPLE_BLOCK,
+						new SimpleBlockConfiguration(BlockStateProvider.simple(ModBlocks.REEDS.get())),
+						BlockPredicateFilter.forPredicate(
+								BlockPredicate.allOf(
+										BlockPredicate.wouldSurvive(ModBlocks.REEDS.get().defaultBlockState(), BlockPos.ZERO)
+								)
+						)
+				)
+		)));
 
-//        context.register(CINDER, new ConfiguredFeature<>(Feature.TREE, treeConfiguration(ModBlocks.CINDER)));
-        context.register(EMBER, new ConfiguredFeature<>(Feature.TREE, treeConfiguration(ModBlocks.EMBER)));
+//		context.register(CINDER, new ConfiguredFeature<>(Feature.TREE, treeConfiguration(ModBlocks.CINDER)));
+		context.register(EMBER, new ConfiguredFeature<>(Feature.TREE, treeConfiguration(ModBlocks.EMBER)));
 
 
-        context.register(CINDER, new ConfiguredFeature<>(Feature.TREE, new TreeConfiguration.TreeConfigurationBuilder(
-                BlockStateProvider.simple(ModBlocks.CINDER.log().get().defaultBlockState()),
-                new CherryTrunkPlacer(6,1,0,
-                        ConstantInt.of(1),
-                        UniformInt.of(2, 4),
-                        UniformInt.of(-3, -2),
-                        UniformInt.of(-1, 0)
-                        ),
-                BlockStateProvider.simple(ModBlocks.CINDER.leaves().get().defaultBlockState()),
-                new CinderFoliagePlacer(ConstantInt.of(2), ConstantInt.of(0)),
-                new TwoLayersFeatureSize(1, 0, 2)
-        ).dirt(BlockStateProvider.simple(Blocks.DIRT.defaultBlockState())).ignoreVines().build()));
-    }
+		context.register(CINDER, new ConfiguredFeature<>(Feature.TREE, new TreeConfiguration.TreeConfigurationBuilder(
+				BlockStateProvider.simple(ModBlocks.CINDER.log().get().defaultBlockState()),
+				new CherryTrunkPlacer(6,1,0,
+						ConstantInt.of(1),
+						UniformInt.of(2, 4),
+						UniformInt.of(-3, -2),
+						UniformInt.of(-1, 0)
+						),
+				BlockStateProvider.simple(ModBlocks.CINDER.leaves().get().defaultBlockState()),
+				new CinderFoliagePlacer(ConstantInt.of(2), ConstantInt.of(0)),
+				new TwoLayersFeatureSize(1, 0, 2)
+		).dirt(BlockStateProvider.simple(Blocks.DIRT.defaultBlockState())).ignoreVines().build()));
+	}
 
-    private static TreeConfiguration treeConfiguration(ModBlocks.WoodSet woodSet) {
-        return new TreeConfiguration.TreeConfigurationBuilder(
-                BlockStateProvider.simple(woodSet.log().get().defaultBlockState()),
-                new StraightTrunkPlacer(6, 0, 4),
-                BlockStateProvider.simple(woodSet.leaves().get().defaultBlockState()),
-                new BlobFoliagePlacer(ConstantInt.of(1), ConstantInt.of(0), 4),
-                new TwoLayersFeatureSize(1, 0, 1)
-        ).dirt(BlockStateProvider.simple(Blocks.DIRT.defaultBlockState())).ignoreVines().build();
-    }
+	private static TreeConfiguration treeConfiguration(ModBlocks.WoodSet woodSet) {
+		return new TreeConfiguration.TreeConfigurationBuilder(
+				BlockStateProvider.simple(woodSet.log().get().defaultBlockState()),
+				new StraightTrunkPlacer(6, 0, 4),
+				BlockStateProvider.simple(woodSet.leaves().get().defaultBlockState()),
+				new BlobFoliagePlacer(ConstantInt.of(1), ConstantInt.of(0), 4),
+				new TwoLayersFeatureSize(1, 0, 1)
+		).dirt(BlockStateProvider.simple(Blocks.DIRT.defaultBlockState())).ignoreVines().build();
+	}
 
-    private static ResourceKey<ConfiguredFeature<?, ?>> createKey(String name) {
-        return ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(WildWindMod.MOD_ID, name));
-    }
+	private static ResourceKey<ConfiguredFeature<?, ?>> createKey(String name) {
+		return ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(WildWindMod.MOD_ID, name));
+	}
 }

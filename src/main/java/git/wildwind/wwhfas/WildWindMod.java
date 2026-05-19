@@ -21,47 +21,47 @@ import org.slf4j.Logger;
  */
 @Mod(WildWindMod.MOD_ID)
 public class WildWindMod {
-    /**
-     * 模组唯一标识符喵~
-     */
-    public static final String MOD_ID = "wwhfas";
-    /**
-     * 模组通用日志记录器喵~
-     */
-    public static final Logger LOGGER = LogUtils.getLogger();
+	/**
+	 * 模组唯一标识符喵~
+	 */
+	public static final String MOD_ID = "wwhfas";
+	/**
+	 * 模组通用日志记录器喵~
+	 */
+	public static final Logger LOGGER = LogUtils.getLogger();
 
-    /**
-     * 创建模组主实例并完成启动期注册喵~
-     *
-     * @param modEventBus 模组事件总线喵~
-     * @param modContainer 当前模组容器喵~
-     */
-    public WildWindMod(IEventBus modEventBus, ModContainer modContainer) {
-        NeoForge.EVENT_BUS.register(this);
-        modEventBus.addListener(this::registerRegistries);
-        ModRegistries.registerAllEntries(modEventBus);
-        ModCommonSetup.register(modEventBus);
-        ModDataGen.register(modEventBus);
-        ModConfigs.register(modContainer);
-    }
+	/**
+	 * 创建模组主实例并完成启动期注册喵~
+	 *
+	 * @param modEventBus 模组事件总线喵~
+	 * @param modContainer 当前模组容器喵~
+	 */
+	public WildWindMod(IEventBus modEventBus, ModContainer modContainer) {
+		NeoForge.EVENT_BUS.register(this);
+		modEventBus.addListener(this::registerRegistries);
+		ModRegistries.registerAllEntries(modEventBus);
+		ModCommonSetup.register(modEventBus);
+		ModDataGen.register(modEventBus);
+		ModConfigs.register(modContainer);
+	}
 
-    @SubscribeEvent
-    void modifyLoots(LootTableLoadEvent event) {
-        if (!LootTableModifications.hasModifications()) return;
-        LootTableModifications.applyModification(event.getKey(), event.getTable());
-    }
+	@SubscribeEvent
+	void modifyLoots(LootTableLoadEvent event) {
+		if (!LootTableModifications.hasModifications()) return;
+		LootTableModifications.applyModification(event.getKey(), event.getTable());
+	}
 
-    void registerRegistries(NewRegistryEvent event) {
-        event.register(ModRegistries.CRAB_VARIANTS);
-    }
+	void registerRegistries(NewRegistryEvent event) {
+		event.register(ModRegistries.CRAB_VARIANTS);
+	}
 
-    /**
-     * 创建当前模组命名空间下的资源定位符喵~
-     *
-     * @param path 资源路径喵~
-     * @return 对应的资源定位符喵~
-     */
-    public static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
-    }
+	/**
+	 * 创建当前模组命名空间下的资源定位符喵~
+	 *
+	 * @param path 资源路径喵~
+	 * @return 对应的资源定位符喵~
+	 */
+	public static ResourceLocation id(String path) {
+		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+	}
 }

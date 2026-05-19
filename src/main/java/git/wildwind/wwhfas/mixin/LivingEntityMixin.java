@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.At;
  */
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
-    @ModifyReturnValue(method = "createLivingAttributes", at = @At("RETURN"))
-    private static AttributeSupplier.Builder addMobAttributes(AttributeSupplier.Builder original) {
-        return original.add(ModAttributes.EXTRA_ITEM_PICKUP_RANGE);
-    }
+	@ModifyReturnValue(method = "createLivingAttributes", at = @At("RETURN"))
+	private static AttributeSupplier.Builder addMobAttributes(AttributeSupplier.Builder original) {
+		return original.add(ModAttributes.EXTRA_ITEM_PICKUP_RANGE);
+	}
 }

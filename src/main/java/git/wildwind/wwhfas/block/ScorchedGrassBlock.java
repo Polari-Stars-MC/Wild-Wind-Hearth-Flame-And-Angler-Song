@@ -17,58 +17,58 @@ import net.minecraft.world.level.lighting.LightEngine;
  * 焦草方块喵~
  */
 public class ScorchedGrassBlock extends GrassBlock {
-    /**
-     * 焦草方块的编解码器喵~
-     */
-    public static final MapCodec<GrassBlock> CODEC = simpleCodec(ScorchedGrassBlock::new);
+	/**
+	 * 焦草方块的编解码器喵~
+	 */
+	public static final MapCodec<GrassBlock> CODEC = simpleCodec(ScorchedGrassBlock::new);
 
-    /**
-     * 创建焦草方块喵~
-     *
-     * @param properties 方块属性喵~
-     */
-    public ScorchedGrassBlock(BlockBehaviour.Properties properties) {
-        super(properties);
-    }
+	/**
+	 * 创建焦草方块喵~
+	 *
+	 * @param properties 方块属性喵~
+	 */
+	public ScorchedGrassBlock(BlockBehaviour.Properties properties) {
+		super(properties);
+	}
 
-    /**
-     * 获取焦草方块的编解码器喵~
-     *
-     * @return 焦草方块编解码器喵~
-     */
-    @Override
-    public MapCodec<GrassBlock> codec() {
-        return CODEC;
-    }
+	/**
+	 * 获取焦草方块的编解码器喵~
+	 *
+	 * @return 焦草方块编解码器喵~
+	 */
+	@Override
+	public MapCodec<GrassBlock> codec() {
+		return CODEC;
+	}
 
-    @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (!canRemainScorchedGrass(state, level, pos)) {
-            if (!level.isAreaLoaded(pos, 1)) {
-                return;
-            }
-            level.setBlockAndUpdate(pos, ModTerrainBlocks.SCORCHED_DIRT.get().defaultBlockState());
-        }
-    }
+	@Override
+	protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+		if (!canRemainScorchedGrass(state, level, pos)) {
+			if (!level.isAreaLoaded(pos, 1)) {
+				return;
+			}
+			level.setBlockAndUpdate(pos, ModTerrainBlocks.SCORCHED_DIRT.get().defaultBlockState());
+		}
+	}
 
-    private static boolean canRemainScorchedGrass(BlockState state, LevelReader level, BlockPos pos) {
-        BlockPos abovePos = pos.above();
-        BlockState aboveState = level.getBlockState(abovePos);
-        if (aboveState.is(Blocks.SNOW) && aboveState.getValue(SnowLayerBlock.LAYERS) == 1) {
-            return true;
-        }
-        if (aboveState.getFluidState().getAmount() == 8) {
-            return false;
-        }
-        int lightBlock = LightEngine.getLightBlockInto(
-            level,
-            state,
-            pos,
-            aboveState,
-            abovePos,
-            Direction.UP,
-            aboveState.getLightBlock(level, abovePos)
-        );
-        return lightBlock < level.getMaxLightLevel();
-    }
+	private static boolean canRemainScorchedGrass(BlockState state, LevelReader level, BlockPos pos) {
+		BlockPos abovePos = pos.above();
+		BlockState aboveState = level.getBlockState(abovePos);
+		if (aboveState.is(Blocks.SNOW) && aboveState.getValue(SnowLayerBlock.LAYERS) == 1) {
+			return true;
+		}
+		if (aboveState.getFluidState().getAmount() == 8) {
+			return false;
+		}
+		int lightBlock = LightEngine.getLightBlockInto(
+			level,
+			state,
+			pos,
+			aboveState,
+			abovePos,
+			Direction.UP,
+			aboveState.getLightBlock(level, abovePos)
+		);
+		return lightBlock < level.getMaxLightLevel();
+	}
 }

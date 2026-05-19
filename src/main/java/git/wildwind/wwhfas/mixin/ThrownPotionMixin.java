@@ -16,11 +16,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ThrownPotion.class)
 public abstract class ThrownPotionMixin {
 
-    @Inject(method = "applyWater", at = @At("TAIL"))
-    private void applyWaterForCrab(CallbackInfo ci, @Local AABB waterArea) {
-        Level level = ((ThrownPotion) (Object) this).level();
-        for (Crab crab : level.getEntitiesOfClass(Crab.class, waterArea)) {
-            crab.rehydrate();
-        }
-    }
+	@Inject(method = "applyWater", at = @At("TAIL"))
+	private void applyWaterForCrab(CallbackInfo ci, @Local AABB waterArea) {
+		Level level = ((ThrownPotion) (Object) this).level();
+		for (Crab crab : level.getEntitiesOfClass(Crab.class, waterArea)) {
+			crab.rehydrate();
+		}
+	}
 }

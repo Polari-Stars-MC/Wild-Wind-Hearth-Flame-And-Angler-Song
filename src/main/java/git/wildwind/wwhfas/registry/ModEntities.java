@@ -21,61 +21,66 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  * 注册模组实体类型喵~
  */
 public final class ModEntities {
-    /**
-     * 实体类型延迟注册器喵~
-     */
-    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
-            DeferredRegister.create(Registries.ENTITY_TYPE, WildWindMod.MOD_ID);
+	/**
+	 * 实体类型延迟注册器喵~
+	 */
+	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
+			DeferredRegister.create(Registries.ENTITY_TYPE, WildWindMod.MOD_ID);
 
-    private ModEntities() {
-    }
+	private ModEntities() {
+	}
 
-    /**
-     * 螃蟹实体类型喵~
-     */
-    public static final DeferredHolder<EntityType<?>, EntityType<Crab>> CRAB =
-            ENTITY_TYPES.register("crab",
-                    () -> EntityType.Builder.of(Crab::new, MobCategory.WATER_CREATURE)
-                            .sized(0.5F, 0.55F)
-                            .clientTrackingRange(10)
-                            .build("crab"));
+	/**
+	 * 螃蟹实体类型喵~
+	 */
+	public static final DeferredHolder<EntityType<?>, EntityType<Crab>> CRAB =
+			ENTITY_TYPES.register("crab",
+					() -> EntityType.Builder.of(Crab::new, MobCategory.WATER_CREATURE)
+							.sized(0.5F, 0.55F)
+							.clientTrackingRange(10)
+							.build("crab"));
 
-    /**
-     * 向模组事件总线注册实体类型喵~
-     *
-     * @param modBus 模组事件总线喵~
-     */
-    public static void register(IEventBus modBus) {
-        ENTITY_TYPES.register(modBus);
-    }
+	/**
+	 * 向模组事件总线注册实体类型喵~
+	 *
+	 * @param modBus 模组事件总线喵~
+	 */
+	public static void register(IEventBus modBus) {
+		ENTITY_TYPES.register(modBus);
+	}
 
-
-    @EventBusSubscriber(value = Dist.CLIENT)
-    public static class EntitiesClientEvent {
-        @SubscribeEvent
-        static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-            event.registerEntityRenderer(ModEntities.CRAB.get(), CrabRenderer::new);
-        }
+	/**
+	 * 实体客户端事件处理器
+	 */
+	@EventBusSubscriber(value = Dist.CLIENT)
+	public static class EntitiesClientEvent {
+		@SubscribeEvent
+		static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+			event.registerEntityRenderer(ModEntities.CRAB.get(), CrabRenderer::new);
+		}
 
 		private EntitiesClientEvent() {
 		}
-    }
+	}
 
-    @EventBusSubscriber
-    public static class EntitiesSeverEvent {
+	/**
+	 * 实体服务端事件处理器
+	 */
+	@EventBusSubscriber
+	public static class EntitiesSeverEvent {
 
-        @SubscribeEvent
-        static void onAttributeCreate(EntityAttributeCreationEvent event) {
-            event.put(ModEntities.CRAB.get(), Crab.createAttributes().build());
-        }
+		@SubscribeEvent
+		static void onAttributeCreate(EntityAttributeCreationEvent event) {
+			event.put(ModEntities.CRAB.get(), Crab.createAttributes().build());
+		}
 
-        @SubscribeEvent
-        static void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {
-            event.register(CRAB.get(), Crab.SPAWN_PLACEMENT, Heightmap.Types.OCEAN_FLOOR, Crab::checkCrabInWaterGroundSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-            event.register(CRAB.get(), Crab::checkCrabOnGroundSpawnRules);
-        }
+		@SubscribeEvent
+		static void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {
+			event.register(CRAB.get(), Crab.SPAWN_PLACEMENT, Heightmap.Types.OCEAN_FLOOR, Crab::checkCrabInWaterGroundSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+			event.register(CRAB.get(), Crab::checkCrabOnGroundSpawnRules);
+		}
 
 		private EntitiesSeverEvent() {
 		}
-    }
+	}
 }

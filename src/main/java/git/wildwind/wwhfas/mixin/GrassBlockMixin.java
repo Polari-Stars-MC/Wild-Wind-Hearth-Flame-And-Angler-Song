@@ -26,38 +26,38 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GrassBlock.class)
 public abstract class GrassBlockMixin {
 
-    @Inject(method = "performBonemeal", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/levelgen/placement/PlacedFeature;place(Lnet/minecraft/world/level/WorldGenLevel;Lnet/minecraft/world/level/chunk/ChunkGenerator;Lnet/minecraft/util/RandomSource;Lnet/minecraft/core/BlockPos;)Z"))
-    private void replaceTallGrassToReeds(ServerLevel level, RandomSource random, BlockPos plantedPos, BlockState blockState, CallbackInfo ci, @Local(ordinal = 1) BlockPos blockPos) {
-        if (level.getBlockState(blockPos).is(Blocks.TALL_GRASS)) wwhfas$tryReplaceToReeds(level, random, blockPos);
-    }
+	@Inject(method = "performBonemeal", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/levelgen/placement/PlacedFeature;place(Lnet/minecraft/world/level/WorldGenLevel;Lnet/minecraft/world/level/chunk/ChunkGenerator;Lnet/minecraft/util/RandomSource;Lnet/minecraft/core/BlockPos;)Z"))
+	private void replaceTallGrassToReeds(ServerLevel level, RandomSource random, BlockPos plantedPos, BlockState blockState, CallbackInfo ci, @Local(ordinal = 1) BlockPos blockPos) {
+		if (level.getBlockState(blockPos).is(Blocks.TALL_GRASS)) wwhfas$tryReplaceToReeds(level, random, blockPos);
+	}
 
-    @WrapOperation(method = "performBonemeal", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/BonemealableBlock;performBonemeal(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/util/RandomSource;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V"))
-    private void replaceBonemealShortGrassToReeds(BonemealableBlock instance, ServerLevel level, RandomSource randomSource, BlockPos blockPos, BlockState state, Operation<Void> original) {
-        if (state.is(Blocks.SHORT_GRASS) && wwhfas$tryReplaceToReeds(level, randomSource, blockPos)) return;
-        original.call(instance, level, randomSource, blockPos, state);
-    }
+	@WrapOperation(method = "performBonemeal", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/BonemealableBlock;performBonemeal(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/util/RandomSource;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V"))
+	private void replaceBonemealShortGrassToReeds(BonemealableBlock instance, ServerLevel level, RandomSource randomSource, BlockPos blockPos, BlockState state, Operation<Void> original) {
+		if (state.is(Blocks.SHORT_GRASS) && wwhfas$tryReplaceToReeds(level, randomSource, blockPos)) return;
+		original.call(instance, level, randomSource, blockPos, state);
+	}
 
-    @Unique
-    private static boolean wwhfas$tryReplaceToReeds(ServerLevel level, RandomSource random, BlockPos blockPos) {
-        boolean replace = level.getBiome(blockPos).is(Tags.Biomes.IS_SWAMP);
-        if (!replace) {
-            BlockPos pos1 = blockPos.offset(-2, -2, -2);
-            BlockPos pos2 = blockPos.offset(2, 2, 2);
-            for (BlockPos pos : BlockPos.betweenClosed(pos1, pos2)) {
-                if (level.getFluidState(pos).is(Fluids.WATER)) {
-                    replace = true;
-                    break;
-                }
-            }
-        }
+	@Unique
+	private static boolean wwhfas$tryReplaceToReeds(ServerLevel level, RandomSource random, BlockPos blockPos) {
+		boolean replace = level.getBiome(blockPos).is(Tags.Biomes.IS_SWAMP);
+		if (!replace) {
+			BlockPos pos1 = blockPos.offset(-2, -2, -2);
+			BlockPos pos2 = blockPos.offset(2, 2, 2);
+			for (BlockPos pos : BlockPos.betweenClosed(pos1, pos2)) {
+				if (level.getFluidState(pos).is(Fluids.WATER)) {
+					replace = true;
+					break;
+				}
+			}
+		}
 
-        if (replace && random.nextFloat() < 0.5f) {
-            BlockState state = ModBlocks.REEDS.get().defaultBlockState();
-            level.setBlock(blockPos, state, 2);
-            ModBlocks.REEDS.get().setPlacedBy(level, blockPos, state, null, ItemStack.EMPTY);
-            return true;
-        }
+		if (replace && random.nextFloat() < 0.5f) {
+			BlockState state = ModBlocks.REEDS.get().defaultBlockState();
+			level.setBlock(blockPos, state, 2);
+			ModBlocks.REEDS.get().setPlacedBy(level, blockPos, state, null, ItemStack.EMPTY);
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 }
