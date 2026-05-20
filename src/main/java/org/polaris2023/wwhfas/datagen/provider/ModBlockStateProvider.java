@@ -141,11 +141,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
 			.modelFile(scorchedTwigWall)
 			.rotationY(((int) state.getValue(WallScorchedTwigBlock.FACING).toYRot() + 270) % 180)
 			.build());
-
-		simpleBlock(
-			ModTerrainBlocks.TINY_CACTUS.get(),
-			models().cross("tiny_cactus", modLoc("block/tiny_cactus")).renderType("cutout")
-		);
 	}
 
 	private ModelFile wallCrossModel(String name, net.minecraft.resources.ResourceLocation texture) {

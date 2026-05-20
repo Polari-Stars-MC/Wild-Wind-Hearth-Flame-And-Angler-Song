@@ -54,13 +54,6 @@ public final class ModTerrainBlocks {
 		"scorched_twig_wall",
 		() -> new WallScorchedTwigBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DEAD_BUSH))
 	);
-	/**
-	 * 迷你仙人掌喵~
-	 */
-	public static final DeferredHolder<Block, Block> TINY_CACTUS = BLOCKS.register(
-		"tiny_cactus",
-		() -> new TinyCactusBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CACTUS))
-	);
 
 	private ModTerrainBlocks() {
 	}

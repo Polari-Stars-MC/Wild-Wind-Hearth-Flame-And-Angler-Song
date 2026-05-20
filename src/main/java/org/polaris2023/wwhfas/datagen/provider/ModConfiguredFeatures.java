@@ -1,9 +1,5 @@
 package org.polaris2023.wwhfas.datagen.provider;
 
-import org.polaris2023.wwhfas.WildWindMod;
-import org.polaris2023.wwhfas.registry.ModBlocks;
-import org.polaris2023.wwhfas.worldgen.tree.CinderFoliagePlacer;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
@@ -24,6 +20,9 @@ import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvi
 import net.minecraft.world.level.levelgen.feature.trunkplacers.CherryTrunkPlacer;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.StraightTrunkPlacer;
 import net.minecraft.world.level.levelgen.placement.BlockPredicateFilter;
+import org.polaris2023.wwhfas.WildWindMod;
+import org.polaris2023.wwhfas.registry.ModBlocks;
+import org.polaris2023.wwhfas.worldgen.tree.CinderFoliagePlacer;
 
 /**
  * 定义模组已配置特征喵~
@@ -40,7 +39,8 @@ public final class ModConfiguredFeatures {
 	/**
 	 * 芦苇补丁的已配置特征键喵~
 	 */
-	public static final ResourceKey<ConfiguredFeature<?, ?>> PATCH_REEDS = createKey("patch_reeds_in_water");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> PATCH_REEDS = createKey("patch_reeds");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> PATCH_CATTAILS = createKey("patch_cattails");
 
 	private ModConfiguredFeatures() {
 	}
@@ -58,11 +58,18 @@ public final class ModConfiguredFeatures {
 				PlacementUtils.inlinePlaced(
 						Feature.SIMPLE_BLOCK,
 						new SimpleBlockConfiguration(BlockStateProvider.simple(ModBlocks.REEDS.get())),
-						BlockPredicateFilter.forPredicate(
-								BlockPredicate.allOf(
-										BlockPredicate.wouldSurvive(ModBlocks.REEDS.get().defaultBlockState(), BlockPos.ZERO)
-								)
-						)
+						BlockPredicateFilter.forPredicate(BlockPredicate.ONLY_IN_AIR_PREDICATE)
+				)
+		)));
+
+		context.register(PATCH_CATTAILS, new ConfiguredFeature<>(Feature.RANDOM_PATCH, new RandomPatchConfiguration(
+				20,
+				6,
+				2,
+				PlacementUtils.inlinePlaced(
+						Feature.SIMPLE_BLOCK,
+						new SimpleBlockConfiguration(BlockStateProvider.simple(ModBlocks.CATTAILS.get())),
+						BlockPredicateFilter.forPredicate(BlockPredicate.ONLY_IN_AIR_PREDICATE)
 				)
 		)));
 

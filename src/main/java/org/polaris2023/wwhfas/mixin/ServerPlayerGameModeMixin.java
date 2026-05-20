@@ -33,14 +33,14 @@ public abstract class ServerPlayerGameModeMixin {
 	@WrapOperation(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;getMainHandItem()Lnet/minecraft/world/item/ItemStack;"))
 	private ItemStack destroyBlockOmniClawSelectTool(ServerPlayer instance, Operation<ItemStack> original, @Local(ordinal = 1) BlockState state) {
 		ItemStack stack = original.call(instance);
-		OmniClawItem.getToolFor(stack, state);
+		OmniClawItem.chooseToolItemByBlock(stack, state);
 		return stack;
 	}
 
 	@WrapOperation(method = "handleBlockBreakAction", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;getMainHandItem()Lnet/minecraft/world/item/ItemStack;"))
 	private ItemStack handleBlockBreakOmniClawSelectTool(ServerPlayer instance, Operation<ItemStack> original, @Local BlockState state) {
 		ItemStack stack = original.call(instance);
-		OmniClawItem.getToolFor(stack, state);
+		OmniClawItem.chooseToolItemByBlock(stack, state);
 		return stack;
 	}
 }

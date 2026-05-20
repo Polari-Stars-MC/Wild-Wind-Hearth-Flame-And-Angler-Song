@@ -66,7 +66,5 @@ public class ModItemModelProvider extends ItemModelProvider {
 			.texture("layer0", modLoc("block/scorched_grass"));
 		withExistingParent(ModTerrainBlocks.SCORCHED_TWIG.getId().getPath(), mcLoc("item/generated"))
 			.texture("layer0", modLoc("block/scorched_twig"));
-		withExistingParent(ModTerrainBlocks.TINY_CACTUS.getId().getPath(), mcLoc("item/generated"))
-			.texture("layer0", modLoc("block/tiny_cactus"));
 	}
 }

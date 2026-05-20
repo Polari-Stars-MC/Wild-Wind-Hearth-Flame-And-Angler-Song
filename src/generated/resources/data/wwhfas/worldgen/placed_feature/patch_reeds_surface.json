@@ -1,8 +1,0 @@
-{
-  "feature": "wwhfas:patch_reeds_in_water",
-  "placement": [
-    {
-      "type": "minecraft:biome"
-    }
-  ]
-}
