@@ -43,7 +43,7 @@ public final class ModBlocks {
 	public static final DeferredBlock<Block> REEDS =
 			BLOCKS.register("reeds", () -> new EmergentPlantBlock(
 					BlockBehaviour.Properties.of()
-							.mapColor(MapColor.COLOR_BROWN)
+							.mapColor(MapColor.TERRACOTTA_YELLOW)
 							.replaceable()
 							.noCollission()
 							.instabreak()
