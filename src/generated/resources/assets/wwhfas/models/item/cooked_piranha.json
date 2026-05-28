@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "wwhfas:block/tiny_cactus"
+    "layer0": "wwhfas:item/cooked_piranha"
   }
 }

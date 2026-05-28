@@ -18,6 +18,7 @@ public interface ModBiomeTags {
 	 */
 	TagKey<Biome> SPAWNS_COLD_VARIANT_CRABS = create("spawns_cold_variant_crabs");
 
+	TagKey<Biome> SPAWNS_PIRANHAS = create("spawns_piranha");
 
 	/**
 	 * 创建群系标签键喵~

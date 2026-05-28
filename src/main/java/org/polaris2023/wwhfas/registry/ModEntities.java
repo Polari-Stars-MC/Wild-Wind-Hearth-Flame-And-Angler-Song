@@ -1,11 +1,12 @@
 package org.polaris2023.wwhfas.registry;
 
-import org.polaris2023.wwhfas.WildWindMod;
-import org.polaris2023.wwhfas.client.entity.render.CrabRenderer;
-import org.polaris2023.wwhfas.entity.animal.Crab;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.SpawnPlacementTypes;
+import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -16,6 +17,11 @@ import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.polaris2023.wwhfas.WildWindMod;
+import org.polaris2023.wwhfas.client.entity.render.CrabRenderer;
+import org.polaris2023.wwhfas.client.entity.render.PiranhaRenderer;
+import org.polaris2023.wwhfas.entity.animal.Crab;
+import org.polaris2023.wwhfas.entity.animal.Piranha;
 
 /**
  * 注册模组实体类型喵~
@@ -37,8 +43,16 @@ public final class ModEntities {
 			ENTITY_TYPES.register("crab",
 					() -> EntityType.Builder.of(Crab::new, MobCategory.WATER_CREATURE)
 							.sized(0.5F, 0.55F)
-							.clientTrackingRange(10)
+							.clientTrackingRange(8)
 							.build("crab"));
+
+	public static final DeferredHolder<EntityType<?>, EntityType<Piranha>> PIRANHA =
+			ENTITY_TYPES.register("piranha",
+					() -> EntityType.Builder.of(Piranha::new, MobCategory.WATER_CREATURE)
+							.sized(0.7F, 0.4F)
+							.eyeHeight(0.26F)
+							.build("piranha")
+			);
 
 	/**
 	 * 向模组事件总线注册实体类型喵~
@@ -57,6 +71,7 @@ public final class ModEntities {
 		@SubscribeEvent
 		static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
 			event.registerEntityRenderer(ModEntities.CRAB.get(), CrabRenderer::new);
+			event.registerEntityRenderer(ModEntities.PIRANHA.get(), PiranhaRenderer::new);
 		}
 
 		private EntitiesClientEvent() {
@@ -72,12 +87,16 @@ public final class ModEntities {
 		@SubscribeEvent
 		static void onAttributeCreate(EntityAttributeCreationEvent event) {
 			event.put(ModEntities.CRAB.get(), Crab.createAttributes().build());
+			event.put(ModEntities.PIRANHA.get(), Piranha.createAttributes().build());
 		}
 
 		@SubscribeEvent
 		static void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {
 			event.register(CRAB.get(), Crab.SPAWN_PLACEMENT, Heightmap.Types.OCEAN_FLOOR, Crab::checkCrabInWaterGroundSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
 			event.register(CRAB.get(), Crab::checkCrabOnGroundSpawnRules);
+			event.register(PIRANHA.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+			event.register(PIRANHA.get(), (entityType, serverLevel, spawnType, pos, random) ->
+					serverLevel.getBiome(pos).is(Biomes.LUSH_CAVES) && serverLevel.getBlockState(pos).is(Blocks.WATER));
 		}
 
 		private EntitiesSeverEvent() {
