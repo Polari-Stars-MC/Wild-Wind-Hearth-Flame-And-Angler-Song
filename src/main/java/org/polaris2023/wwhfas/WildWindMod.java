@@ -48,7 +48,7 @@ public class WildWindMod {
 	@SubscribeEvent
 	void modifyLoots(LootTableLoadEvent event) {
 		if (!LootTableModifications.hasModifications()) return;
-		LootTableModifications.applyModification(event.getKey(), event.getTable());
+		LootTableModifications.applyModification(event.getKey(), event.getTable(), event.getRegistries());
 	}
 
 	void registerRegistries(NewRegistryEvent event) {
