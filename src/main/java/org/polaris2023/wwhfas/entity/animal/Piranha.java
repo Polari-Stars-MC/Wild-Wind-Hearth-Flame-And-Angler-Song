@@ -45,6 +45,7 @@ public class Piranha extends AbstractSchoolingFish implements WindupAttackMob, G
 
     public static AttributeSupplier.Builder createAttributes() {
         return AbstractFish.createAttributes()
+                .add(Attributes.MOVEMENT_SPEED, 0.95)
                 .add(Attributes.FOLLOW_RANGE, 35.0)
                 .add(Attributes.MAX_HEALTH, 6.0)
                 .add(Attributes.ATTACK_DAMAGE, 3.0);
@@ -63,7 +64,7 @@ public class Piranha extends AbstractSchoolingFish implements WindupAttackMob, G
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new PiranhaAttackGoal(this, 1.25f, false));
+        this.goalSelector.addGoal(1, new PiranhaAttackGoal(this, 2.0f, false));
         this.goalSelector.addGoal(4, new AbstractFish.FishSwimGoal(this));
         this.goalSelector.addGoal(5, new FollowFlockLeaderGoal(this));
         this.targetSelector.addGoal(0, new HurtByTargetGoal(this).setAlertOthers());
