@@ -51,9 +51,11 @@ public class ModBiomeTagsProvider extends BiomeTagsProvider {
 				.add(Biomes.SNOWY_TAIGA)
 				.add(Biomes.SNOWY_BEACH)
 				.addTag(BiomeTags.IS_END);
+		tag(ModBiomeTags.ALLOWS_PIRANHA_SPAWNS_AT_ANY_HEIGHT)
+				.add(Biomes.LUSH_CAVES);
 		tag(ModBiomeTags.SPAWNS_PIRANHAS)
 				.add(Biomes.JUNGLE)
 				.add(Biomes.RIVER)
-				.add(Biomes.LUSH_CAVES);
+				.addTag(ModBiomeTags.ALLOWS_PIRANHA_SPAWNS_AT_ANY_HEIGHT);
 	}
 }

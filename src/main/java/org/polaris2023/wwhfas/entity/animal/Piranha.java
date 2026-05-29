@@ -1,24 +1,32 @@
 package org.polaris2023.wwhfas.entity.animal;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FollowFlockLeaderGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.animal.AbstractFish;
 import net.minecraft.world.entity.animal.AbstractSchoolingFish;
+import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Blocks;
 import org.polaris2023.wwhfas.entity.WindupAttackMob;
 import org.polaris2023.wwhfas.entity.ai.goal.AlertOthersNearestAttackableTargetGoal;
 import org.polaris2023.wwhfas.entity.ai.goal.ChargingMeleeAttackGoal;
 import org.polaris2023.wwhfas.registry.ModItems;
+import org.polaris2023.wwhfas.tag.ModBiomeTags;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -27,7 +35,6 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-// TODO: 修正繁茂洞穴水下生成
 public class Piranha extends AbstractSchoolingFish implements WindupAttackMob, GeoEntity {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private int preparingToAttack;
@@ -41,6 +48,17 @@ public class Piranha extends AbstractSchoolingFish implements WindupAttackMob, G
                 .add(Attributes.FOLLOW_RANGE, 35.0)
                 .add(Attributes.MAX_HEALTH, 6.0)
                 .add(Attributes.ATTACK_DAMAGE, 3.0);
+    }
+
+    public static boolean checkPiranhaSpawnRules(
+            EntityType<Piranha> piranha, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random
+    ) {
+        return level.getFluidState(pos.below()).is(FluidTags.WATER)
+                && level.getBlockState(pos.above()).is(Blocks.WATER)
+                && (
+                level.getBiome(pos).is(ModBiomeTags.ALLOWS_PIRANHA_SPAWNS_AT_ANY_HEIGHT)
+                        || WaterAnimal.checkSurfaceWaterAnimalSpawnRules(piranha, level, spawnType, pos, random)
+        );
     }
 
     @Override

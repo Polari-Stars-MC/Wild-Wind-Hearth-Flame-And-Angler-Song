@@ -2,6 +2,6 @@
   "values": [
     "minecraft:jungle",
     "minecraft:river",
-    "minecraft:lush_caves"
+    "#wwhfas:allows_piranha_spawns_at_any_height"
   ]
 }
