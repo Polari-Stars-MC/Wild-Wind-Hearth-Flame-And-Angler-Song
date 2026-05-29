@@ -67,12 +67,13 @@ public class Piranha extends AbstractSchoolingFish implements WindupAttackMob, G
         this.goalSelector.addGoal(1, new PiranhaAttackGoal(this, 2.0f, false));
         this.goalSelector.addGoal(4, new AbstractFish.FishSwimGoal(this));
         this.goalSelector.addGoal(5, new FollowFlockLeaderGoal(this));
-        this.targetSelector.addGoal(0, new HurtByTargetGoal(this).setAlertOthers());
+        this.targetSelector.addGoal(0, new HurtByTargetGoal(this, Piranha.class).setAlertOthers());
         this.targetSelector.addGoal(1, new AlertOthersNearestAttackableTargetGoal<>(this, Mob.class, true,
-                entity -> entity.getHealth() <= entity.getMaxHealth() * 0.25)
+                entity -> !(entity instanceof Piranha) && (entity.getHealth() <= entity.getMaxHealth() * 0.25))
                 .overrideFindEntityFollowDistance(15.0)
         );
-        this.targetSelector.addGoal(1, new AlertOthersNearestAttackableTargetGoal<>(this, Player.class, true, entity -> entity.getHealth() <= entity.getMaxHealth() * 0.25)
+        this.targetSelector.addGoal(1, new AlertOthersNearestAttackableTargetGoal<>(this, Player.class, true,
+                entity -> entity.getHealth() <= entity.getMaxHealth() * 0.25)
                 .overrideFindEntityFollowDistance(15.0)
         );
     }
