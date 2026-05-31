@@ -65,8 +65,12 @@ public interface WindupAttackMob {
 
                 if (target != null && target.isAlive() && mob.isWithinMeleeAttackRange(target) && mob.getSensing().hasLineOfSight(target)) {
                     mob.doHurtTarget(target);
+                    this.onAttackDone(target);
                 }
             }
         }
+    }
+
+    default void onAttackDone(LivingEntity target) {
     }
 }

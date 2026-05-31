@@ -5,6 +5,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.BiomeTagsProvider;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biomes;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 import org.polaris2023.wwhfas.WildWindMod;
@@ -51,11 +52,8 @@ public class ModBiomeTagsProvider extends BiomeTagsProvider {
 				.add(Biomes.SNOWY_TAIGA)
 				.add(Biomes.SNOWY_BEACH)
 				.addTag(BiomeTags.IS_END);
-		tag(ModBiomeTags.ALLOWS_PIRANHA_SPAWNS_AT_ANY_HEIGHT)
-				.add(Biomes.LUSH_CAVES);
 		tag(ModBiomeTags.SPAWNS_PIRANHAS)
 				.add(Biomes.JUNGLE)
-				.add(Biomes.RIVER)
-				.addTag(ModBiomeTags.ALLOWS_PIRANHA_SPAWNS_AT_ANY_HEIGHT);
+				.addTag(Tags.Biomes.IS_SWAMP);
 	}
 }

@@ -51,15 +51,6 @@ public class LootTableModifications {
 								.build()
 		}));
 
-		// 修改村庄渔夫箱
-		registerModification(BuiltInLootTables.VILLAGE_FISHER, addEntryToByIndexPool(0, registries ->
-                new LootPoolEntryContainer[]{
-						LootItem.lootTableItem(ModItems.PIRANHA) // 添加模组鱼
-								.setWeight(1)
-								.apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F)))
-								.build()
-		}));
-
 		// 修改奖励箱
 		registerModification(BuiltInLootTables.SPAWN_BONUS_CHEST, addEntryToByIndexPool(2, registries ->
                 new LootPoolEntryContainer[]{
@@ -81,7 +72,7 @@ public class LootTableModifications {
 		registerModification(BuiltInLootTables.FISHING_FISH, addEntryToByIndexPool(0, registries ->
                 new LootPoolEntryContainer[]{
 						LootItem.lootTableItem(ModItems.PIRANHA) // 添加模组鱼
-								.setWeight(10)
+								.setWeight(25)
 								.build()
 		}));
 
@@ -91,13 +82,6 @@ public class LootTableModifications {
 						LootItem.lootTableItem(Items.TIPPED_ARROW) // 添加药水箭
 								.apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 1.0F)))
 								.apply(SetPotionFunction.setPotion(ModPotions.REACH))
-								.build()
-		}));
-
-		// 修改渔夫村庄英雄礼物
-		registerModification(BuiltInLootTables.FISHERMAN_GIFT, addEntryToByIndexPool(0, registries ->
-                new LootPoolEntryContainer[]{
-						LootItem.lootTableItem(ModItems.PIRANHA) // 添加模组鱼
 								.build()
 		}));
 	}

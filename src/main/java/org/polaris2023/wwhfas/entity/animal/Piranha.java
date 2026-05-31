@@ -1,32 +1,26 @@
 package org.polaris2023.wwhfas.entity.animal;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FollowFlockLeaderGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.animal.AbstractFish;
 import net.minecraft.world.entity.animal.AbstractSchoolingFish;
-import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Blocks;
+import org.jetbrains.annotations.Nullable;
 import org.polaris2023.wwhfas.entity.WindupAttackMob;
 import org.polaris2023.wwhfas.entity.ai.goal.AlertOthersNearestAttackableTargetGoal;
 import org.polaris2023.wwhfas.entity.ai.goal.ChargingMeleeAttackGoal;
 import org.polaris2023.wwhfas.registry.ModItems;
-import org.polaris2023.wwhfas.tag.ModBiomeTags;
+import org.polaris2023.wwhfas.registry.ModSoundEvents;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -51,23 +45,12 @@ public class Piranha extends AbstractSchoolingFish implements WindupAttackMob, G
                 .add(Attributes.ATTACK_DAMAGE, 3.0);
     }
 
-    public static boolean checkPiranhaSpawnRules(
-            EntityType<Piranha> piranha, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random
-    ) {
-        return level.getFluidState(pos.below()).is(FluidTags.WATER)
-                && level.getBlockState(pos.above()).is(Blocks.WATER)
-                && (
-                level.getBiome(pos).is(ModBiomeTags.ALLOWS_PIRANHA_SPAWNS_AT_ANY_HEIGHT)
-                        || WaterAnimal.checkSurfaceWaterAnimalSpawnRules(piranha, level, spawnType, pos, random)
-        );
-    }
-
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new PiranhaAttackGoal(this, 2.0f, false));
         this.goalSelector.addGoal(4, new AbstractFish.FishSwimGoal(this));
         this.goalSelector.addGoal(5, new FollowFlockLeaderGoal(this));
-        this.targetSelector.addGoal(0, new HurtByTargetGoal(this, Piranha.class).setAlertOthers());
+        this.targetSelector.addGoal(0, new HurtByTargetGoal(this).setAlertOthers());
         this.targetSelector.addGoal(1, new AlertOthersNearestAttackableTargetGoal<>(this, Mob.class, true,
                 entity -> !(entity instanceof Piranha) && (entity.getHealth() <= entity.getMaxHealth() * 0.25))
                 .overrideFindEntityFollowDistance(15.0)
@@ -87,6 +70,15 @@ public class Piranha extends AbstractSchoolingFish implements WindupAttackMob, G
     @Override
     protected SoundEvent getFlopSound() {
         return SoundEvents.SALMON_FLOP;
+    }
+
+    @Override
+    protected @Nullable SoundEvent getDeathSound() {
+        return ModSoundEvents.PIRANHA_DEATH.get();
+    }
+
+    protected SoundEvent getAttackSound() {
+        return ModSoundEvents.PIRANHA_ATTACK.get();
     }
 
     @Override
@@ -129,7 +121,10 @@ public class Piranha extends AbstractSchoolingFish implements WindupAttackMob, G
     @Override
     public boolean prepareAttack(LivingEntity entity) {
         boolean result = WindupAttackMob.super.prepareAttack(entity);
-        if (result) this.triggerAnim("Attack", "attack");
+        if (result) {
+            this.triggerAnim("Attack", "attack");
+            this.makeSound(this.getAttackSound());
+        }
         return result;
     }
 

@@ -1,9 +1,9 @@
 {
   "type": "neoforge:add_spawns",
-  "biomes": "#wwhfas:spawns_piranha",
+  "biomes": "#c:is_swamp",
   "spawners": {
-    "type": "wwhfas:piranha",
-    "maxCount": 5,
+    "type": "wwhfas:crab",
+    "maxCount": 2,
     "minCount": 1,
     "weight": 8
   }

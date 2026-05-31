@@ -1,5 +1,6 @@
 package org.polaris2023.wwhfas.datagen.provider;
 
+import net.minecraft.world.entity.EntityType;
 import org.polaris2023.wwhfas.WildWindMod;
 import org.polaris2023.wwhfas.registry.ModEntities;
 import net.minecraft.core.HolderGetter;
@@ -28,12 +29,16 @@ public final class ModBiomeModifiers {
 	/**
 	 * 为螃蟹添加生成规则的群系修改器键喵~
 	 */
-	public static final ResourceKey<BiomeModifier> ADD_SWAMP_SPAWNS = createKey("add_swamp_spawns");
+	public static final ResourceKey<BiomeModifier> ADD_CRAB_SPAWNS = createKey("add_crab_spawns");
 	public static final ResourceKey<BiomeModifier> ADD_PIRANHA_SPAWNS = createKey("add_piranha_spawns");
+	public static final ResourceKey<BiomeModifier> REMOVE_SPIDER_SPAWNS = createKey("remove_spider_spawns");
+	public static final ResourceKey<BiomeModifier> ADD_CAVE_SPIDER_SPAWNS = createKey("cave_spider_spawns");
 	/**
 	 * 为挺水植物补丁添加生成规则的群系修改器键喵~
 	 */
 	public static final ResourceKey<BiomeModifier> ADD_EMERGENT_PLANT_PATCHES = createKey("add_emergent_plant_patches");
+
+
 //	public static final ResourceKey<BiomeModifier> ADD_CINDER = createKey("add_cinder");
 //	public static final ResourceKey<BiomeModifier> ADD_EMBER = createKey("add_ember");
 
@@ -62,7 +67,7 @@ public final class ModBiomeModifiers {
 		);
 
 		context.register(
-				ADD_SWAMP_SPAWNS,
+				ADD_CRAB_SPAWNS,
 				new BiomeModifiers.AddSpawnsBiomeModifier(
 						biomes.getOrThrow(Tags.Biomes.IS_SWAMP),
 						List.of(
@@ -71,12 +76,29 @@ public final class ModBiomeModifiers {
 										8,
 										1,
 										2
-								),
+								)
+						)
+				)
+		);
+
+		context.register(
+				REMOVE_SPIDER_SPAWNS,
+				new BiomeModifiers.RemoveSpawnsBiomeModifier(
+						biomes.getOrThrow(Tags.Biomes.IS_SWAMP),
+						HolderSet.direct(EntityType.SPIDER.builtInRegistryHolder())
+				)
+		);
+
+		context.register(
+				ADD_CAVE_SPIDER_SPAWNS,
+				new BiomeModifiers.AddSpawnsBiomeModifier(
+						biomes.getOrThrow(Tags.Biomes.IS_SWAMP),
+						List.of(
 								new MobSpawnSettings.SpawnerData(
-										ModEntities.PIRANHA.get(),
-										10,
-										1,
-										5
+										EntityType.CAVE_SPIDER,
+										100,
+										4,
+										4
 								)
 						)
 				)
@@ -89,7 +111,7 @@ public final class ModBiomeModifiers {
 						List.of(
 								new MobSpawnSettings.SpawnerData(
 								ModEntities.PIRANHA.get(),
-								5,
+								8,
 								1,
 								5
 								)

@@ -8,7 +8,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraft.world.food.Foods;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
@@ -22,6 +21,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.polaris2023.wwhfas.WildWindMod;
 import org.polaris2023.wwhfas.block.ModTerrainBlocks;
+import org.polaris2023.wwhfas.item.ModFoods;
 import org.polaris2023.wwhfas.item.OmniClawItem;
 import org.polaris2023.wwhfas.item.component.OmniClawTools;
 
@@ -309,11 +309,11 @@ public final class ModItems {
 					));
 
 	public static final DeferredItem<Item> PIRANHA = ITEMS.registerSimpleItem("piranha", new Item.Properties()
-			.food(Foods.SALMON)
+			.food(ModFoods.PIRANHA)
 	);
 
 	public static final DeferredItem<Item> COOKED_PIRANHA = ITEMS.registerSimpleItem("cooked_piranha", new Item.Properties()
-			.food(Foods.COOKED_SALMON)
+			.food(ModFoods.COOKED_PIRANHA)
 	);
 	
 	public static final DeferredItem<MobBucketItem> PIRANHA_BUCKET =

@@ -1,7 +1,6 @@
 {
   "values": [
     "minecraft:jungle",
-    "minecraft:river",
-    "#wwhfas:allows_piranha_spawns_at_any_height"
+    "#c:is_swamp"
   ]
 }

@@ -20,8 +20,6 @@ public interface ModBiomeTags {
 
 	TagKey<Biome> SPAWNS_PIRANHAS = create("spawns_piranha");
 
-	TagKey<Biome> ALLOWS_PIRANHA_SPAWNS_AT_ANY_HEIGHT = create("allows_piranha_spawns_at_any_height");
-
 	/**
 	 * 创建群系标签键喵~
 	 *
