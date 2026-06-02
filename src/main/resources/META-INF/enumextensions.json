@@ -5,7 +5,7 @@
       "name": "WWHFAS_CINDER",
       "constructor": "(Ljava/util/function/Supplier;Ljava/lang/String;Ljava/util/function/Supplier;Ljava/util/function/Supplier;Ljava/util/function/Supplier;Z)V",
       "parameters": {
-        "class": "git/wildwind/wwhfas/registry/ModBoatTypes",
+        "class": "org/polaris2023/wwhfas/registry/ModBoatTypes",
         "field": "CINDER"
       }
     },
@@ -14,7 +14,7 @@
       "name": "WWHFAS_EMBER",
       "constructor": "(Ljava/util/function/Supplier;Ljava/lang/String;Ljava/util/function/Supplier;Ljava/util/function/Supplier;Ljava/util/function/Supplier;Z)V",
       "parameters": {
-        "class": "git/wildwind/wwhfas/registry/ModBoatTypes",
+        "class": "org/polaris2023/wwhfas/registry/ModBoatTypes",
         "field": "EMBER"
       }
     },
@@ -23,7 +23,7 @@
       "name": "WWHFAS_AZALEA",
       "constructor": "(Ljava/util/function/Supplier;Ljava/lang/String;Ljava/util/function/Supplier;Ljava/util/function/Supplier;Ljava/util/function/Supplier;Z)V",
       "parameters": {
-        "class": "git/wildwind/wwhfas/registry/ModBoatTypes",
+        "class": "org/polaris2023/wwhfas/registry/ModBoatTypes",
         "field": "AZALEA"
       }
     }

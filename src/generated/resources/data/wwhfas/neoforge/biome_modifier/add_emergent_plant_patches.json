@@ -2,8 +2,8 @@
   "type": "neoforge:add_features",
   "biomes": "#c:is_swamp",
   "features": [
-    "wwhfas:patch_reeds_surface",
-    "wwhfas:patch_reeds_in_water"
+    "wwhfas:patch_reeds",
+    "wwhfas:patch_cattails"
   ],
   "step": "vegetal_decoration"
 }

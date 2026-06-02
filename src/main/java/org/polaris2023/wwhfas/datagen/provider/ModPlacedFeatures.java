@@ -1,16 +1,23 @@
 package org.polaris2023.wwhfas.datagen.provider;
 
-import org.polaris2023.wwhfas.WildWindMod;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.placement.VegetationPlacements;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.configurations.RandomBooleanFeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.placement.*;
+import org.polaris2023.wwhfas.WildWindMod;
+import org.polaris2023.wwhfas.registry.ModBlocks;
 
 import java.util.List;
 
@@ -27,13 +34,13 @@ public final class ModPlacedFeatures {
 	 */
 	public static final ResourceKey<PlacedFeature> EMBER = createKey("ember");
 	/**
-	 * 地表芦苇补丁的已放置特征键喵~
+	 * 芦苇补丁的已放置特征键喵~
 	 */
-	public static final ResourceKey<PlacedFeature> PATCH_REEDS_SURFACE = createKey("patch_reeds_surface");
-	/**
-	 * 水中芦苇补丁的已放置特征键喵~
-	 */
-	public static final ResourceKey<PlacedFeature> PATCH_REEDS_IN_WATER = createKey("patch_reeds_in_water");
+	public static final ResourceKey<PlacedFeature> PATCH_REEDS = createKey("patch_reeds");
+
+	public static final ResourceKey<PlacedFeature> PATCH_CATTAILS = createKey("patch_cattails");
+
+	public static final ResourceKey<PlacedFeature> GRASS_SWAMP_BONEMEAL = createKey("grass_swamp_bonemeal");
 
 	private ModPlacedFeatures() {
 	}
@@ -45,6 +52,7 @@ public final class ModPlacedFeatures {
 	 */
 	public static void bootstrap(BootstrapContext<PlacedFeature> context) {
 		HolderGetter<ConfiguredFeature<?, ?>> configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
+		HolderGetter<PlacedFeature> placedFeatures = context.lookup(Registries.PLACED_FEATURE);
 
 		context.register(CINDER, new PlacedFeature(
 				configuredFeatures.getOrThrow(ModConfiguredFeatures.CINDER),
@@ -55,25 +63,56 @@ public final class ModPlacedFeatures {
 				treePlacement(1)
 		));
 
-		context.register(PATCH_REEDS_SURFACE, new PlacedFeature(
+		context.register(PATCH_REEDS, new PlacedFeature(
 				configuredFeatures.getOrThrow(ModConfiguredFeatures.PATCH_REEDS),
 				List.of(
 						BiomeFilter.biome(),
-						CountPlacement.of(16),
+						CountPlacement.of(3),
 						InSquarePlacement.spread(),
-						HeightmapPlacement.onHeightmap(Heightmap.Types.OCEAN_FLOOR_WG)
+						HeightmapPlacement.onHeightmap(Heightmap.Types.OCEAN_FLOOR_WG),
+						BlockPredicateFilter.forPredicate(BlockPredicate.matchesBlocks(Blocks.WATER))
 				)
 		));
 
-		context.register(PATCH_REEDS_IN_WATER, new PlacedFeature(
-				configuredFeatures.getOrThrow(ModConfiguredFeatures.PATCH_REEDS),
+		context.register(PATCH_CATTAILS, new PlacedFeature(
+				configuredFeatures.getOrThrow(ModConfiguredFeatures.PATCH_CATTAILS),
 				List.of(
 						BiomeFilter.biome(),
-						BlockPredicateFilter.forPredicate(BlockPredicate.matchesBlocks(Blocks.WATER)),
-						CountPlacement.of(16),
+						CountPlacement.of(3),
 						InSquarePlacement.spread(),
-						HeightmapPlacement.onHeightmap(Heightmap.Types.OCEAN_FLOOR_WG)
+						HeightmapPlacement.onHeightmap(Heightmap.Types.OCEAN_FLOOR_WG),
+						BlockPredicateFilter.forPredicate(BlockPredicate.matchesBlocks(Blocks.WATER))
 				)
+		));
+
+		context.register(GRASS_SWAMP_BONEMEAL, new PlacedFeature(
+				Holder.direct(new ConfiguredFeature<>(
+						Feature.RANDOM_BOOLEAN_SELECTOR,
+						new RandomBooleanFeatureConfiguration(
+								Holder.direct(
+										new PlacedFeature(
+												Holder.direct(new ConfiguredFeature<>(
+														Feature.RANDOM_BOOLEAN_SELECTOR,
+														new RandomBooleanFeatureConfiguration(
+																Holder.direct(new PlacedFeature(
+																		Holder.direct(new ConfiguredFeature<>(
+																				Feature.SIMPLE_BLOCK,
+																				new SimpleBlockConfiguration(BlockStateProvider.simple(ModBlocks.REEDS.get()))
+																		)), List.of()
+																)),
+																Holder.direct(new PlacedFeature(
+																		Holder.direct(new ConfiguredFeature<>(
+																				Feature.SIMPLE_BLOCK,
+																				new SimpleBlockConfiguration(BlockStateProvider.simple(ModBlocks.CATTAILS.get()))
+																		)), List.of()
+																))
+														)
+												)), List.of()
+										)
+								),
+								placedFeatures.getOrThrow(VegetationPlacements.GRASS_BONEMEAL)
+						)
+				)), List.of(BlockPredicateFilter.forPredicate(BlockPredicate.ONLY_IN_AIR_PREDICATE))
 		));
 	}
 

@@ -52,8 +52,8 @@ public final class ModBiomeModifiers {
 				new BiomeModifiers.AddFeaturesBiomeModifier(
 						biomes.getOrThrow(Tags.Biomes.IS_SWAMP),
 						HolderSet.direct(
-								features.getOrThrow(ModPlacedFeatures.PATCH_REEDS_SURFACE),
-								features.getOrThrow(ModPlacedFeatures.PATCH_REEDS_IN_WATER)
+								features.getOrThrow(ModPlacedFeatures.PATCH_REEDS),
+								features.getOrThrow(ModPlacedFeatures.PATCH_CATTAILS)
 						),
 						GenerationStep.Decoration.VEGETAL_DECORATION
 				)

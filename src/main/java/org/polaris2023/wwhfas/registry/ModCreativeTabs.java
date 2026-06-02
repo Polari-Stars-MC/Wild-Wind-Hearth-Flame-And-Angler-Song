@@ -57,7 +57,6 @@ public final class ModCreativeTabs {
 		accept(output, ModItems.SCORCHED_TWIG);
 		accept(output, ModItems.SCORCHED_GRASS_BLOCK);
 		accept(output, ModItems.SCORCHED_DIRT);
-		accept(output, ModItems.TINY_CACTUS);
 
 		output.accept(ModItems.CRAB_BUCKET.get().getDefaultInstance());
 		output.accept(ModItems.CRAB_CLAW.get().getDefaultInstance());

@@ -74,7 +74,6 @@ public class ModLootTableProvider extends LootTableProvider {
 			dropSelf(ModTerrainBlocks.SCORCHED_GRASS.get());
 			dropSelf(ModTerrainBlocks.SCORCHED_TWIG.get());
 			dropSelf(ModTerrainBlocks.SCORCHED_TWIG_WALL.get());
-			dropSelf(ModTerrainBlocks.TINY_CACTUS.get());
 
 			this.add(ModBlocks.REEDS.get(), createShearsOtherDrop(ModItems.REEDS.get()));
 			this.add(ModBlocks.CATTAILS.get(), createShearsOtherDrop(ModItems.CATTAILS.get()));

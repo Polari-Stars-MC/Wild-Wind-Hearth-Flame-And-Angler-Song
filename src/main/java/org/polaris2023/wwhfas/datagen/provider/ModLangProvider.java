@@ -90,7 +90,6 @@ public class ModLangProvider extends LanguageProvider {
 		addBlock(ModTerrainBlocks.SCORCHED_DIRT, text("Scorched Dirt", "焦土"));
 		addBlock(ModTerrainBlocks.SCORCHED_GRASS, text("Scorched Grass", "焦灰草丛"));
 		addBlock(ModTerrainBlocks.SCORCHED_TWIG, text("Scorched Twig", "焦灰枝条"));
-		addBlock(ModTerrainBlocks.TINY_CACTUS, text("Tiny Cactus", "仙人球"));
 		add("container.wwhfas.arrow_fletching", text("Fletching Table", "制箭台"));
 		add("tooltip.wwhfas.arrow.tail", text("Tail: %s", "箭尾：%s"));
 		add("tooltip.wwhfas.arrow.shaft", text("Shaft: %s", "箭杆：%s"));

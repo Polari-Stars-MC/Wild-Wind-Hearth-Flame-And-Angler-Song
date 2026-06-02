@@ -92,10 +92,6 @@ public final class ModItems {
 			Direction.DOWN
 		)
 	);
-	/**
-	 * 小仙人掌对应物品喵~
-	 */
-	public static final DeferredHolder<Item, Item> TINY_CACTUS = blockItem(ModTerrainBlocks.TINY_CACTUS);
 
 	/**
 	 * 全部木材套装物品集合喵~
