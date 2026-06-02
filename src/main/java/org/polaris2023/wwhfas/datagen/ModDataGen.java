@@ -63,5 +63,6 @@ public final class ModDataGen {
 		generator.addProvider(event.includeServer(), new ModRecipeProvider(output, lookupProvider));
 		generator.addProvider(event.includeServer(), new ModEntityTypeTagsProvider(output, lookupProvider, existingFileHelper));
 		generator.addProvider(event.includeServer(), new ModBiomeTagsProvider(output, lookupProvider, existingFileHelper));
+		generator.addProvider(event.includeServer(), new ModSoundDefinitionsProvider(output, existingFileHelper));
 	}
 }

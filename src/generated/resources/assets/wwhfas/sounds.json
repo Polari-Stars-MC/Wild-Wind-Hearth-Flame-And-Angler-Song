@@ -1,0 +1,18 @@
+{
+  "entity.piranha.attack": {
+    "replace": true,
+    "sounds": [
+      "wwhfas:entity_piranha_attack_1",
+      "wwhfas:entity_piranha_attack_2",
+      "wwhfas:entity_piranha_attack_3"
+    ],
+    "subtitle": "DeferredHolder{ResourceKey[minecraft:sound_event / wwhfas:entity.piranha.attack]}wwhfasentity.piranha.attack"
+  },
+  "entity.piranha.death": {
+    "replace": true,
+    "sounds": [
+      "wwhfas:entity_piranha_death"
+    ],
+    "subtitle": "DeferredHolder{ResourceKey[minecraft:sound_event / wwhfas:entity.piranha.death]}wwhfasentity.piranha.death"
+  }
+}

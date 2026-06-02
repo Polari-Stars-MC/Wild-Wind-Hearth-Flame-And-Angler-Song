@@ -1,11 +1,6 @@
 package org.polaris2023.wwhfas.entity.animal;
 
 import com.mojang.logging.LogUtils;
-import org.polaris2023.wwhfas.entity.ModSpawnPlacementTypes;
-import org.polaris2023.wwhfas.registry.*;
-import org.polaris2023.wwhfas.tag.ModBiomeTags;
-import org.polaris2023.wwhfas.tag.ModBlockTags;
-import org.polaris2023.wwhfas.tag.ModItemTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -57,6 +52,13 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
+import org.polaris2023.wwhfas.entity.ModSpawnPlacementTypes;
+import org.polaris2023.wwhfas.entity.WindupAttackMob;
+import org.polaris2023.wwhfas.entity.ai.goal.ChargingMeleeAttackGoal;
+import org.polaris2023.wwhfas.registry.*;
+import org.polaris2023.wwhfas.tag.ModBiomeTags;
+import org.polaris2023.wwhfas.tag.ModBlockTags;
+import org.polaris2023.wwhfas.tag.ModItemTags;
 import org.slf4j.Logger;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -72,7 +74,7 @@ import java.util.EnumSet;
  * <br/>
  * 负责陆水两栖移动、变种同步、桶装存取与动画控制喵~
  */
-public class Crab extends Animal implements Bucketable, VariantHolder<Holder<CrabVariant>>, GeoEntity {
+public class Crab extends Animal implements Bucketable, VariantHolder<Holder<CrabVariant>>, WindupAttackMob, GeoEntity {
 	/**
 	 * 螃蟹使用的自定义生成位置类型喵~
 	 */
@@ -139,7 +141,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
 	protected void registerGoals() {
 		this.goalSelector.addGoal(1, new PanicGoal(this, 1.25f));
 		this.goalSelector.addGoal(2, new CrabFindWaterGoal(this, 1.25f, 12, 80));
-		this.goalSelector.addGoal(3, new CrabAttackGoal(this, 1.2f, true));
+		this.goalSelector.addGoal(3, new ChargingMeleeAttackGoal<>(this, 1.2f, true));
 		this.goalSelector.addGoal(4, new BreedGoal(this, 1.0f));
 		this.goalSelector.addGoal(5, new TemptGoal(this, 1.1f, stack -> stack.is(ModItemTags.CRAB_FOOD), false));
 		this.goalSelector.addGoal(6, new FollowParentGoal(this, 1.1f));
@@ -211,13 +213,26 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
 		return this.greetingTicks != -1;
 	}
 
-	/**
-	 * 获取攻击蓄力持续刻数喵~
-	 *
-	 * @return 蓄力持续刻数喵~
-	 */
+	@Override
+	public void setPreparingToAttackTick(int tick) {
+		this.preparingToAttack = tick;
+	}
+
+	@Override
+	public int getPreparingToAttackTick() {
+		return this.preparingToAttack;
+	}
+
+	@Override
 	public int getPreparationToAttackDuration() {
 		return 12;
+	}
+
+	@Override
+	public boolean prepareAttack(LivingEntity entity) {
+		boolean result = WindupAttackMob.super.prepareAttack(entity);
+		if (result) this.triggerAnim("Attack", "attack");
+		return result;
 	}
 
 	protected void updateClientSideVisuals() {
@@ -251,21 +266,6 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
 
 	protected boolean shouldRotModelX() {
 		return !this.onGround() && !this.isVisuallySwimming() && this.isClimbing();
-	}
-
-	/**
-	 * 进入攻击蓄力状态并准备对目标发动攻击喵~
-	 *
-	 * @param entity 攻击目标喵~
-	 * @return 成功进入蓄力状态时返回 true 喵~
-	 */
-	public boolean prepareAttack(LivingEntity entity) {
-		this.setTarget(entity);
-		if (entity == null || !entity.isAlive()) return false;
-
-		this.preparingToAttack = getPreparationToAttackDuration();
-		this.triggerAnim("Attack", "attack");
-		return true;
 	}
 
 	/**
@@ -549,7 +549,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
 	 */
 	@Override
 	public ItemStack getBucketItemStack() {
-		return new ItemStack(ModItems.CRAB_BUCKET);
+		return new ItemStack((ItemLike) ModItems.CRAB_BUCKET);
 	}
 
 	/**
@@ -772,20 +772,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
 
 		this.setClimbing(this.horizontalCollision);
 
-		if (this.preparingToAttack > 0) {
-			LivingEntity target = this.getTarget();
-			if (target != null && target.isAlive()) {
-				this.lookAt(target, 15.0f, 15.0f);
-			}
-
-			if (--this.preparingToAttack <= 0) {
-				this.preparingToAttack = -1;
-
-				if (target != null && target.isAlive() && this.isWithinMeleeAttackRange(target) && this.getSensing().hasLineOfSight(target)) {
-					this.doHurtTarget(target);
-				}
-			}
-		}
+		processPreparingAttack(this);
 
 		if (this.greetingTicks > 0) {
 			if (--this.greetingTicks <= 0) {
@@ -894,32 +881,6 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
 			return navigation instanceof CrabPathNavigation crabPathNavigation
 					? !crabPathNavigation.isDone() || (this.crab.isInWater() && crabPathNavigation.fallbackPos != null)
 					: !navigation.isDone();
-		}
-	}
-
-	protected static class CrabAttackGoal extends MeleeAttackGoal {
-		private final Crab crab;
-
-		public CrabAttackGoal(Crab crab, double speedModifier, boolean followingTargetEvenIfNotSeen) {
-			super(crab, speedModifier, followingTargetEvenIfNotSeen);
-			this.crab = crab;
-		}
-
-		@Override
-		public boolean canUse() {
-			return !this.crab.isImmobile() && super.canUse();
-		}
-
-		@Override
-		public boolean canContinueToUse() {
-			return !this.crab.isImmobile() && super.canContinueToUse();
-		}
-
-		@Override
-		protected void checkAndPerformAttack(LivingEntity target) {
-			if (!canPerformAttack(target)) return;
-			this.resetAttackCooldown();
-			this.crab.prepareAttack(target);
 		}
 	}
 

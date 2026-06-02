@@ -1,5 +1,6 @@
 package org.polaris2023.wwhfas.datagen.provider;
 
+import net.minecraft.world.item.crafting.Ingredient;
 import org.polaris2023.wwhfas.registry.ModBlocks;
 import org.polaris2023.wwhfas.registry.ModItems;
 import net.minecraft.core.HolderLookup;
@@ -30,6 +31,13 @@ public class ModRecipeProvider extends RecipeProvider {
 		}
 
 		buildCraftingTable(recipeOutput);
+		buildSimpleCooking(recipeOutput);
+	}
+
+	private void buildSimpleCooking(RecipeOutput recipeOutput) {
+		SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.PIRANHA), RecipeCategory.FOOD, ModItems.COOKED_PIRANHA, 0.35F, 200)
+				.unlockedBy("has_piranha", has(ModItems.PIRANHA))
+				.save(recipeOutput);
 	}
 
 	private void buildCraftingTable(RecipeOutput recipeOutput) {

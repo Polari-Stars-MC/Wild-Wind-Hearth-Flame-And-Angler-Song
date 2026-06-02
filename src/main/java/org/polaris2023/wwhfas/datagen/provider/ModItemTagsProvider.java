@@ -44,6 +44,18 @@ public class ModItemTagsProvider extends ItemTagsProvider {
 				.addTag(ModItemTags.CRAB_FOOD);
 		tag(ModItemTags.CRAB_FOOD)
 				.add(Items.SPIDER_EYE);
+		tag(ItemTags.CAT_FOOD)
+				.add(ModItems.PIRANHA.get());
+		tag(ItemTags.OCELOT_FOOD)
+				.add(ModItems.PIRANHA.get());
+		tag(ItemTags.WOLF_FOOD)
+				.add(ModItems.PIRANHA.get())
+				.add(ModItems.COOKED_PIRANHA.get());
+		tag(ItemTags.FISHES)
+				.add(ModItems.PIRANHA.get())
+				.add(ModItems.COOKED_PIRANHA.get());
+		tag(Tags.Items.FOODS_COOKED_FISH)
+				.add(ModItems.COOKED_PIRANHA.get());
 
 		copy(net.minecraft.tags.BlockTags.LOGS, ItemTags.LOGS);
 		copy(net.minecraft.tags.BlockTags.PLANKS, ItemTags.PLANKS);

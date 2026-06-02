@@ -32,10 +32,15 @@ public class ModItemModelProvider extends ItemModelProvider {
 		withExistingParent("crab_spawn_egg",mcLoc("item/template_spawn_egg"));
 		withExistingParent("crab_bucket", mcLoc("item/generated"))
 				.texture("layer0", modLoc("item/crab_bucket"));
-
 		basicItem(ModItems.CRAB_CLAW.get());
 		basicItem(ModItems.REEDS.get());
 		basicItem(ModItems.CATTAILS.get());
+		withExistingParent("piranha_spawn_egg",mcLoc("item/template_spawn_egg"));
+		basicItem(ModItems.PIRANHA.get());
+		basicItem(ModItems.COOKED_PIRANHA.get());
+		basicItem(ModItems.FANG.get());
+		withExistingParent("piranha_bucket", mcLoc("item/generated"))
+				.texture("layer0", modLoc("item/piranha_bucket"));
 	}
 
 	private void registerWoodSet(ModBlocks.WoodSet woodSet) {

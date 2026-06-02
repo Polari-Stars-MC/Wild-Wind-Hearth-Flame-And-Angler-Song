@@ -1,8 +1,5 @@
 package org.polaris2023.wwhfas.registry;
 
-import org.polaris2023.wwhfas.block.ModTerrainBlocks;
-import org.polaris2023.wwhfas.interaction.BlockPropertyBookFactory;
-import org.polaris2023.wwhfas.menu.ArrowFletchingMenu;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -25,6 +22,9 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import org.polaris2023.wwhfas.block.ModTerrainBlocks;
+import org.polaris2023.wwhfas.interaction.BlockPropertyBookFactory;
+import org.polaris2023.wwhfas.menu.ArrowFletchingMenu;
 
 /**
  * 模组通用阶段初始化逻辑，负责注册公共事件与交互行为喵~

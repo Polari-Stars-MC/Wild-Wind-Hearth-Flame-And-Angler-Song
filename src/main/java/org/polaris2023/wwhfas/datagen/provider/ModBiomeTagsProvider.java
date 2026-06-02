@@ -1,14 +1,15 @@
 package org.polaris2023.wwhfas.datagen.provider;
 
-import org.polaris2023.wwhfas.WildWindMod;
-import org.polaris2023.wwhfas.tag.ModBiomeTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.BiomeTagsProvider;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biomes;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
+import org.polaris2023.wwhfas.WildWindMod;
+import org.polaris2023.wwhfas.tag.ModBiomeTags;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -51,5 +52,8 @@ public class ModBiomeTagsProvider extends BiomeTagsProvider {
 				.add(Biomes.SNOWY_TAIGA)
 				.add(Biomes.SNOWY_BEACH)
 				.addTag(BiomeTags.IS_END);
+		tag(ModBiomeTags.SPAWNS_PIRANHAS)
+				.add(Biomes.JUNGLE)
+				.addTag(Tags.Biomes.IS_SWAMP);
 	}
 }

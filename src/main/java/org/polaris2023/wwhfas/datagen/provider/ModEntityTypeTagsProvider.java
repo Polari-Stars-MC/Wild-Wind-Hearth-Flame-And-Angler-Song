@@ -29,8 +29,15 @@ public class ModEntityTypeTagsProvider extends EntityTypeTagsProvider {
 	@Override
 	protected void addTags(HolderLookup.Provider provider) {
 		tag(EntityTypeTags.AQUATIC)
-				.add(ModEntities.CRAB.get());
+				.add(ModEntities.CRAB.get())
+				.add(ModEntities.PIRANHA.get());
 		tag(EntityTypeTags.CAN_BREATHE_UNDER_WATER)
-				.add(ModEntities.CRAB.get());
+				.add(ModEntities.CRAB.get())
+				.add(ModEntities.PIRANHA.get());
+		tag(EntityTypeTags.NOT_SCARY_FOR_PUFFERFISH)
+				.add(ModEntities.CRAB.get())
+				.add(ModEntities.PIRANHA.get());
+		tag(EntityTypeTags.AXOLOTL_HUNT_TARGETS)
+				.add(ModEntities.PIRANHA.get());
 	}
 }

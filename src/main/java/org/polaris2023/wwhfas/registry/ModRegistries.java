@@ -30,7 +30,7 @@ public final class ModRegistries {
 		ModTerrainBlocks.register(modEventBus);
 		ModItems.register(modEventBus);
 		ModCreativeTabs.register(modEventBus);
-		ModSounds.register(modEventBus);
+		ModSoundEvents.register(modEventBus);
 		ModMenuTypes.register(modEventBus);
 		ModDataComponents.register(modEventBus);
 		ModDataAttachments.register(modEventBus);

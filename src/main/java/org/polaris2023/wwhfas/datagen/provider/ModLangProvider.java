@@ -46,6 +46,11 @@ public class ModLangProvider extends LanguageProvider {
 		addItem(ModItems.OMNI_CLAW, text("Omni Craw", "万用蟹钳"));
 		addItem(ModItems.REEDS, text("Reed", "芦苇"));
 		addItem(ModItems.CATTAILS, text("Cattail", "香蒲"));
+		addItem(ModItems.PIRANHA_SPAWN_EGG, text("Piranha Spawn Egg", "食人鱼刷怪蛋"));
+		addItem(ModItems.PIRANHA, text("Raw Piranha", "生食人鱼"));
+		addItem(ModItems.COOKED_PIRANHA, text("Cooked Piranha", "熟食人鱼"));
+		addItem(ModItems.FANG, text("Fang", "尖牙"));
+		addItem(ModItems.PIRANHA_BUCKET, text("Bucket of Piranha", "食人鱼桶"));
 	}
 
 	private void addEffects() {
@@ -54,6 +59,7 @@ public class ModLangProvider extends LanguageProvider {
 
 	private void addEntity() {
 		addEntityType(ModEntities.CRAB, text("Crab", "螃蟹"));
+		addEntityType(ModEntities.PIRANHA, text("Piranha", "食人鱼"));
 	}
 
 	private void addAttribute() {
