@@ -20,6 +20,8 @@ public interface ModBiomeTags {
 
 	TagKey<Biome> SPAWNS_PIRANHAS = create("spawns_piranha");
 
+	TagKey<Biome> HAS_STRUCTURE_RUINED_CHAPEL = create("has_structure/ruined_chapel");
+
 	/**
 	 * 创建群系标签键喵~
 	 *

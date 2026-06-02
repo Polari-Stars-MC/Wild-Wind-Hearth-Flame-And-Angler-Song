@@ -55,5 +55,8 @@ public class ModBiomeTagsProvider extends BiomeTagsProvider {
 		tag(ModBiomeTags.SPAWNS_PIRANHAS)
 				.add(Biomes.JUNGLE)
 				.addTag(Tags.Biomes.IS_SWAMP);
+
+		tag(ModBiomeTags.HAS_STRUCTURE_RUINED_CHAPEL)
+			.add(Biomes.SWAMP);
 	}
 }
