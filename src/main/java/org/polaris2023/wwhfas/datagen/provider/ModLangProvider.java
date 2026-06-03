@@ -51,6 +51,7 @@ public class ModLangProvider extends LanguageProvider {
 		addItem(ModItems.COOKED_PIRANHA, text("Cooked Piranha", "熟食人鱼"));
 		addItem(ModItems.FANG, text("Fang", "尖牙"));
 		addItem(ModItems.PIRANHA_BUCKET, text("Bucket of Piranha", "食人鱼桶"));
+		addItem(ModItems.SPIDERLING_SPAWN_EGG, text("Spiderling Spawn Egg", "幼蛛刷怪蛋"));
 	}
 
 	private void addEffects() {

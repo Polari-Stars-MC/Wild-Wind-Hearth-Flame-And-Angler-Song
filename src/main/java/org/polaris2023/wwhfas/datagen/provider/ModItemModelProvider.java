@@ -36,6 +36,7 @@ public class ModItemModelProvider extends ItemModelProvider {
 		basicItem(ModItems.REEDS.get());
 		basicItem(ModItems.CATTAILS.get());
 		withExistingParent("piranha_spawn_egg",mcLoc("item/template_spawn_egg"));
+		withExistingParent("spiderling_spawn_egg",mcLoc("item/template_spawn_egg"));
 		basicItem(ModItems.PIRANHA.get());
 		basicItem(ModItems.COOKED_PIRANHA.get());
 		basicItem(ModItems.FANG.get());

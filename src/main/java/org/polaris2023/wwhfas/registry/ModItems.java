@@ -323,6 +323,15 @@ public final class ModItems {
 					SoundEvents.BUCKET_EMPTY)
 			);
 
+	public static final DeferredItem<DeferredSpawnEggItem> SPIDERLING_SPAWN_EGG =
+			ITEMS.register("spiderling_spawn_egg",
+					() -> new DeferredSpawnEggItem(
+							() -> EntityType.PIG,
+							0xFF807E7C,
+							0xFF4D0606,
+							new Item.Properties()
+					));
+
 	public static final DeferredItem<Item> FANG = ITEMS.registerSimpleItem("fang");
 
 	private static MobBucketItem registerMobBucket(EntityType<?> type, Fluid fluid, SoundEvent soundEvent) {
