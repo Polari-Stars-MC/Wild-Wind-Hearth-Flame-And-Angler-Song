@@ -122,6 +122,9 @@
   "item.wwhfas.spiderling_spawn_egg": "Spiderling Spawn Egg",
   "message.wwhfas.block_property_book.created": "Generated a block property book.",
   "mod.wwhfas.name": "Wild Wind: Hearth Flame & Angler Song",
+  "subtitles.wwhfas.entity.piranha.attack": "Piranha bites",
+  "subtitles.wwhfas.entity.piranha.death": "Piranha dies",
+  "subtitles.wwhfas.entity.piranha.hurt": "Piranha hurts",
   "tooltip.wwhfas.arrow.head": "Head: %s",
   "tooltip.wwhfas.arrow.shaft": "Shaft: %s",
   "tooltip.wwhfas.arrow.tail": "Tail: %s"

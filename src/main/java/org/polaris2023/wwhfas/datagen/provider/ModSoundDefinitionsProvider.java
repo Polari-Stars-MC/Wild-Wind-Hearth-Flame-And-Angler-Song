@@ -24,7 +24,13 @@ public class ModSoundDefinitionsProvider extends SoundDefinitionsProvider {
         );
 
         add(ModSoundEvents.PIRANHA_DEATH, SoundDefinition.definition()
-                .with(simpleSound(ModSoundEvents.PIRANHA_DEATH))
+                .with(this.simpleSounds(ModSoundEvents.PIRANHA_DEATH, 4))
+                .subtitle(ModSoundEvents.subtitleOf(ModSoundEvents.PIRANHA_DEATH))
+                .replace(true)
+        );
+
+        add(ModSoundEvents.PIRANHA_HURT, SoundDefinition.definition()
+                .with(this.simpleSounds(ModSoundEvents.PIRANHA_HURT, 4))
                 .subtitle(ModSoundEvents.subtitleOf(ModSoundEvents.PIRANHA_DEATH))
                 .replace(true)
         );

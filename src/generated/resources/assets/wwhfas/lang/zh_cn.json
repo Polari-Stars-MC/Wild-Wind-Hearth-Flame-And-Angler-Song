@@ -122,6 +122,9 @@
   "item.wwhfas.spiderling_spawn_egg": "幼蛛刷怪蛋",
   "message.wwhfas.block_property_book.created": "已生成方块属性书。",
   "mod.wwhfas.name": "原野之风：炉焰与渔歌",
+  "subtitles.wwhfas.entity.piranha.attack": "食人鱼：撕咬",
+  "subtitles.wwhfas.entity.piranha.death": "食人鱼：死亡",
+  "subtitles.wwhfas.entity.piranha.hurt": "食人鱼：受伤",
   "tooltip.wwhfas.arrow.head": "箭头：%s",
   "tooltip.wwhfas.arrow.shaft": "箭杆：%s",
   "tooltip.wwhfas.arrow.tail": "箭尾：%s"

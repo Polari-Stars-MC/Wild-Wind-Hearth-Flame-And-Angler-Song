@@ -1,12 +1,13 @@
 package org.polaris2023.wwhfas.datagen.provider;
 
-import org.polaris2023.wwhfas.WildWindMod;
-import org.polaris2023.wwhfas.block.ModTerrainBlocks;
-import org.polaris2023.wwhfas.registry.*;
 import net.minecraft.data.PackOutput;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffect;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import org.polaris2023.wwhfas.WildWindMod;
+import org.polaris2023.wwhfas.block.ModTerrainBlocks;
+import org.polaris2023.wwhfas.registry.*;
 
 /**
  * 生成模组语言文件喵~
@@ -36,6 +37,7 @@ public class ModLangProvider extends LanguageProvider {
 		addItems();
 		addEffects();
 		addEntity();
+		addSounds();
 		addAttribute();
 	}
 
@@ -61,6 +63,12 @@ public class ModLangProvider extends LanguageProvider {
 	private void addEntity() {
 		addEntityType(ModEntities.CRAB, text("Crab", "螃蟹"));
 		addEntityType(ModEntities.PIRANHA, text("Piranha", "食人鱼"));
+	}
+
+	private void addSounds() {
+		addSoundEvent(ModSoundEvents.PIRANHA_DEATH, text("Piranha dies", "食人鱼：死亡"));
+		addSoundEvent(ModSoundEvents.PIRANHA_HURT, text("Piranha hurts", "食人鱼：受伤"));
+		addSoundEvent(ModSoundEvents.PIRANHA_ATTACK, text("Piranha bites", "食人鱼：撕咬"));
 	}
 
 	private void addAttribute() {
@@ -156,6 +164,10 @@ public class ModLangProvider extends LanguageProvider {
 
 	private String text(String english, String chinese) {
 		return "en_us".equals(this.locale) ? english : chinese;
+	}
+
+	private void addSoundEvent(DeferredHolder<SoundEvent, SoundEvent> soundEvent, String text) {
+		add(ModSoundEvents.subtitleOf(soundEvent), text);
 	}
 
 	private void addEffectAndPotion(DeferredHolder<MobEffect, MobEffect> effect, String text) {
