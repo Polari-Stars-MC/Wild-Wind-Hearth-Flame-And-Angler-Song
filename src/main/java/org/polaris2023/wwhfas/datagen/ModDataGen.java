@@ -1,5 +1,8 @@
 package org.polaris2023.wwhfas.datagen;
 
+import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.registries.Registries;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.polaris2023.wwhfas.WildWindMod;
 import org.polaris2023.wwhfas.datagen.provider.*;
 import net.minecraft.core.HolderLookup;
@@ -16,6 +19,14 @@ import java.util.concurrent.CompletableFuture;
  * 注册模组数据生成入口喵~
  */
 public final class ModDataGen {
+	public static final RegistrySetBuilder DATAPACK_BUILTIN_BUILDER = new RegistrySetBuilder()
+			.add(Registries.STRUCTURE, ModStructures::bootstrap)
+			.add(Registries.STRUCTURE_SET, ModStructureSets::bootstrap)
+			.add(Registries.TEMPLATE_POOL, ModStructureTemplatePools::bootstrap)
+			.add(Registries.CONFIGURED_FEATURE, ModConfiguredFeatures::bootstrap)
+			.add(Registries.PLACED_FEATURE, ModPlacedFeatures::bootstrap)
+			.add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ModBiomeModifiers::bootstrap);
+
 	private ModDataGen() {
 	}
 
@@ -48,7 +59,7 @@ public final class ModDataGen {
 				new DatapackBuiltinEntriesProvider(
 						output,
 						lookupProvider,
-						ModWorldGenProvider.BUILDER,
+						DATAPACK_BUILTIN_BUILDER,
 						Set.of(WildWindMod.MOD_ID)
 				)
 		);
