@@ -58,7 +58,7 @@ public final class ModEntities {
 	public static final DeferredHolder<EntityType<?>, EntityType<Spiderling>> SPIDERLING = ENTITY_TYPES.register(
 			"spiderling",
 			() -> EntityType.Builder.of(Spiderling::new, MobCategory.MONSTER)
-					.sized(0.45F, 0.25F)
+					.sized(0.55F, 0.35F)
 					.eyeHeight(0.15F)
 					.passengerAttachments(0.765F)
 					.clientTrackingRange(8)
