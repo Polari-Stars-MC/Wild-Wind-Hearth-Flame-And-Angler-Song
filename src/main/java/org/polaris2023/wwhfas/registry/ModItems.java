@@ -21,6 +21,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.polaris2023.wwhfas.WildWindMod;
 import org.polaris2023.wwhfas.block.ModTerrainBlocks;
+import org.polaris2023.wwhfas.item.AttachParentSpawnEggItem;
 import org.polaris2023.wwhfas.item.ModFoods;
 import org.polaris2023.wwhfas.item.OmniClawItem;
 import org.polaris2023.wwhfas.item.component.OmniClawTools;
@@ -325,11 +326,12 @@ public final class ModItems {
 
 	public static final DeferredItem<DeferredSpawnEggItem> SPIDERLING_SPAWN_EGG =
 			ITEMS.register("spiderling_spawn_egg",
-					() -> new DeferredSpawnEggItem(
-							() -> EntityType.PIG,
+					() -> new AttachParentSpawnEggItem(
+							ModEntities.SPIDERLING,
 							0xFF807E7C,
 							0xFF4D0606,
-							new Item.Properties()
+							new Item.Properties(),
+							EntityType.SPIDER, EntityType.CAVE_SPIDER
 					));
 
 	public static final DeferredItem<Item> FANG = ITEMS.registerSimpleItem("fang");

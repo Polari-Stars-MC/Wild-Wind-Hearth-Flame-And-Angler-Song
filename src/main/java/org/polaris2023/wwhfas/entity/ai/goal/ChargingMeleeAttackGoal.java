@@ -16,7 +16,7 @@ public class ChargingMeleeAttackGoal<T extends PathfinderMob & WindupAttackMob> 
 
     @Override
     public boolean canUse() {
-        return !this.mob.isPreparingToAttack()  && super.canUse();
+        return !this.mob.isPreparingToAttack() && super.canUse();
     }
 
     @Override

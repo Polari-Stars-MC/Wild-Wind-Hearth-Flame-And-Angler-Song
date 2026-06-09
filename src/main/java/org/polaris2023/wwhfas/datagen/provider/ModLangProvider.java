@@ -63,6 +63,7 @@ public class ModLangProvider extends LanguageProvider {
 	private void addEntity() {
 		addEntityType(ModEntities.CRAB, text("Crab", "螃蟹"));
 		addEntityType(ModEntities.PIRANHA, text("Piranha", "食人鱼"));
+		addEntityType(ModEntities.SPIDERLING, text("Spiderling", "幼蛛"));
 	}
 
 	private void addSounds() {
