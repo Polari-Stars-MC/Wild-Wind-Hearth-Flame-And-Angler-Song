@@ -32,7 +32,7 @@ public class Spiderling extends Spider implements GeoEntity, WindupAttackMob {
     public static AttributeSupplier.Builder createAttributes() {
         return Spider.createAttributes()
                 .add(Attributes.MAX_HEALTH, 8.0)
-                .add(Attributes.ATTACK_DAMAGE, 10)
+                .add(Attributes.ATTACK_DAMAGE, 1)
                 .add(Attributes.MOVEMENT_SPEED, 0.25);
     }
 
