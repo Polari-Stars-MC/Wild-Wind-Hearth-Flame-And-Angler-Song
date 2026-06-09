@@ -328,8 +328,8 @@ public final class ModItems {
 			ITEMS.register("spiderling_spawn_egg",
 					() -> new AttachParentSpawnEggItem(
 							ModEntities.SPIDERLING,
-							0xFF807E7C,
-							0xFF4D0606,
+							14144467,
+							11013646,
 							new Item.Properties(),
 							EntityType.SPIDER, EntityType.CAVE_SPIDER
 					));
