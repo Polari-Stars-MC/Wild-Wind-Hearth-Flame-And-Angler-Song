@@ -1036,7 +1036,7 @@ public class Crab extends Animal implements Bucketable, VariantHolder<Holder<Cra
 
 		private boolean forwardToFallbackPos() {
 			if (fallbackPos == null) return false;
-			if (this.crab.isClimbing()) return !this.crab.verticalCollision;
+			if (this.crab.isClimbing()) return !this.crab.verticalCollision || this.crab.onGround();
 
 			double horizontalDistance = fallbackPos.distToCenterSqr(mob.getX(), fallbackPos.getY(), mob.getZ());
 			if (horizontalDistance < Mth.square(Math.max(this.mob.getBbWidth(), 1.0))) {
