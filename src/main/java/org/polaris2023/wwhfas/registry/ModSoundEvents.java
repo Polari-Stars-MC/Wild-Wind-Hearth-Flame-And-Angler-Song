@@ -21,12 +21,17 @@ public class ModSoundEvents {
             SoundEvent::createVariableRangeEvent
     );
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> PIRANHA_HURT = SOUND_EVENTS.register(
+            "entity.piranha.hurt",
+            SoundEvent::createVariableRangeEvent
+    );
+
     public static void register(IEventBus modEventBus) {
         SOUND_EVENTS.register(modEventBus);
     }
 
     public static String subtitleOf(DeferredHolder<SoundEvent, SoundEvent> sound) {
         ResourceLocation id = sound.getId();
-        return sound + id.getNamespace() + id.getPath();
+        return "subtitles." + id.getNamespace() + '.' + id.getPath().replace('_', '.');
     }
 }

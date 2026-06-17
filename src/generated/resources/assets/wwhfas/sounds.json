@@ -2,17 +2,63 @@
   "entity.piranha.attack": {
     "replace": true,
     "sounds": [
-      "wwhfas:entity_piranha_attack_1",
-      "wwhfas:entity_piranha_attack_2",
-      "wwhfas:entity_piranha_attack_3"
+      {
+        "name": "wwhfas:entity_piranha_attack_1",
+        "volume": 0.4
+      },
+      {
+        "name": "wwhfas:entity_piranha_attack_2",
+        "volume": 0.4
+      },
+      {
+        "name": "wwhfas:entity_piranha_attack_3",
+        "volume": 0.4
+      }
     ],
-    "subtitle": "DeferredHolder{ResourceKey[minecraft:sound_event / wwhfas:entity.piranha.attack]}wwhfasentity.piranha.attack"
+    "subtitle": "subtitles.wwhfas.entity.piranha.attack"
   },
   "entity.piranha.death": {
     "replace": true,
     "sounds": [
-      "wwhfas:entity_piranha_death"
+      {
+        "name": "wwhfas:entity_piranha_death_1",
+        "volume": 0.4
+      },
+      {
+        "name": "wwhfas:entity_piranha_death_2",
+        "volume": 0.4
+      },
+      {
+        "name": "wwhfas:entity_piranha_death_3",
+        "volume": 0.4
+      },
+      {
+        "name": "wwhfas:entity_piranha_death_4",
+        "volume": 0.4
+      }
     ],
-    "subtitle": "DeferredHolder{ResourceKey[minecraft:sound_event / wwhfas:entity.piranha.death]}wwhfasentity.piranha.death"
+    "subtitle": "subtitles.wwhfas.entity.piranha.death"
+  },
+  "entity.piranha.hurt": {
+    "replace": true,
+    "sounds": [
+      {
+        "name": "wwhfas:entity_piranha_hurt_1",
+        "volume": 0.4
+      },
+      {
+        "name": "wwhfas:entity_piranha_hurt_2",
+        "volume": 0.4
+      },
+      {
+        "name": "wwhfas:entity_piranha_hurt_3",
+        "volume": 0.4
+      },
+      {
+        "name": "wwhfas:entity_piranha_hurt_4",
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.wwhfas.entity.piranha.death"
   }
 }

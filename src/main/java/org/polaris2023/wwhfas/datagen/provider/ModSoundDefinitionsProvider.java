@@ -18,26 +18,42 @@ public class ModSoundDefinitionsProvider extends SoundDefinitionsProvider {
     @Override
     public void registerSounds() {
         add(ModSoundEvents.PIRANHA_ATTACK, SoundDefinition.definition()
-                .with(this.simpleSounds(ModSoundEvents.PIRANHA_ATTACK, 3))
+                .with(this.sounds(ModSoundEvents.PIRANHA_ATTACK, 3, 0.4))
                 .subtitle(ModSoundEvents.subtitleOf(ModSoundEvents.PIRANHA_ATTACK))
                 .replace(true)
         );
 
         add(ModSoundEvents.PIRANHA_DEATH, SoundDefinition.definition()
-                .with(simpleSound(ModSoundEvents.PIRANHA_DEATH))
+                .with(this.sounds(ModSoundEvents.PIRANHA_DEATH, 4, 0.4))
+                .subtitle(ModSoundEvents.subtitleOf(ModSoundEvents.PIRANHA_DEATH))
+                .replace(true)
+        );
+
+        add(ModSoundEvents.PIRANHA_HURT, SoundDefinition.definition()
+                .with(this.sounds(ModSoundEvents.PIRANHA_HURT, 4, 0.4))
                 .subtitle(ModSoundEvents.subtitleOf(ModSoundEvents.PIRANHA_DEATH))
                 .replace(true)
         );
     }
 
-    private Sound simpleSound(DeferredHolder<SoundEvent, SoundEvent> soundEvent) {
+    private Sound sound(DeferredHolder<SoundEvent, SoundEvent> soundEvent) {
         return sound(soundEvent.getId().toString().replace('.', '_'));
     }
 
-    private Sound[] simpleSounds(DeferredHolder<SoundEvent, SoundEvent> soundEvent, int count) {
+    private Sound[] sounds(DeferredHolder<SoundEvent, SoundEvent> soundEvent, int count) {
+        return this.sounds(soundEvent, count, 1.0f);
+    }
+
+    private Sound[] sounds(DeferredHolder<SoundEvent, SoundEvent> soundEvent, int count, double volume) {
+        return this.sounds(soundEvent, count, volume, 1.0f);
+    }
+
+    private Sound[] sounds(DeferredHolder<SoundEvent, SoundEvent> soundEvent, int count, double volume, double pitch) {
         Sound[] sounds = new Sound[count];
         for (int i = 0; i < count; i++) {
-            sounds[i] = sound(soundEvent.getId().toString().replace('.', '_') + "_" + (i + 1));
+            sounds[i] = sound(soundEvent.getId().toString().replace('.', '_') + "_" + (i + 1))
+                    .volume(volume)
+                    .pitch(pitch);
         }
 
         return sounds;

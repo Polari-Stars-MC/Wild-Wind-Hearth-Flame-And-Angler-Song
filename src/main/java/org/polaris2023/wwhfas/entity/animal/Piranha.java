@@ -2,6 +2,7 @@ package org.polaris2023.wwhfas.entity.animal;
 
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -70,6 +71,11 @@ public class Piranha extends AbstractSchoolingFish implements WindupAttackMob, G
     @Override
     protected SoundEvent getFlopSound() {
         return SoundEvents.SALMON_FLOP;
+    }
+
+    @Override
+    protected @Nullable SoundEvent getHurtSound(DamageSource damageSource) {
+        return ModSoundEvents.PIRANHA_HURT.get();
     }
 
     @Override

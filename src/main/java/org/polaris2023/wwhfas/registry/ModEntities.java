@@ -5,6 +5,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -18,8 +19,10 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.polaris2023.wwhfas.WildWindMod;
 import org.polaris2023.wwhfas.client.entity.render.CrabRenderer;
 import org.polaris2023.wwhfas.client.entity.render.PiranhaRenderer;
+import org.polaris2023.wwhfas.client.entity.render.SpiderlingRenderer;
 import org.polaris2023.wwhfas.entity.animal.Crab;
 import org.polaris2023.wwhfas.entity.animal.Piranha;
+import org.polaris2023.wwhfas.entity.monster.Spiderling;
 
 /**
  * 注册模组实体类型喵~
@@ -52,6 +55,16 @@ public final class ModEntities {
 							.build("piranha")
 			);
 
+	public static final DeferredHolder<EntityType<?>, EntityType<Spiderling>> SPIDERLING = ENTITY_TYPES.register(
+			"spiderling",
+			() -> EntityType.Builder.of(Spiderling::new, MobCategory.MONSTER)
+					.sized(0.55F, 0.35F)
+					.eyeHeight(0.15F)
+					.passengerAttachments(0.765F)
+					.clientTrackingRange(8)
+					.build("spiderling")
+	);
+
 	/**
 	 * 向模组事件总线注册实体类型喵~
 	 *
@@ -70,6 +83,7 @@ public final class ModEntities {
 		static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
 			event.registerEntityRenderer(ModEntities.CRAB.get(), CrabRenderer::new);
 			event.registerEntityRenderer(ModEntities.PIRANHA.get(), PiranhaRenderer::new);
+			event.registerEntityRenderer(ModEntities.SPIDERLING.get(), SpiderlingRenderer::new);
 		}
 
 		private EntitiesClientEvent() {
@@ -86,6 +100,7 @@ public final class ModEntities {
 		static void onAttributeCreate(EntityAttributeCreationEvent event) {
 			event.put(ModEntities.CRAB.get(), Crab.createAttributes().build());
 			event.put(ModEntities.PIRANHA.get(), Piranha.createAttributes().build());
+			event.put(ModEntities.SPIDERLING.get(), Spiderling.createAttributes().build());
 		}
 
 		@SubscribeEvent
@@ -93,6 +108,7 @@ public final class ModEntities {
 			event.register(CRAB.get(), Crab.SPAWN_PLACEMENT, Heightmap.Types.OCEAN_FLOOR, Crab::checkCrabInWaterGroundSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
 			event.register(CRAB.get(), Crab::checkCrabOnGroundSpawnRules);
 			event.register(PIRANHA.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+			event.register(SPIDERLING.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
 		}
 
 		private EntitiesSeverEvent() {
