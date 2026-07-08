@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
@@ -25,6 +26,7 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -36,6 +38,9 @@ public final class ModBlocks {
 	 */
 	public static final DeferredRegister.Blocks BLOCKS =
 			DeferredRegister.createBlocks(WildWindMod.MOD_ID);
+
+	private static final BlockBehaviour.StatePredicate ALWAYS = (BlockState state, BlockGetter blockGetter, BlockPos pos) -> true;
+	private static final BlockBehaviour.StatePredicate NEVER = (BlockState state, BlockGetter blockGetter, BlockPos pos) -> false;
 
 	/**
 	 * 芦苇方块喵~
@@ -73,36 +78,36 @@ public final class ModBlocks {
 	 * 灰烬木套装方块集合喵~
 	 */
 	public static final WoodSet CINDER = registerWoodSet(
-		"cinder",
-		MapColor.PODZOL,
-		MapColor.COLOR_BROWN,
-		MapColor.COLOR_BROWN,
-		ModTreeGrower.CINDER,
-		ModBlockSetType.CINDER,
-		ModWoodType.CINDER
+			"cinder",
+			MapColor.PODZOL,
+			MapColor.COLOR_BROWN,
+			MapColor.COLOR_BROWN,
+			ModTreeGrower.CINDER,
+			ModBlockSetType.CINDER,
+			ModWoodType.CINDER
 	);
 	/**
 	 * 余烬木套装方块集合喵~
 	 */
 	public static final WoodSet EMBER = registerWoodSet(
-		"ember",
-		MapColor.COLOR_ORANGE,
-		MapColor.TERRACOTTA_ORANGE,
-		MapColor.COLOR_ORANGE,
-		ModTreeGrower.EMBER,
-		ModBlockSetType.EMBER,
-		ModWoodType.EMBER
+			"ember",
+			MapColor.COLOR_ORANGE,
+			MapColor.TERRACOTTA_ORANGE,
+			MapColor.COLOR_ORANGE,
+			ModTreeGrower.EMBER,
+			ModBlockSetType.EMBER,
+			ModWoodType.EMBER
 	);
 	/**
 	 * 杜鹃木套装方块集合喵~
 	 */
 	public static final WoodSet AZALEA = registerWoodSet(
-		"azalea",
-		MapColor.COLOR_PINK,
-		MapColor.COLOR_PINK,
-		MapColor.COLOR_PINK,
-		ModBlockSetType.AZALEA,
-		ModWoodType.AZALEA
+			"azalea",
+			MapColor.COLOR_PINK,
+			MapColor.COLOR_PINK,
+			MapColor.COLOR_PINK,
+			ModBlockSetType.AZALEA,
+			ModWoodType.AZALEA
 	);
 
 	/**
@@ -123,92 +128,92 @@ public final class ModBlocks {
 	}
 
 	private static WoodSet registerWoodSet(
-		String name,
-		MapColor barkColor,
-		MapColor woodColor,
-		MapColor plankColor,
-		BlockSetType blockSetType,
-		WoodType woodType
+			String name,
+			MapColor barkColor,
+			MapColor woodColor,
+			MapColor plankColor,
+			BlockSetType blockSetType,
+			WoodType woodType
 	) {
 		return registerWoodSet(name, barkColor, woodColor, plankColor, null, blockSetType, woodType);
 	}
 
 	private static WoodSet registerWoodSet(
-		String name,
-		MapColor barkColor,
-		MapColor woodColor,
-		MapColor plankColor,
-		net.minecraft.world.level.block.grower.TreeGrower treeGrower,
-		BlockSetType blockSetType,
-		WoodType woodType
+			String name,
+			MapColor barkColor,
+			MapColor woodColor,
+			MapColor plankColor,
+			@Nullable TreeGrower treeGrower,
+			BlockSetType blockSetType,
+			WoodType woodType
 	) {
-	DeferredHolder<Block, Block> log = BLOCKS.register(name + "_log", () -> log(MapColor.WOOD, barkColor));
-	DeferredHolder<Block, Block> wood = BLOCKS.register(name + "_wood", () -> log(barkColor, barkColor));
-	DeferredHolder<Block, Block> strippedLog = BLOCKS.register(
-		"stripped_" + name + "_log",
-		() -> log(MapColor.WOOD, woodColor)
-	);
-	DeferredHolder<Block, Block> strippedWood = BLOCKS.register(
-		"stripped_" + name + "_wood",
-		() -> log(woodColor, woodColor)
-	);
-	DeferredHolder<Block, Block> leaves = treeGrower == null ? null : BLOCKS.register(name + "_leaves", ModBlocks::leaves);
-	DeferredHolder<Block, Block> planks = BLOCKS.register(name + "_planks", () -> planks(plankColor));
-	DeferredHolder<Block, Block> stairs = BLOCKS.register(name + "_stairs", () -> legacyStair(planks.get()));
-	DeferredHolder<Block, Block> slab = BLOCKS.register(name + "_slab", () -> slab(plankColor));
-	DeferredHolder<Block, Block> fence = BLOCKS.register(name + "_fence", () -> fence(plankColor));
-	DeferredHolder<Block, Block> fenceGate = BLOCKS.register(name + "_fence_gate", () -> fenceGate(woodType, plankColor));
-	DeferredHolder<Block, Block> door = BLOCKS.register(name + "_door", () -> door(blockSetType, plankColor));
-	DeferredHolder<Block, Block> trapdoor = BLOCKS.register(name + "_trapdoor", () -> trapdoor(blockSetType, plankColor));
-	DeferredHolder<Block, Block> pressurePlate = BLOCKS.register(
-		name + "_pressure_plate",
-		() -> pressurePlate(blockSetType, plankColor)
-	);
-	DeferredHolder<Block, Block> button = BLOCKS.register(name + "_button", () -> woodenButton(blockSetType));
-	DeferredHolder<Block, Block> sapling = treeGrower == null ? null : BLOCKS.register(name + "_sapling", () -> sapling(treeGrower));
-	DeferredHolder<Block, Block> pottedSapling = sapling == null
-		? null
-		: BLOCKS.register("potted_" + name + "_sapling", () -> pottedSapling(sapling));
-	DeferredHolder<Block, Block> sign = BLOCKS.register(name + "_sign", () -> sign(woodType, plankColor));
-	DeferredHolder<Block, Block> wallSign = BLOCKS.register(name + "_wall_sign", () -> wallSign(woodType, plankColor, sign));
-	DeferredHolder<Block, Block> hangingSign = BLOCKS.register(
-		name + "_hanging_sign",
-		() -> hangingSign(woodType, plankColor)
-	);
-	DeferredHolder<Block, Block> wallHangingSign = BLOCKS.register(
-		name + "_wall_hanging_sign",
-		() -> wallHangingSign(woodType, plankColor, hangingSign)
-	);
+		DeferredHolder<Block, Block> log = BLOCKS.register(name + "_log", () -> log(MapColor.WOOD, barkColor));
+		DeferredHolder<Block, Block> wood = BLOCKS.register(name + "_wood", () -> log(barkColor, barkColor));
+		DeferredHolder<Block, Block> strippedLog = BLOCKS.register(
+				"stripped_" + name + "_log",
+				() -> log(MapColor.WOOD, woodColor)
+		);
+		DeferredHolder<Block, Block> strippedWood = BLOCKS.register(
+				"stripped_" + name + "_wood",
+				() -> log(woodColor, woodColor)
+		);
+		DeferredHolder<Block, Block> leaves = treeGrower == null ? null : BLOCKS.register(name + "_leaves", ModBlocks::leaves);
+		DeferredHolder<Block, Block> planks = BLOCKS.register(name + "_planks", () -> planks(plankColor));
+		DeferredHolder<Block, Block> stairs = BLOCKS.register(name + "_stairs", () -> legacyStair(planks.get()));
+		DeferredHolder<Block, Block> slab = BLOCKS.register(name + "_slab", () -> slab(plankColor));
+		DeferredHolder<Block, Block> fence = BLOCKS.register(name + "_fence", () -> fence(plankColor));
+		DeferredHolder<Block, Block> fenceGate = BLOCKS.register(name + "_fence_gate", () -> fenceGate(woodType, plankColor));
+		DeferredHolder<Block, Block> door = BLOCKS.register(name + "_door", () -> door(blockSetType, plankColor));
+		DeferredHolder<Block, Block> trapdoor = BLOCKS.register(name + "_trapdoor", () -> trapdoor(blockSetType, plankColor));
+		DeferredHolder<Block, Block> pressurePlate = BLOCKS.register(
+				name + "_pressure_plate",
+				() -> pressurePlate(blockSetType, plankColor)
+		);
+		DeferredHolder<Block, Block> button = BLOCKS.register(name + "_button", () -> woodenButton(blockSetType));
+		DeferredHolder<Block, Block> sapling = treeGrower == null ? null : BLOCKS.register(name + "_sapling", () -> sapling(treeGrower));
+		DeferredHolder<Block, Block> pottedSapling = sapling == null
+				? null
+				: BLOCKS.register("potted_" + name + "_sapling", () -> pottedSapling(sapling));
+		DeferredHolder<Block, Block> sign = BLOCKS.register(name + "_sign", () -> sign(woodType, plankColor));
+		DeferredHolder<Block, Block> wallSign = BLOCKS.register(name + "_wall_sign", () -> wallSign(woodType, plankColor, sign));
+		DeferredHolder<Block, Block> hangingSign = BLOCKS.register(
+				name + "_hanging_sign",
+				() -> hangingSign(woodType, plankColor)
+		);
+		DeferredHolder<Block, Block> wallHangingSign = BLOCKS.register(
+				name + "_wall_hanging_sign",
+				() -> wallHangingSign(woodType, plankColor, hangingSign)
+		);
 
-	return new WoodSet(
-		name,
-		log,
-		wood,
-		strippedLog,
-		strippedWood,
-		leaves,
-		planks,
-		stairs,
-		slab,
-		fence,
-		fenceGate,
-		door,
-		trapdoor,
-		pressurePlate,
-		button,
-		sapling,
-		pottedSapling,
-		sign,
-		wallSign,
-		hangingSign,
-		wallHangingSign
-	);
+		return new WoodSet(
+				name,
+				log,
+				wood,
+				strippedLog,
+				strippedWood,
+				leaves,
+				planks,
+				stairs,
+				slab,
+				fence,
+				fenceGate,
+				door,
+				trapdoor,
+				pressurePlate,
+				button,
+				sapling,
+				pottedSapling,
+				sign,
+				wallSign,
+				hangingSign,
+				wallHangingSign
+		);
 	}
 
 	private static Block log(MapColor topMapColor, MapColor sideMapColor) {
 		return new RotatedPillarBlock(
 				BlockBehaviour.Properties.of()
-						.mapColor(p_152624_ -> p_152624_.getValue(RotatedPillarBlock.AXIS) == Direction.Axis.Y ? topMapColor : sideMapColor)
+						.mapColor(blockState -> blockState.getValue(RotatedPillarBlock.AXIS) == Direction.Axis.Y ? topMapColor : sideMapColor)
 						.instrument(NoteBlockInstrument.BASS)
 						.strength(2.0F)
 						.sound(SoundType.WOOD)
@@ -225,11 +230,11 @@ public final class ModBlocks {
 						.sound(SoundType.GRASS)
 						.noOcclusion()
 						.isValidSpawn(Blocks::ocelotOrParrot)
-						.isSuffocating(ModBlocks::never)
-						.isViewBlocking(ModBlocks::never)
+						.isSuffocating(NEVER)
+						.isViewBlocking(NEVER)
 						.ignitedByLava()
 						.pushReaction(PushReaction.DESTROY)
-						.isRedstoneConductor(ModBlocks::never)
+						.isRedstoneConductor(NEVER)
 		);
 	}
 
@@ -287,7 +292,7 @@ public final class ModBlocks {
 		);
 	}
 
-	private static Block sapling(net.minecraft.world.level.block.grower.TreeGrower treeGrower) {
+	private static Block sapling(TreeGrower treeGrower) {
 		return new SaplingBlock(
 				treeGrower,
 				BlockBehaviour.Properties.of()
@@ -313,25 +318,25 @@ public final class ModBlocks {
 
 	private static Block sign(WoodType woodType, MapColor mapColor) {
 		return new ModStandingSignBlock(
-			woodType,
-			BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_SIGN).mapColor(mapColor),
-			() -> ModBlockEntities.SIGN.get()
+				woodType,
+				BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_SIGN).mapColor(mapColor),
+				() -> ModBlockEntities.SIGN.get()
 		);
 	}
 
 	private static Block wallSign(WoodType woodType, MapColor mapColor, DeferredHolder<Block, Block> sign) {
 		return new ModWallSignBlock(
 				woodType,
-			BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_WALL_SIGN).mapColor(mapColor).lootFrom(sign),
-			() -> ModBlockEntities.SIGN.get()
+				BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_WALL_SIGN).mapColor(mapColor).lootFrom(sign),
+				() -> ModBlockEntities.SIGN.get()
 		);
 	}
 
 	private static Block hangingSign(WoodType woodType, MapColor mapColor) {
 		return new ModCeilingHangingSignBlock(
 				woodType,
-			BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_HANGING_SIGN).mapColor(mapColor),
-			() -> ModBlockEntities.HANGING_SIGN.get()
+				BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_HANGING_SIGN).mapColor(mapColor),
+				() -> ModBlockEntities.HANGING_SIGN.get()
 		);
 	}
 
@@ -342,8 +347,8 @@ public final class ModBlocks {
 	) {
 		return new ModWallHangingSignBlock(
 				woodType,
-			BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_WALL_HANGING_SIGN).mapColor(mapColor).lootFrom(hangingSign),
-			() -> ModBlockEntities.HANGING_SIGN.get()
+				BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_WALL_HANGING_SIGN).mapColor(mapColor).lootFrom(hangingSign),
+				() -> ModBlockEntities.HANGING_SIGN.get()
 		);
 	}
 
@@ -354,14 +359,6 @@ public final class ModBlocks {
 				.strength(2.0F, 3.0F)
 				.sound(SoundType.WOOD)
 				.ignitedByLava();
-	}
-
-	private static boolean always(BlockState state, BlockGetter blockGetter, BlockPos pos) {
-		return true;
-	}
-
-	private static boolean never(BlockState state, BlockGetter blockGetter, BlockPos pos) {
-		return false;
 	}
 
 	/**
@@ -395,7 +392,7 @@ public final class ModBlocks {
 			DeferredHolder<Block, Block> wood,
 			DeferredHolder<Block, Block> strippedLog,
 			DeferredHolder<Block, Block> strippedWood,
-			DeferredHolder<Block, Block> leaves,
+			@Nullable DeferredHolder<Block, Block> leaves,
 			DeferredHolder<Block, Block> planks,
 			DeferredHolder<Block, Block> stairs,
 			DeferredHolder<Block, Block> slab,
@@ -405,8 +402,8 @@ public final class ModBlocks {
 			DeferredHolder<Block, Block> trapdoor,
 			DeferredHolder<Block, Block> pressurePlate,
 			DeferredHolder<Block, Block> button,
-			DeferredHolder<Block, Block> sapling,
-			DeferredHolder<Block, Block> pottedSapling,
+			@Nullable DeferredHolder<Block, Block> sapling,
+			@Nullable DeferredHolder<Block, Block> pottedSapling,
 			DeferredHolder<Block, Block> sign,
 			DeferredHolder<Block, Block> wallSign,
 			DeferredHolder<Block, Block> hangingSign,

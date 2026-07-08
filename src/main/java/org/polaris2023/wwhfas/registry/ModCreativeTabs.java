@@ -9,6 +9,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import javax.annotation.Nullable;
+
 /**
  * 注册模组创造模式物品栏喵~
  */
@@ -89,7 +91,7 @@ public final class ModCreativeTabs {
 		accept(output, woodItems.button());
 	}
 
-	private static void accept(CreativeModeTab.Output output, DeferredHolder<Item, Item> item) {
+	private static void accept(CreativeModeTab.Output output, @Nullable DeferredHolder<Item, ? extends Item> item) {
 		if (item != null) {
 			output.accept(item.get().getDefaultInstance());
 		}
