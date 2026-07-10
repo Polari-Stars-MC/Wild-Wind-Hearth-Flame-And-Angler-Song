@@ -24,6 +24,7 @@ import org.polaris2023.wwhfas.WildWindMod;
 import org.polaris2023.wwhfas.block.ModTerrainBlocks;
 import org.polaris2023.wwhfas.item.ModFoods;
 import org.polaris2023.wwhfas.item.OmniClawItem;
+import org.polaris2023.wwhfas.item.SpiderCocoonBlockItem;
 import org.polaris2023.wwhfas.item.component.OmniClawTools;
 
 import javax.annotation.Nullable;
@@ -86,14 +87,25 @@ public final class ModItems {
 	/**
 	 * 焦枝对应物品喵~
 	 */
-	public static final DeferredItem<Item> SCORCHED_TWIG = ITEMS.register(
-		ModTerrainBlocks.SCORCHED_TWIG.getId().getPath(),
-		() -> new StandingAndWallBlockItem(
-			ModTerrainBlocks.SCORCHED_TWIG.get(),
-			ModTerrainBlocks.SCORCHED_TWIG_WALL.get(),
-			new Item.Properties(),
-			Direction.DOWN
-		)
+	public static final DeferredItem<StandingAndWallBlockItem> SCORCHED_TWIG = ITEMS.register(
+			ModTerrainBlocks.SCORCHED_TWIG.getId().getPath(),
+			() -> new StandingAndWallBlockItem(
+					ModTerrainBlocks.SCORCHED_TWIG.get(),
+					ModTerrainBlocks.SCORCHED_TWIG_WALL.get(),
+					new Item.Properties(),
+					Direction.DOWN
+			)
+	);
+
+	/**
+	 * 蜘蛛卵物品
+	 */
+	public static final DeferredItem<SpiderCocoonBlockItem> SPIDER_COCOON = ITEMS.register(
+			ModBlocks.SPIDER_COCOON.getId().getPath(),
+			() -> new SpiderCocoonBlockItem(
+					ModBlocks.SPIDER_COCOON.get(), ModBlocks.SPIDER_COCOON_HANGING.get(),
+					new Item.Properties()
+			)
 	);
 
 	/**
@@ -110,7 +122,7 @@ public final class ModItems {
 		ITEMS.register(modBus);
 	}
 
-		private static WoodItems registerWoodItems(ModBlocks.WoodSet woodSet, EnumProxy<Boat.Type> boatType) {
+	private static WoodItems registerWoodItems(ModBlocks.WoodSet woodSet, EnumProxy<Boat.Type> boatType) {
 		DeferredItem<BlockItem> log = blockItem(woodSet.log());
 		DeferredItem<BlockItem> wood = blockItem(woodSet.wood());
 		DeferredItem<BlockItem> strippedLog = blockItem(woodSet.strippedLog());
@@ -122,55 +134,55 @@ public final class ModItems {
 		DeferredItem<BlockItem> fence = blockItem(woodSet.fence());
 		DeferredItem<BlockItem> fenceGate = blockItem(woodSet.fenceGate());
 		DeferredItem<BlockItem> door = ITEMS.register(
-			woodSet.door().getId().getPath(),
-			() -> new BlockItem(woodSet.door().get(), new Item.Properties())
+				woodSet.door().getId().getPath(),
+				() -> new BlockItem(woodSet.door().get(), new Item.Properties())
 		);
 		DeferredItem<BlockItem> trapdoor = blockItem(woodSet.trapdoor());
 		DeferredItem<BlockItem> pressurePlate = blockItem(woodSet.pressurePlate());
 		DeferredItem<BlockItem> button = blockItem(woodSet.button());
 		DeferredItem<BlockItem> sapling = blockItem(woodSet.sapling());
 		DeferredItem<SignItem> sign = ITEMS.register(
-			woodSet.name() + "_sign",
-			() -> new SignItem(new Item.Properties().stacksTo(16), woodSet.sign().get(), woodSet.wallSign().get())
+				woodSet.name() + "_sign",
+				() -> new SignItem(new Item.Properties().stacksTo(16), woodSet.sign().get(), woodSet.wallSign().get())
 		);
 		DeferredItem<HangingSignItem> hangingSign = ITEMS.register(
-			woodSet.name() + "_hanging_sign",
-			() -> new HangingSignItem(
-				woodSet.hangingSign().get(),
-				woodSet.wallHangingSign().get(),
-				new Item.Properties().stacksTo(16)
-			)
+				woodSet.name() + "_hanging_sign",
+				() -> new HangingSignItem(
+						woodSet.hangingSign().get(),
+						woodSet.wallHangingSign().get(),
+						new Item.Properties().stacksTo(16)
+				)
 		);
 		DeferredItem<BoatItem> boat = ITEMS.register(
-			woodSet.name() + "_boat",
-			() -> new BoatItem(false, boatType.getValue(), new Item.Properties().stacksTo(1))
+				woodSet.name() + "_boat",
+				() -> new BoatItem(false, boatType.getValue(), new Item.Properties().stacksTo(1))
 		);
 		DeferredItem<BoatItem> chestBoat = ITEMS.register(
-			woodSet.name() + "_chest_boat",
-			() -> new BoatItem(true, boatType.getValue(), new Item.Properties().stacksTo(1))
+				woodSet.name() + "_chest_boat",
+				() -> new BoatItem(true, boatType.getValue(), new Item.Properties().stacksTo(1))
 		);
 
 		return new WoodItems(
-			woodSet.name(),
-			log,
-			wood,
-			strippedLog,
-			strippedWood,
-			leaves,
-			planks,
-			stairs,
-			slab,
-			fence,
-			fenceGate,
-			door,
-			trapdoor,
-			pressurePlate,
-			button,
-			sapling,
-			sign,
-			hangingSign,
-			boat,
-			chestBoat
+				woodSet.name(),
+				log,
+				wood,
+				strippedLog,
+				strippedWood,
+				leaves,
+				planks,
+				stairs,
+				slab,
+				fence,
+				fenceGate,
+				door,
+				trapdoor,
+				pressurePlate,
+				button,
+				sapling,
+				sign,
+				hangingSign,
+				boat,
+				chestBoat
 		);
 	}
 
@@ -207,26 +219,26 @@ public final class ModItems {
 	 * @param chestBoat 运输船物品喵~
 	 */
 	public record WoodItems(
-		String name,
-		DeferredItem<BlockItem> log,
-		DeferredItem<BlockItem> wood,
-		DeferredItem<BlockItem> strippedLog,
-		DeferredItem<BlockItem> strippedWood,
-		@Nullable DeferredItem<BlockItem> leaves,
-		DeferredItem<BlockItem> planks,
-		DeferredItem<BlockItem> stairs,
-		DeferredItem<BlockItem> slab,
-		DeferredItem<BlockItem> fence,
-		DeferredItem<BlockItem> fenceGate,
-		DeferredItem<BlockItem> door,
-		DeferredItem<BlockItem> trapdoor,
-		DeferredItem<BlockItem> pressurePlate,
-		DeferredItem<BlockItem> button,
-		@Nullable DeferredItem<BlockItem> sapling,
-		DeferredItem<SignItem> sign,
-		DeferredItem<HangingSignItem> hangingSign,
-		DeferredItem<BoatItem> boat,
-		DeferredItem<BoatItem> chestBoat
+			String name,
+			DeferredItem<BlockItem> log,
+			DeferredItem<BlockItem> wood,
+			DeferredItem<BlockItem> strippedLog,
+			DeferredItem<BlockItem> strippedWood,
+			@Nullable DeferredItem<BlockItem> leaves,
+			DeferredItem<BlockItem> planks,
+			DeferredItem<BlockItem> stairs,
+			DeferredItem<BlockItem> slab,
+			DeferredItem<BlockItem> fence,
+			DeferredItem<BlockItem> fenceGate,
+			DeferredItem<BlockItem> door,
+			DeferredItem<BlockItem> trapdoor,
+			DeferredItem<BlockItem> pressurePlate,
+			DeferredItem<BlockItem> button,
+			@Nullable DeferredItem<BlockItem> sapling,
+			DeferredItem<SignItem> sign,
+			DeferredItem<HangingSignItem> hangingSign,
+			DeferredItem<BoatItem> boat,
+			DeferredItem<BoatItem> chestBoat
 	) {
 		/**
 		 * 判断当前木材套装是否包含树木相关物品喵~
@@ -318,7 +330,7 @@ public final class ModItems {
 	public static final DeferredItem<Item> COOKED_PIRANHA = ITEMS.registerSimpleItem("cooked_piranha", new Item.Properties()
 			.food(ModFoods.COOKED_PIRANHA)
 	);
-	
+
 	public static final DeferredItem<MobBucketItem> PIRANHA_BUCKET =
 			ITEMS.register("piranha_bucket", () -> registerMobBucket(
 					ModEntities.PIRANHA.get(),

@@ -41,6 +41,7 @@ public class ModItemModelProvider extends ItemModelProvider {
 		basicItem(ModItems.FANG.get());
 		withExistingParent("piranha_bucket", mcLoc("item/generated"))
 				.texture("layer0", modLoc("item/piranha_bucket"));
+		simpleBlockItem(ModBlocks.SPIDER_COCOON.get());
 	}
 
 	private void registerWoodSet(ModBlocks.WoodSet woodSet) {

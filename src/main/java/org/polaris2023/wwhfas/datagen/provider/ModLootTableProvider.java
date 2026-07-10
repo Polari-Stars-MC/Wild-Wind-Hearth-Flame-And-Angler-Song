@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.functions.SmeltItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
@@ -134,6 +135,9 @@ public class ModLootTableProvider extends LootTableProvider {
 
 			this.add(ModBlocks.REEDS.get(), block -> createSinglePropConditionTable(block, DoublePlantBlock.HALF, DoubleBlockHalf.LOWER));
 			this.add(ModBlocks.CATTAILS.get(), block -> createSinglePropConditionTable(block, DoublePlantBlock.HALF, DoubleBlockHalf.LOWER));
+
+			this.add(ModBlocks.SPIDER_COCOON.get(), block -> this.createSilkTouchOrShearsDispatchTable(block, this.getSpiderCocoonLootTable(block)));
+			this.add(ModBlocks.SPIDER_COCOON_HANGING.get(), block -> this.createSilkTouchOrShearsDispatchTable(block, this.getSpiderCocoonLootTable(block)));
 		}
 
 		/**
@@ -154,6 +158,10 @@ public class ModLootTableProvider extends LootTableProvider {
 			return Stream.concat(ModBlocks.BLOCKS.getEntries().stream(), ModTerrainBlocks.BLOCKS.getEntries().stream())
 				.map(holder -> (Block) holder.get())
 				.collect(Collectors.toList());
+		}
+
+		private LootPoolEntryContainer.Builder<?> getSpiderCocoonLootTable(Block block) {
+			return LootItem.lootTableItem(Items.STRING);
 		}
 	}
 }

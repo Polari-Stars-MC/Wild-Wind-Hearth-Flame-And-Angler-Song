@@ -1,10 +1,7 @@
 package org.polaris2023.wwhfas.registry;
 
 import org.polaris2023.wwhfas.WildWindMod;
-import org.polaris2023.wwhfas.block.EmergentPlantBlock;
-import org.polaris2023.wwhfas.block.ModBlockSetType;
-import org.polaris2023.wwhfas.block.ModTreeGrower;
-import org.polaris2023.wwhfas.block.ModWoodType;
+import org.polaris2023.wwhfas.block.*;
 import org.polaris2023.wwhfas.block.sign.ModCeilingHangingSignBlock;
 import org.polaris2023.wwhfas.block.sign.ModStandingSignBlock;
 import org.polaris2023.wwhfas.block.sign.ModWallHangingSignBlock;
@@ -72,6 +69,36 @@ public final class ModBlocks {
 							.offsetType(BlockBehaviour.OffsetType.XZ)
 							.ignitedByLava()
 							.pushReaction(PushReaction.DESTROY)
+			));
+
+	/**
+	 * 蜘蛛卵方块
+	 */
+	public static final DeferredBlock<SpiderCocoonBlock> SPIDER_COCOON =
+			BLOCKS.register("spider_cocoon", () -> new SpiderCocoonBlock(
+					BlockBehaviour.Properties.of()
+							.strength(4)
+							.mapColor(MapColor.WOOL)
+							.noOcclusion()
+							.isSuffocating(NEVER)
+							.isRedstoneConductor(NEVER)
+							.pushReaction(PushReaction.DESTROY)
+							.ignitedByLava()
+			));
+
+	/**
+	 * 悬挂蜘蛛卵方块
+	 */
+	public static final DeferredBlock<SpiderCocoonBlock> SPIDER_COCOON_HANGING =
+			BLOCKS.register("spider_cocoon_hanging", () -> new HangingSpiderCocoonBlock(
+					BlockBehaviour.Properties.of()
+							.strength(4)
+							.mapColor(MapColor.WOOL)
+							.noOcclusion()
+							.isSuffocating(NEVER)
+							.isRedstoneConductor(NEVER)
+							.pushReaction(PushReaction.DESTROY)
+							.ignitedByLava()
 			));
 
 	/**

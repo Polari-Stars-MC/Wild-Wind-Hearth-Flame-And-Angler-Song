@@ -21,4 +21,9 @@ public interface ModBlockTags {
 	 * 螃蟹偏好游荡的方块标签喵~
 	 */
 	TagKey<Block> CRAB_PREFERRED_WANDER_BLOCKS = BlockTags.create(WildWindMod.id("crab_preferred_wander_blocks"));
+
+	/**
+	 * 蜘蛛卵
+	 */
+	TagKey<Block> SPIDER_COCOONS = BlockTags.create(WildWindMod.id("spider_cocoons"));
 }

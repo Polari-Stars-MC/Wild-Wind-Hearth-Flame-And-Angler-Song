@@ -67,6 +67,10 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
 				.add(Blocks.MANGROVE_ROOTS)
 				.add(Blocks.MUDDY_MANGROVE_ROOTS);
 
+		tag(ModBlockTags.SPIDER_COCOONS)
+				.add(ModBlocks.SPIDER_COCOON.get())
+				.add(ModBlocks.SPIDER_COCOON_HANGING.get());
+
 		for (ModBlocks.WoodSet woodSet : ModBlocks.WOOD_SETS) {
 			TagKey<Block> logsTag = TagKey.create(
 				net.minecraft.core.registries.Registries.BLOCK,

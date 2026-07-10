@@ -17,6 +17,8 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
  * 生成模组方块状态与方块模型数据喵~
  */
 public class ModBlockStateProvider extends BlockStateProvider {
+	private final ExistingFileHelper existingFileHelper;
+
 	/**
 	 * 创建方块状态提供器喵~
 	 *
@@ -25,6 +27,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
 	 */
 	public ModBlockStateProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
 		super(output, WildWindMod.MOD_ID, existingFileHelper);
+		this.existingFileHelper = existingFileHelper;
 	}
 
 	@Override
@@ -33,6 +36,9 @@ public class ModBlockStateProvider extends BlockStateProvider {
 			registerWoodSet(woodSet);
 		}
 		registerTerrainBlocks();
+
+		simpleBlock(ModBlocks.SPIDER_COCOON.get(), this.existing("block/spider_cocoon"));
+		simpleBlock(ModBlocks.SPIDER_COCOON_HANGING.get(), this.existing("block/spider_cocoon_hanging"));
 	}
 
 	private void registerWoodSet(ModBlocks.WoodSet woodSet) {
@@ -189,5 +195,9 @@ public class ModBlockStateProvider extends BlockStateProvider {
 				.face(Direction.UP)   .uvs(0.0F, 8.0F, 16.0F, 8.0F).texture("#cross").end()
 				.face(Direction.DOWN) .uvs(0.0F, 8.0F, 16.0F, 8.0F).texture("#cross").end()
 				.end(); // 结束 Element
+	}
+
+	private ModelFile.ExistingModelFile existing(String path) {
+		return new ModelFile.ExistingModelFile(this.modLoc(path), this.existingFileHelper);
 	}
 }

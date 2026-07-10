@@ -31,7 +31,7 @@ public class ModLangProvider extends LanguageProvider {
 		addWoodSet(ModBlocks.CINDER, ModItems.CINDER, text("Cinder", "灵焰木"));
 		addWoodSet(ModBlocks.EMBER, ModItems.EMBER, text("Ember", "焚烬木"));
 		addWoodSet(ModBlocks.AZALEA, ModItems.AZALEA, text("Azalea", "杜鹃木"));
-		addTerrainBlocks();
+		addBlocks();
 		addBlockPropertyBookTranslations();
 		addItems();
 		addEffects();
@@ -89,6 +89,13 @@ public class ModLangProvider extends LanguageProvider {
 			addBlock(woodSet.sapling(), baseName + suffix(" Sapling", "树苗"));
 			addBlock(woodSet.pottedSapling(), suffix("Potted ", "盆栽") + baseName + suffix(" Sapling", "树苗"));
 		}
+	}
+
+	private void addBlocks() {
+		addTerrainBlocks();
+
+		addBlock(ModBlocks.SPIDER_COCOON, text("Spider Cocoon", "蜘蛛卵"));
+		addBlock(ModBlocks.SPIDER_COCOON_HANGING, text("Hanging Spider Cocoon", "悬挂着的蜘蛛卵"));
 	}
 
 	private void addTerrainBlocks() {
