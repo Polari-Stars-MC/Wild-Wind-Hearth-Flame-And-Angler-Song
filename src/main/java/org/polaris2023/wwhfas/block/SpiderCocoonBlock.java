@@ -28,7 +28,7 @@ import java.util.List;
 public class SpiderCocoonBlock extends Block implements IShearable {
 	private static final VoxelShape SHAPE = Shapes.or(
 			Block.box(1, 0, 1, 15, 14, 15),
-			Block.box(3, 6, 3, 13, 18, 13)
+			Block.box(3, 14, 3, 13, 26, 13)
 	);
 
 	/**

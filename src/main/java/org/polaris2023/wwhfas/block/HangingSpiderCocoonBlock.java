@@ -16,8 +16,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  */
 public class HangingSpiderCocoonBlock extends SpiderCocoonBlock {
 	private static final VoxelShape SHAPE = Shapes.or(
-			Block.box(1, -8, 1, 15, 6, 15),
-			Block.box(3, 14, 3, 13, 26, 13)
+			Block.box(1, -24, 1, 15, -10, 15),
+			Block.box(3, -10, 3, 13, 2, 13)
 	);
 
 	/**

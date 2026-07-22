@@ -1,5 +1,6 @@
 {
   "texture_size": [64, 64],
+  "render_type": "cutout",
   "textures": {
     "0": "wwhfas:block/spider_cocoon",
     "particle": "wwhfas:block/spider_cocoon"
