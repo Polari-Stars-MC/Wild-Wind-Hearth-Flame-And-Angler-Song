@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/cube_column",
-  "textures": {
-    "end": "wwhfas:block/stripped_ember_log_top",
-    "side": "wwhfas:block/stripped_ember_log"
-  }
-}

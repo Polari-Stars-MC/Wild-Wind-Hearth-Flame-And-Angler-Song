@@ -1,5 +1,0 @@
-{
-  "type": "neoforge:remove_spawns",
-  "biomes": "#c:is_swamp",
-  "entity_types": "minecraft:spider"
-}

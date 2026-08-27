@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/door_top_left",
-  "render_type": "minecraft:cutout",
-  "textures": {
-    "bottom": "wwhfas:block/cinder_door_bottom",
-    "top": "wwhfas:block/cinder_door_top"
-  }
-}
