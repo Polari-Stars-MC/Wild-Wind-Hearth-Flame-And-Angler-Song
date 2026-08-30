@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/door_bottom_right_open",
-  "render_type": "minecraft:cutout",
-  "textures": {
-    "bottom": "wwhfas:block/azalea_door_bottom",
-    "top": "wwhfas:block/azalea_door_top"
-  }
-}

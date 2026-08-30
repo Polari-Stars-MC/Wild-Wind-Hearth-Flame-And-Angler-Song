@@ -2,28 +2,28 @@
   "entries": [
     {
       "enum": "net/minecraft/world/entity/vehicle/Boat$Type",
-      "name": "WWHFAS_CINDER",
+      "name": "wild_wind_CINDER",
       "constructor": "(Ljava/util/function/Supplier;Ljava/lang/String;Ljava/util/function/Supplier;Ljava/util/function/Supplier;Ljava/util/function/Supplier;Z)V",
       "parameters": {
-        "class": "org/polaris2023/wwhfas/registry/ModBoatTypes",
+        "class": "org/polaris2023/wild_wind/registry/ModBoatTypes",
         "field": "CINDER"
       }
     },
     {
       "enum": "net/minecraft/world/entity/vehicle/Boat$Type",
-      "name": "WWHFAS_EMBER",
+      "name": "wild_wind_EMBER",
       "constructor": "(Ljava/util/function/Supplier;Ljava/lang/String;Ljava/util/function/Supplier;Ljava/util/function/Supplier;Ljava/util/function/Supplier;Z)V",
       "parameters": {
-        "class": "org/polaris2023/wwhfas/registry/ModBoatTypes",
+        "class": "org/polaris2023/wild_wind/registry/ModBoatTypes",
         "field": "EMBER"
       }
     },
     {
       "enum": "net/minecraft/world/entity/vehicle/Boat$Type",
-      "name": "WWHFAS_AZALEA",
+      "name": "wild_wind_AZALEA",
       "constructor": "(Ljava/util/function/Supplier;Ljava/lang/String;Ljava/util/function/Supplier;Ljava/util/function/Supplier;Ljava/util/function/Supplier;Z)V",
       "parameters": {
-        "class": "org/polaris2023/wwhfas/registry/ModBoatTypes",
+        "class": "org/polaris2023/wild_wind/registry/ModBoatTypes",
         "field": "AZALEA"
       }
     }

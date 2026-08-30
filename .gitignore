@@ -35,7 +35,7 @@ bin/
 ### Minecraft Modding ###
 run/
 !**/src/**/run/
-**/src/generated/**/.cache/
+**/src/generated/
 repo/
 !**/src/**/repo/
 资源
@@ -43,4 +43,8 @@ repo/
 ### AI ####
 *.md
 !README.md
+!CLAUDE.md
+!AGENTS.md
 .helloagents
+.dsh
+.claude

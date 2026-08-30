@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/stairs",
-  "textures": {
-    "bottom": "wwhfas:block/cinder_planks",
-    "side": "wwhfas:block/cinder_planks",
-    "top": "wwhfas:block/cinder_planks"
-  }
-}
